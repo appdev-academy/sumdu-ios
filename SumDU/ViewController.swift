@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import Alamofire
 
-class ViewController: UIViewController {
+class ViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
