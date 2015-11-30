@@ -4,3 +4,4 @@ use_frameworks!
 
 link_with 'SumDU'
 pod 'Alamofire'
+pod 'SwiftyJSON'
