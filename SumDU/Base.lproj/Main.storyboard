@@ -88,7 +88,7 @@
                                 <variation key="widthClass=compact" layoutMarginsFollowReadableWidth="YES" preservesSuperviewLayoutMargins="YES"/>
                             </searchBar>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Jgf-z8-fQo">
-                                <rect key="frame" x="2" y="49" width="316" height="29"/>
+                                <rect key="frame" x="5" y="49" width="310" height="29"/>
                                 <animations/>
                                 <segments>
                                     <segment title="Викладач"/>
@@ -107,11 +107,11 @@
                                         <rect key="frame" x="0.0" y="28" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="e8s-X5-cQD" id="bOW-Ay-c4y">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3oU-HS-qdb">
-                                                    <rect key="frame" x="2" y="7" width="316" height="30"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3oU-HS-qdb">
+                                                    <rect key="frame" x="5" y="0.0" width="310" height="44"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -122,11 +122,17 @@
                                             <constraints>
                                                 <constraint firstItem="3oU-HS-qdb" firstAttribute="centerX" secondItem="bOW-Ay-c4y" secondAttribute="centerX" id="43x-ZY-1Rb"/>
                                                 <constraint firstItem="3oU-HS-qdb" firstAttribute="centerY" secondItem="bOW-Ay-c4y" secondAttribute="centerY" id="FQK-HF-zqc"/>
-                                                <constraint firstAttribute="bottom" secondItem="3oU-HS-qdb" secondAttribute="bottom" constant="6.5" id="ORs-97-iNN"/>
-                                                <constraint firstAttribute="trailing" secondItem="3oU-HS-qdb" secondAttribute="trailing" constant="2" id="WKi-XA-lHe"/>
-                                                <constraint firstItem="3oU-HS-qdb" firstAttribute="top" secondItem="bOW-Ay-c4y" secondAttribute="top" constant="7" id="YDl-Ev-826"/>
-                                                <constraint firstItem="3oU-HS-qdb" firstAttribute="leading" secondItem="bOW-Ay-c4y" secondAttribute="leading" constant="2" id="hUM-mD-zq3"/>
+                                                <constraint firstAttribute="bottom" secondItem="3oU-HS-qdb" secondAttribute="bottom" id="ORs-97-iNN"/>
+                                                <constraint firstAttribute="trailing" secondItem="3oU-HS-qdb" secondAttribute="trailing" constant="5" id="WKi-XA-lHe"/>
+                                                <constraint firstItem="3oU-HS-qdb" firstAttribute="top" secondItem="bOW-Ay-c4y" secondAttribute="top" id="YDl-Ev-826"/>
+                                                <constraint firstItem="3oU-HS-qdb" firstAttribute="leading" secondItem="bOW-Ay-c4y" secondAttribute="leading" constant="5" id="hUM-mD-zq3"/>
                                             </constraints>
+                                            <variation key="default">
+                                                <mask key="constraints">
+                                                    <exclude reference="43x-ZY-1Rb"/>
+                                                    <exclude reference="FQK-HF-zqc"/>
+                                                </mask>
+                                            </variation>
                                             <variation key="widthClass=compact">
                                                 <mask key="subviews">
                                                     <include reference="3oU-HS-qdb"/>
@@ -152,10 +158,10 @@
                             </tableView>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="Jgf-z8-fQo" secondAttribute="trailing" constant="2" id="51P-GW-unH"/>
-                            <constraint firstItem="Jgf-z8-fQo" firstAttribute="leading" secondItem="GTx-xS-acF" secondAttribute="leading" constant="2" id="8JE-jH-20x"/>
+                            <constraint firstAttribute="trailing" secondItem="Jgf-z8-fQo" secondAttribute="trailing" constant="5" id="51P-GW-unH"/>
+                            <constraint firstItem="Jgf-z8-fQo" firstAttribute="leading" secondItem="GTx-xS-acF" secondAttribute="leading" constant="5" id="8JE-jH-20x"/>
                             <constraint firstItem="Jgf-z8-fQo" firstAttribute="top" secondItem="zYR-O0-G46" secondAttribute="bottom" constant="5" id="9w0-n3-qFm"/>
                             <constraint firstAttribute="trailing" secondItem="zYR-O0-G46" secondAttribute="trailing" id="DTS-VG-Iih"/>
                             <constraint firstItem="i2R-RE-hU6" firstAttribute="leading" secondItem="GTx-xS-acF" secondAttribute="leading" id="LMv-N1-Y8Y"/>
@@ -168,6 +174,13 @@
                             <constraint firstItem="zYR-O0-G46" firstAttribute="leading" secondItem="GTx-xS-acF" secondAttribute="leading" id="sx1-5e-gnc"/>
                             <constraint firstAttribute="trailing" secondItem="i2R-RE-hU6" secondAttribute="trailing" id="xPT-Mb-hTE"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="cXn-3k-AHl"/>
+                                <exclude reference="sug-kY-DgV"/>
+                                <exclude reference="ntA-U6-TCw"/>
+                            </mask>
+                        </variation>
                         <variation key="widthClass=compact">
                             <mask key="subviews">
                                 <include reference="zYR-O0-G46"/>
@@ -222,6 +235,6 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="DJm-zB-G4b"/>
-        <segue reference="1YB-4j-Y80"/>
+        <segue reference="7GI-n5-4H0"/>
     </inferredMetricsTieBreakers>
 </document>
