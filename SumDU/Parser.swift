@@ -23,7 +23,7 @@ enum scheduleRequestParameters: String {
 
 // MARK: - Parser protocol
 
-protocol ParserDeligate {
+protocol ParserDelegate {
     
     func getScheduleJson()
     
@@ -34,9 +34,10 @@ protocol ParserDeligate {
 
 class Parser {
     
-    var deligate: ParserDeligate!
+    var deligate: ParserDelegate!
     var resopnseJson:JSON = [:]
     
+//    request router
     enum Router: URLRequestConvertible {
         
         static let baseURLString = "http://schedule.sumdu.edu.ua"
@@ -83,12 +84,12 @@ class Parser {
             if scheduleRequest.result.isSuccess {
                 if let resultValeu = scheduleRequest.result.value {
                     self.resopnseJson = JSON(resultValeu)
+                    
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.deligate.getScheduleJson()
+                    })
                 }
             }
-            
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.deligate.getScheduleJson()
-            })
         }
     }
 }

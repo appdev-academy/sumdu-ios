@@ -8,14 +8,16 @@
 
 import UIKit
 
-class NavigationController: UINavigationController, ParserDeligate {
+class NavigationController: UINavigationController, ParserDelegate, ScheduleDelegate {
     
     var parser = Parser()
+    var schedule = Schedule()
     
     override func viewDidLoad() {
         
 //        important line, need explain
-        self.parser.deligate = self
+        parser.deligate = self
+        schedule.delegate = self
         
         let requestData : [String : String] =
         [
@@ -28,12 +30,22 @@ class NavigationController: UINavigationController, ParserDeligate {
             scheduleRequestParameters.Param.rawValue: "0"
         ]
         
-        self.parser.sendRequest(requestData)
+        parser.sendRequest(requestData)
+        
+        if parser.resopnseJson.count > 0 {
+            schedule.getRecords(parser.resopnseJson)
+        }
     }
     
 //    MARK: ParserDeligate
     
     func getScheduleJson() {
-        print(parser.resopnseJson)
+        if parser.resopnseJson.count > 0 {
+            schedule.getRecords(parser.resopnseJson)
+        }
+    }
+    
+//    MARK: ScheduleDelegate
+    func getRecords() {
     }
 }

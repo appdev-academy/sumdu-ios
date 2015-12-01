@@ -17,7 +17,8 @@
 		7D181E4C1C006D96000C04B5 /* SumDUUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D181E4B1C006D96000C04B5 /* SumDUUITests.swift */; };
 		E117991E1C09E25F005D2ABA /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E117991D1C09E25F005D2ABA /* Parser.swift */; };
 		E11799201C09E522005D2ABA /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E117991F1C09E522005D2ABA /* NavigationController.swift */; };
-		E1F1C4831C0A134D00A96918 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F1C4821C0A134D00A96918 /* AppModel.swift */; };
+		E1F1C4831C0A134D00A96918 /* ScheduleRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F1C4821C0A134D00A96918 /* ScheduleRecord.swift */; };
+		E1F8D6E71C0E241F000A3FEA /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F8D6E61C0E241F000A3FEA /* Schedule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,7 +56,8 @@
 		D1DD90AC92C58F9DD5331ED4 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E117991D1C09E25F005D2ABA /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Parser.swift; path = SumDU/Parser.swift; sourceTree = SOURCE_ROOT; };
 		E117991F1C09E522005D2ABA /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
-		E1F1C4821C0A134D00A96918 /* AppModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppModel.swift; path = SumDU/AppModel.swift; sourceTree = SOURCE_ROOT; };
+		E1F1C4821C0A134D00A96918 /* ScheduleRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ScheduleRecord.swift; path = SumDU/ScheduleRecord.swift; sourceTree = SOURCE_ROOT; };
+		E1F8D6E61C0E241F000A3FEA /* Schedule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,7 +116,8 @@
 			isa = PBXGroup;
 			children = (
 				E117991D1C09E25F005D2ABA /* Parser.swift */,
-				E1F1C4821C0A134D00A96918 /* AppModel.swift */,
+				E1F1C4821C0A134D00A96918 /* ScheduleRecord.swift */,
+				E1F8D6E61C0E241F000A3FEA /* Schedule.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -378,10 +381,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1F8D6E71C0E241F000A3FEA /* Schedule.swift in Sources */,
 				7D07F8201C099C56007DF3FD /* ViewController.swift in Sources */,
 				E11799201C09E522005D2ABA /* NavigationController.swift in Sources */,
 				E117991E1C09E25F005D2ABA /* Parser.swift in Sources */,
-				E1F1C4831C0A134D00A96918 /* AppModel.swift in Sources */,
+				E1F1C4831C0A134D00A96918 /* ScheduleRecord.swift in Sources */,
 				7D07F81D1C099C56007DF3FD /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
