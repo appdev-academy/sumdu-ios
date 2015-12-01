@@ -55,7 +55,7 @@
         <!--Navigation Controller-->
         <scene sceneID="rVL-Me-BGY">
             <objects>
-                <navigationController id="3rK-8X-GqU" sceneMemberID="viewController">
+                <navigationController id="3rK-8X-GqU" customClass="NavigationController" customModule="SumDU" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="JQR-ck-LAA">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -73,8 +73,12 @@
         <scene sceneID="xGC-82-TvE">
             <objects>
                 <viewController id="rWU-h3-QzD" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="hve-Ab-sml"/>
+                        <viewControllerLayoutGuide type="bottom" id="fUY-zm-0oy"/>
+                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="GTx-xS-acF">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
@@ -89,6 +93,10 @@
         <scene sceneID="GcR-tL-UCE">
             <objects>
                 <viewController id="usX-lJ-Sfa" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Syo-kE-rzm"/>
+                        <viewControllerLayoutGuide type="bottom" id="JS0-PU-vrU"/>
+                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="pyE-Yu-B3P">
                         <rect key="frame" x="0.0" y="0.0" width="280" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -102,6 +110,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="DJm-zB-G4b"/>
+        <segue reference="Jlm-8r-4it"/>
     </inferredMetricsTieBreakers>
 </document>

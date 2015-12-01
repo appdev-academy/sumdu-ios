@@ -8,23 +8,32 @@
 
 import UIKit
 
-class NavigationController: UINavigationController {
+class NavigationController: UINavigationController, ParserDeligate {
+    
+    var parser = Parser()
     
     override func viewDidLoad() {
         
+//        important line, need explain
+        self.parser.deligate = self
+        
         let requestData : [String : String] =
         [
-            Parameters.BeginDate.rawValue: "21.11.2015",
-            Parameters.EndDate.rawValue: "28.11.2015",
-            Parameters.GroupId.rawValue: "100597",
-            Parameters.NameId.rawValue: "0",
-            Parameters.LectureRoomId.rawValue: "0",
-            Parameters.PublicDate.rawValue: "true",
-            Parameters.Param.rawValue: "0"
+            scheduleRequestParameters.BeginDate.rawValue: "21.11.2015",
+            scheduleRequestParameters.EndDate.rawValue: "28.11.2015",
+            scheduleRequestParameters.GroupId.rawValue: "100597",
+            scheduleRequestParameters.NameId.rawValue: "0",
+            scheduleRequestParameters.LectureRoomId.rawValue: "0",
+            scheduleRequestParameters.PublicDate.rawValue: "true",
+            scheduleRequestParameters.Param.rawValue: "0"
         ]
         
-        let test = Parser(parameters: requestData)
-        test.sendRequest()
-//        print(test.resopnseJson)
+        self.parser.sendRequest(requestData)
+    }
+    
+//    MARK: ParserDeligate
+    
+    func getScheduleJson() {
+        print(parser.resopnseJson)
     }
 }
