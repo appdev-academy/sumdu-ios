@@ -7,17 +7,19 @@
 //
 
 import UIKit
+import SwiftyJSON
 
-class NavigationController: UINavigationController, ParserDelegate, ScheduleDelegate {
+class NavigationController: UINavigationController, ParserDelegate {
     
     var parser = Parser()
-    var schedule = Schedule()
+    
+    //    Array of schedule records
+    var allRecords = [Schedule]()
     
     override func viewDidLoad() {
         
-//        important line, need explain
-        parser.deligate = self
-        schedule.delegate = self
+        //        important line, need explain
+        parser.delegate = self
         
         let requestData : [String : String] =
         [
@@ -30,22 +32,46 @@ class NavigationController: UINavigationController, ParserDelegate, ScheduleDele
             scheduleRequestParameters.Param.rawValue: "0"
         ]
         
-        parser.sendRequest(requestData)
+        parser.sendScheduleRequest(requestData)
         
-        if parser.resopnseJson.count > 0 {
-            schedule.getRecords(parser.resopnseJson)
-        }
+//        groups request example
+        parser.getDataRequest([dataRequestMethod : scheduleDataParameters.Group.rawValue])
+        
+        //        teachers request example
+        parser.getDataRequest([dataRequestMethod : scheduleDataParameters.Teachers.rawValue])
+        
+        //        auditories request example
+        parser.getDataRequest([dataRequestMethod : scheduleDataParameters.Auditorium.rawValue])
     }
     
-//    MARK: ParserDeligate
+    //    MARK: ParserDeligate
     
     func getScheduleJson() {
-        if parser.resopnseJson.count > 0 {
-            schedule.getRecords(parser.resopnseJson)
+        if parser.jsonResponse.count > 0 {
+            
+            for (_,subJson):(String, JSON) in parser.jsonResponse {
+                
+                //                create a new object of schedule model
+                let scheduleRecord = Schedule()
+                scheduleRecord.getRecord(subJson)
+                
+                //                append schedule object to array of all records
+                allRecords.append(scheduleRecord)
+            }
+            
+            //            just for test
+            for record in allRecords {
+                print(record.pairOrderName)
+                print(record.pairTime)
+            }
         }
     }
     
-//    MARK: ScheduleDelegate
-    func getRecords() {
+    func getGroupsJson() {
+        if parser.dataResult.count > 0 {
+            for (_,subJson):(String, JSON) in parser.dataResult {
+                print(subJson)
+            }
+        }
     }
 }
