@@ -23,17 +23,30 @@ protocol AuditoryDelegate {
 }
 
 // MARK: - Auditory class
+
 class Auditory {
     
-/// Name of auditory
-    var label: String?
+    /// Name of auditory
+    var label: String
     
-/// Id of auditory
-    var value: Int?
+    /// Id of auditory
+    var value: Int
     
-/// Get Teacher object from JSON data
-    func getAuditory(auditoryAsJson: JSON) {
-        label = auditoryAsJson[TeacherResponseLables.Label.rawValue].stringValue
-        value = auditoryAsJson[TeacherResponseLables.Value.rawValue].intValue
+    init?(auditoryJSON: JSON) {
+        // Set default values (probably bug in Xcode, can't return nil on failable initializer)
+        self.label = ""
+        self.value = 1
+        
+        if let label = auditoryJSON[TeacherResponseLables.Label.rawValue].string {
+            self.label = label
+        } else {
+            return nil
+        }
+        
+        if let value = auditoryJSON[TeacherResponseLables.Value.rawValue].int {
+            self.value = value
+        } else {
+            return nil
+        }
     }
 }

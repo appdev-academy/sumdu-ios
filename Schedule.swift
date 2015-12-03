@@ -9,7 +9,8 @@
 import Foundation
 import SwiftyJSON
 
-//    enumeration of all available response parameters
+/// Enumeration of all available response parameters
+
 enum ScheduleResponseParameters: String {
     case PairTime = "TIME_PAIR"
     case PairDate = "DATE_REG"
@@ -24,7 +25,7 @@ enum ScheduleResponseParameters: String {
 
 protocol ScheduleDelegate {
     
-//        get object of schedule record
+// get object of schedule record
     func getRecord()
 }
 
