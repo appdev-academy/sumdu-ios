@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 //    enumeration of all available response parameters
-enum scheduleResponseParameters: String {
+enum ScheduleResponseParameters: String {
     case PairTime = "TIME_PAIR"
     case PairDate = "DATE_REG"
     case PairOrderName = "NAME_PAIR"
@@ -49,14 +49,14 @@ class Schedule {
 //    convert json element to schedule object
     func getRecord(recodrAsJson: JSON) {
 //                pair data
-        self.pairTime = recodrAsJson[scheduleResponseParameters.PairTime.rawValue].stringValue
-        self.paitDate = recodrAsJson[scheduleResponseParameters.PairDate.rawValue].stringValue
-        self.pairOrderName = recodrAsJson[scheduleResponseParameters.PairOrderName.rawValue].stringValue
+        self.pairTime = recodrAsJson[ScheduleResponseParameters.PairTime.rawValue].stringValue
+        self.paitDate = recodrAsJson[ScheduleResponseParameters.PairDate.rawValue].stringValue
+        self.pairOrderName = recodrAsJson[ScheduleResponseParameters.PairOrderName.rawValue].stringValue
         
 //                other data
-        self.groupName = recodrAsJson[scheduleResponseParameters.GroupName.rawValue].stringValue
-        self.auditoriumName = recodrAsJson[scheduleResponseParameters.AuditoriumName.rawValue].stringValue
-        self.dayOfWeek = recodrAsJson[scheduleResponseParameters.DayOfWeek.rawValue].stringValue
-        self.teacherName = recodrAsJson[scheduleResponseParameters.TeacherName.rawValue].stringValue
+        self.groupName = recodrAsJson[ScheduleResponseParameters.GroupName.rawValue].stringValue
+        self.auditoriumName = recodrAsJson[ScheduleResponseParameters.AuditoriumName.rawValue].stringValue
+        self.dayOfWeek = recodrAsJson[ScheduleResponseParameters.DayOfWeek.rawValue].stringValue
+        self.teacherName = recodrAsJson[ScheduleResponseParameters.TeacherName.rawValue].stringValue
     }
 }

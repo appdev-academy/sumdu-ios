@@ -11,7 +11,7 @@ import Alamofire
 import SwiftyJSON
 
 //    enumeration of all available request parameters
-enum scheduleRequestParameters: String {
+enum ScheduleRequestParameters: String {
     case BeginDate = "data[DATE_BEG]"
     case EndDate = "data[DATE_END]"
     case GroupId = "data[KOD_GROUP]"
@@ -24,7 +24,7 @@ enum scheduleRequestParameters: String {
 let dataRequestMethod = "method"
 
 // enumeration of available data request types
-enum scheduleDataParameters: String {
+enum ScheduleDataParameters: String {
     case Group = "getGroups"
     case Auditorium = "getAuditoriums"
     case Teachers = "getTeachers"
@@ -36,7 +36,7 @@ protocol ParserDelegate {
     
     func getScheduleJson()
     
-    func getGroupsJson()
+    func getDataResponse(jsonResponse: JSON, requestParameters: [String: String])
     
 }
 
@@ -133,10 +133,10 @@ class Parser {
             if gropusRequest.result.isSuccess {
                 if let resultValue = gropusRequest.result.value {
                     
-                    self.dataResult = JSON(resultValue)
+                    let jsonResponse = JSON(resultValue)
                     
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        self.delegate.getGroupsJson()
+                        self.delegate.getDataResponse(jsonResponse, requestParameters: requestParameters)
                     })
                 }
             }

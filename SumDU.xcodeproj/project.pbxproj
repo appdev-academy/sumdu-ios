@@ -17,6 +17,9 @@
 		7D181E4C1C006D96000C04B5 /* SumDUUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D181E4B1C006D96000C04B5 /* SumDUUITests.swift */; };
 		E117991E1C09E25F005D2ABA /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E117991D1C09E25F005D2ABA /* Parser.swift */; };
 		E11799201C09E522005D2ABA /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E117991F1C09E522005D2ABA /* NavigationController.swift */; };
+		E1F7458D1C1048B000DD2839 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F7458C1C1048B000DD2839 /* Group.swift */; };
+		E1F7458F1C10500D00DD2839 /* Teacher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F7458E1C10500D00DD2839 /* Teacher.swift */; };
+		E1F745911C1052C600DD2839 /* Auditory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F745901C1052C600DD2839 /* Auditory.swift */; };
 		E1F8D6E71C0E241F000A3FEA /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F8D6E61C0E241F000A3FEA /* Schedule.swift */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +58,9 @@
 		D1DD90AC92C58F9DD5331ED4 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E117991D1C09E25F005D2ABA /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Parser.swift; path = SumDU/Parser.swift; sourceTree = SOURCE_ROOT; };
 		E117991F1C09E522005D2ABA /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		E1F7458C1C1048B000DD2839 /* Group.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = SOURCE_ROOT; };
+		E1F7458E1C10500D00DD2839 /* Teacher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Teacher.swift; sourceTree = SOURCE_ROOT; };
+		E1F745901C1052C600DD2839 /* Auditory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Auditory.swift; sourceTree = SOURCE_ROOT; };
 		E1F8D6E61C0E241F000A3FEA /* Schedule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -115,6 +121,9 @@
 			children = (
 				E117991D1C09E25F005D2ABA /* Parser.swift */,
 				E1F8D6E61C0E241F000A3FEA /* Schedule.swift */,
+				E1F7458C1C1048B000DD2839 /* Group.swift */,
+				E1F7458E1C10500D00DD2839 /* Teacher.swift */,
+				E1F745901C1052C600DD2839 /* Auditory.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -380,7 +389,10 @@
 			files = (
 				E1F8D6E71C0E241F000A3FEA /* Schedule.swift in Sources */,
 				7D07F8201C099C56007DF3FD /* ViewController.swift in Sources */,
+				E1F745911C1052C600DD2839 /* Auditory.swift in Sources */,
 				E11799201C09E522005D2ABA /* NavigationController.swift in Sources */,
+				E1F7458D1C1048B000DD2839 /* Group.swift in Sources */,
+				E1F7458F1C10500D00DD2839 /* Teacher.swift in Sources */,
 				E117991E1C09E25F005D2ABA /* Parser.swift in Sources */,
 				7D07F81D1C099C56007DF3FD /* AppDelegate.swift in Sources */,
 			);
