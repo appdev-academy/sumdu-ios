@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 import SwiftyJSON
 
-//    enumeration of all available request parameters
+/// Request parameter for schedule
 enum ScheduleRequestParameter: String {
     case BeginDate = "data[DATE_BEG]"
     case EndDate = "data[DATE_END]"
@@ -21,22 +21,35 @@ enum ScheduleRequestParameter: String {
     case Param = "data[PARAM]"
 }
 
-let dataRequestMethod = "method"
+/// Name of GET parameter for mobile API request
+let relatedDataParameterName = "method"
 
-// enumeration of available data request types
-enum ScheduleDataParameter: String {
+/// Parameter for mobile API requests
+enum RelatedDataParameter: String {
     case Group = "getGroups"
     case Auditorium = "getAuditoriums"
-    case Teachers = "getTeachers"
+    case Teacher = "getTeachers"
 }
 
-// MARK: - Parser protocol
+// MARK: - ParserDelegate protocol
 
+/// Protocol for Parser class
 protocol ParserDelegate {
     
-    func getScheduleJson()
+    /**
+    Required method for schedule request
     
-    func getDataResponse(jsonResponse: JSON, requestParameters: [String: String])
+    - parameter response:  result of the schedule request in JSON type
+    */
+    func getSchedule(response: JSON)
+    
+    /**
+     Required method for mobile request (teachers, groups and auditorium data)
+     
+     - parameter response:  result of the data request in JSON type
+     - parameter requestType:  type of related request
+     */
+    func getRelatedData(response: JSON, requestType: RelatedDataParameter)
     
 }
 
@@ -45,36 +58,37 @@ protocol ParserDelegate {
 /// Class that parses responses from server
 class Parser {
     
-    static let baseURLString        = "http://schedule.sumdu.edu.ua"
-    static let mobileBaseURLString  = "http://m.schedule.sumdu.edu.ua"
+    /// Main url for schedule requests
+    static let baseURL       = "http://schedule.sumdu.edu.ua"
     
+    /// Url of mobile API for data requests (teachers, groups and auditorium)
+    static let mobileBaseURL = "http://m.schedule.sumdu.edu.ua"
+    
+    /// Parser protocol delegate
     var delegate: ParserDelegate?
-    
-    var jsonResponse:JSON = [:]
-    var dataResult:JSON = [:]
     
     /// Request router
     enum Router: URLRequestConvertible {
         
-        case ReadJson([String: AnyObject])
-        case getDataRequest([String: AnyObject])
+        case ScheduleRequest([String: AnyObject])
+        case RelatedDataRequest([String: AnyObject])
         
         // Returns base URL for each request
         var baseURLString: String {
             switch self {
-                case .ReadJson:
-                    return Parser.baseURLString
-                case .getDataRequest:
-                    return Parser.mobileBaseURLString
+                case .ScheduleRequest:
+                    return Parser.baseURL
+                case .RelatedDataRequest:
+                    return Parser.mobileBaseURL
             }
         }
         
         // Returns HTTP method for each request
         var method: Alamofire.Method {
             switch self {
-                case .ReadJson:
+                case .ScheduleRequest:
                     return .POST
-                case .getDataRequest:
+                case .RelatedDataRequest:
                     return .GET
             }
         }
@@ -82,9 +96,9 @@ class Parser {
         // Returns relative path to each API endpoint
         var path: String {
             switch self {
-                case .ReadJson:
+                case .ScheduleRequest:
                     return "/index/json"
-                case .getDataRequest:
+                case .RelatedDataRequest:
                     return "/php/index.php"
             }
         }
@@ -97,9 +111,9 @@ class Parser {
             
             var parameters: [String: AnyObject] = [:]
             switch self {
-                case .ReadJson(let params):
+                case .ScheduleRequest(let params):
                     parameters = params
-                case .getDataRequest(let params):
+                case .RelatedDataRequest(let params):
                     parameters = params
             }
             let request = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
@@ -107,11 +121,14 @@ class Parser {
         }
     }
     
-//    function for sending schedule request
-    
-    func sendScheduleRequest(requestParameters: [String: String]) {
+    /**
+     Function for sending schedule request
+     
+     - parameter withParameters:  what parameters need for schedule request
+     */
+    func sendScheduleRequest(withParameters: [String: String]) {
         
-        Alamofire.request(Router.ReadJson(requestParameters)).responseJSON {
+        Alamofire.request(Router.ScheduleRequest(withParameters)).responseJSON {
             (scheduleResponse) -> Void in
             
             if scheduleResponse.result.isFailure {
@@ -120,21 +137,36 @@ class Parser {
             
             if scheduleResponse.result.isSuccess {
                 if let resultValue = scheduleResponse.result.value {
-                    self.jsonResponse = JSON(resultValue)
+                    let response = JSON(resultValue)
                     
                     dispatch_async(dispatch_get_main_queue(), {
-                        self.delegate?.getScheduleJson()
+                        self.delegate?.getSchedule(response)
                     })
                 }
             }
         }
     }
     
-//    get data request (groups, teachers, auditories)
-    
-    func getDataRequest(scheduleDataParameter: ScheduleDataParameter) {
+
+    /**
+     Send request for related data (groups, teachers, auditories)
+     
+     - parameter withParameter:  type of related request
+     */
+    func sendDataRequest(withParameter: RelatedDataParameter) {
         
-        Alamofire.request(Router.getDataRequest(requestParameters)).responseJSON {
+        var requestType: String
+        
+        switch withParameter {
+            case .Auditorium:
+                requestType = RelatedDataParameter.Auditorium.rawValue
+            case .Group:
+                requestType = RelatedDataParameter.Group.rawValue
+            case .Teacher:
+                requestType = RelatedDataParameter.Teacher.rawValue
+        }
+        
+        Alamofire.request(Router.RelatedDataRequest([relatedDataParameterName : requestType])).responseJSON {
             (groupsRequest) -> Void in
             
             if groupsRequest.result.isFailure {
@@ -144,10 +176,10 @@ class Parser {
             if groupsRequest.result.isSuccess {
                 if let resultValue = groupsRequest.result.value {
                     
-                    let jsonResponse = JSON(resultValue)
+                    let response = JSON(resultValue)
                     
                     dispatch_async(dispatch_get_main_queue(), {
-                        self.delegate?.getDataResponse(jsonResponse, requestParameters: requestParameters)
+                        self.delegate?.getRelatedData(response, requestType: withParameter)
                     })
                 }
             }

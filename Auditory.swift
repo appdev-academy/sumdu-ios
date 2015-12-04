@@ -10,41 +10,36 @@ import Foundation
 import SwiftyJSON
 
 /// Enumeration of available values in JSON response of auditories request
-enum AuditoryResponseLables: String {
+enum AuditoryResponseLable: String {
     case Label = "label"
     case Value = "value"
 }
 
-// MARK: - AuditoryDelegate protocol
-protocol AuditoryDelegate {
-    
-/// Returns object of Auditory model
-    func getAuditory(auditoryAsJson: JSON)
-}
+// MARK: - Auditory struct (single record about auditory)
 
-// MARK: - Auditory class
-
-class Auditory {
+struct Auditory {
     
     /// Name of auditory
-    var label: String
+    let name: String
     
     /// Id of auditory
-    var value: Int
+    let id: Int
     
+    /**
+     Initializer for auditory struct
+     
+     - parameter auditoryJSON:  JSON type parameter with single auditory record
+     */
     init?(auditoryJSON: JSON) {
-        // Set default values (probably bug in Xcode, can't return nil on failable initializer)
-        self.label = ""
-        self.value = 1
         
-        if let label = auditoryJSON[TeacherResponseLables.Label.rawValue].string {
-            self.label = label
+        if let name = auditoryJSON[AuditoryResponseLable.Label.rawValue].string {
+            self.name = name
         } else {
             return nil
         }
         
-        if let value = auditoryJSON[TeacherResponseLables.Value.rawValue].int {
-            self.value = value
+        if let id = auditoryJSON[AuditoryResponseLable.Value.rawValue].int {
+            self.id = id
         } else {
             return nil
         }

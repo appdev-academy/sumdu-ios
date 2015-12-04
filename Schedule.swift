@@ -21,43 +21,87 @@ enum ScheduleResponseParameters: String {
     case TeacherName = "NAME_FIO"
 }
 
-// MARK: - ScheduleRecordDelegate protocol
-
-protocol ScheduleDelegate {
-    
-// get object of schedule record
-    func getRecord()
-}
-
-// MARK: - Schedule class
+// MARK: - class of schedule
 
 class Schedule {
     
-//        protocol deligate
-    var delegate: ScheduleDelegate!
+    /// Pair start time
+    var pairTime: String
     
-//            pair data
-    var pairTime: String?
-    var paitDate: String?
-    var pairOrderName: String?
+    /// Date of pair
+    var paitDate: String
     
-//        other data
-    var groupName: String?
-    var auditoriumName: String?
-    var dayOfWeek: String?
-    var teacherName: String?
+    /// Human pair order
+    var pairOrderName: String
     
-//    convert json element to schedule object
-    func getRecord(recodrAsJson: JSON) {
-//                pair data
-        self.pairTime = recodrAsJson[ScheduleResponseParameters.PairTime.rawValue].stringValue
-        self.paitDate = recodrAsJson[ScheduleResponseParameters.PairDate.rawValue].stringValue
-        self.pairOrderName = recodrAsJson[ScheduleResponseParameters.PairOrderName.rawValue].stringValue
+    /// Name of group that will go on pair
+    var groupName: String
+    
+    /// Name of auditory where is pair will be
+    var auditoriumName: String
+    
+    /// Day of week for pair
+    var dayOfWeek: String
+    
+    /// Name of a teacher who spend a pair
+    var teacherName: String
+    
+    /**
+     Initializer for schedule class
+     
+     - parameter record:  JSON type parameter with single schedule record
+     */
+    init?(record: JSON) {
         
-//                other data
-        self.groupName = recodrAsJson[ScheduleResponseParameters.GroupName.rawValue].stringValue
-        self.auditoriumName = recodrAsJson[ScheduleResponseParameters.AuditoriumName.rawValue].stringValue
-        self.dayOfWeek = recodrAsJson[ScheduleResponseParameters.DayOfWeek.rawValue].stringValue
-        self.teacherName = recodrAsJson[ScheduleResponseParameters.TeacherName.rawValue].stringValue
+        // Set default values (probably bug in Xcode, can't return nil on failable initializer)
+        self.pairTime = ""
+        self.paitDate = ""
+        self.pairOrderName = ""
+        self.groupName = ""
+        self.auditoriumName = ""
+        self.dayOfWeek = ""
+        self.teacherName = ""
+        
+        if let pairTime = record[ScheduleResponseParameters.PairTime.rawValue].string {
+            self.pairTime = pairTime
+        } else {
+            return nil
+        }
+        
+        if let paitDate = record[ScheduleResponseParameters.PairDate.rawValue].string {
+            self.paitDate = paitDate
+        } else {
+            return nil
+        }
+        
+        if let pairOrderName = record[ScheduleResponseParameters.PairOrderName.rawValue].string {
+            self.pairOrderName = pairOrderName
+        } else {
+            return nil
+        }
+        
+        if let groupName = record[ScheduleResponseParameters.GroupName.rawValue].string {
+            self.groupName = groupName
+        } else {
+            return nil
+        }
+        
+        if let auditoriumName = record[ScheduleResponseParameters.AuditoriumName.rawValue].string {
+            self.auditoriumName = auditoriumName
+        } else {
+            return nil
+        }
+        
+        if let dayOfWeek = record[ScheduleResponseParameters.DayOfWeek.rawValue].string {
+            self.dayOfWeek = dayOfWeek
+        } else {
+            return nil
+        }
+        
+        if let teacherName = record[ScheduleResponseParameters.TeacherName.rawValue].string {
+            self.teacherName = teacherName
+        } else {
+            return nil
+        }
     }
 }

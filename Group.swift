@@ -10,30 +10,38 @@ import Foundation
 import SwiftyJSON
 
 /// Enumeration of available values in JSON response of gropus request
-enum GropResponseLables: String {
+enum GropResponseLable: String {
     case Label = "label"
     case Value = "value"
 }
 
-// MARK: - GroupDelegate protocol
-protocol GroupDelegate {
-    
-/// Returns object of group model
-    func getGroup(groupAsJson: JSON)
-}
+// MARK: - Group struct (single record about group)
 
-// MARK: - Group class
-class Group {
+struct Group {
     
-/// Name of group
-    var label: String?
+    /// Name of group
+    var name: String
     
-/// Id of group
-    var value: Int?
+    /// Id of group
+    var id: Int
     
-/// Get Group object from JSON data    
-    func getGroup(groupAsJson: JSON) {
-        label = groupAsJson[GropResponseLables.Label.rawValue].stringValue
-        value = groupAsJson[GropResponseLables.Value.rawValue].intValue
+    /**
+     Initializer for group struct
+     
+     - parameter groupJSON:  JSON type parameter with single group record
+     */
+    init?(groupJSON: JSON) {
+        
+        if let name = groupJSON[GropResponseLable.Label.rawValue].string {
+            self.name = name
+        } else {
+            return nil
+        }
+        
+        if let id = groupJSON[GropResponseLable.Value.rawValue].int {
+            self.id = id
+        } else {
+            return nil
+        }
     }
 }

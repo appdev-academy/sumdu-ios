@@ -10,30 +10,38 @@ import Foundation
 import SwiftyJSON
 
 /// Enumeration of available values in JSON response of teachers request
-enum TeacherResponseLables: String {
+enum TeacherResponseLable: String {
     case Label = "label"
     case Value = "value"
 }
 
-// MARK: - TeacherDelegate protocol
-protocol TeacherDelegate {
-    
-/// Returns object of Teacher model
-    func getTeacher(teacherAsJson: JSON)
-}
+// MARK: - Teacher struct (single record about teacher)
 
-// MARK: - Teacher class
-class Teacher {
+struct Teacher {
     
-/// Name of teacher
-    var label: String?
+    /// Name of teacher
+    let name: String
     
-/// Id of teacher
-    var value: Int?
+    /// Id of teacher
+    let id: Int
     
-/// Get Teacher object from JSON data
-    func getTeacher(teacherAsJson: JSON) {
-        label = teacherAsJson[TeacherResponseLables.Label.rawValue].stringValue
-        value = teacherAsJson[TeacherResponseLables.Value.rawValue].intValue
+    /**
+     Initializer for teacher struct
+     
+     - parameter teacherJSON:  JSON type parameter with single teacher record
+     */
+    init?(teacherJSON: JSON) {
+        
+        if let name = teacherJSON[TeacherResponseLable.Label.rawValue].string {
+            self.name = name
+        } else {
+            return nil
+        }
+        
+        if let id = teacherJSON[TeacherResponseLable.Value.rawValue].int {
+            self.id = id
+        } else {
+            return nil
+        }
     }
 }
