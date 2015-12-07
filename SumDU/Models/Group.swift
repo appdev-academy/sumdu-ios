@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 /// Enumeration of available values in JSON response of gropus request
-enum GropResponseLable: String {
+enum GroupResponseLabel: String {
     case Label = "label"
     case Value = "value"
 }
@@ -32,13 +32,13 @@ struct Group {
      */
     init?(groupJSON: JSON) {
         
-        if let name = groupJSON[GropResponseLable.Label.rawValue].string {
+        if let name = groupJSON[GroupResponseLabel.Label.rawValue].string {
             self.name = name
         } else {
             return nil
         }
         
-        if let id = groupJSON[GropResponseLable.Value.rawValue].int {
+        if let id = groupJSON[GroupResponseLabel.Value.rawValue].int {
             self.id = id
         } else {
             return nil

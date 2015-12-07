@@ -124,7 +124,7 @@ class Parser {
      - parameter withParameters:  what parameters need for schedule request
      */
     func sendScheduleRequest(withParameters: [String: String]) {
-        Auditory.init(auditoryJSON: <#T##JSON#>)
+        
         Alamofire.request(Router.ScheduleRequest(withParameters)).responseJSON {
             (scheduleResponse) -> Void in
             
