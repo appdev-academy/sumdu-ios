@@ -21,9 +21,6 @@ enum ScheduleRequestParameter: String {
     case Param = "data[PARAM]"
 }
 
-/// Name of GET parameter for mobile API request
-let relatedDataParameterName = "method"
-
 /// Parameter for mobile API requests
 enum RelatedDataParameter: String {
     case Group = "getGroups"
@@ -71,7 +68,7 @@ class Parser {
     enum Router: URLRequestConvertible {
         
         case ScheduleRequest([String: AnyObject])
-        case RelatedDataRequest([String: AnyObject])
+        case RelatedDataRequest(relatedDataParameter: RelatedDataParameter)
         
         // Returns base URL for each request
         var baseURLString: String {
@@ -113,8 +110,8 @@ class Parser {
             switch self {
                 case .ScheduleRequest(let params):
                     parameters = params
-                case .RelatedDataRequest(let params):
-                    parameters = params
+                case .RelatedDataRequest(let relatedDataParameter):
+                    parameters = ["method": relatedDataParameter.rawValue]
             }
             let request = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
             return request
@@ -127,7 +124,7 @@ class Parser {
      - parameter withParameters:  what parameters need for schedule request
      */
     func sendScheduleRequest(withParameters: [String: String]) {
-        
+        Auditory.init(auditoryJSON: <#T##JSON#>)
         Alamofire.request(Router.ScheduleRequest(withParameters)).responseJSON {
             (scheduleResponse) -> Void in
             
@@ -147,26 +144,14 @@ class Parser {
         }
     }
     
-
     /**
      Send request for related data (groups, teachers, auditories)
      
      - parameter withParameter:  type of related request
      */
-    func sendDataRequest(withParameter: RelatedDataParameter) {
+    func sendDataRequest(relatedDataParameter: RelatedDataParameter) {
         
-        var requestType: String
-        
-        switch withParameter {
-            case .Auditorium:
-                requestType = RelatedDataParameter.Auditorium.rawValue
-            case .Group:
-                requestType = RelatedDataParameter.Group.rawValue
-            case .Teacher:
-                requestType = RelatedDataParameter.Teacher.rawValue
-        }
-        
-        Alamofire.request(Router.RelatedDataRequest([relatedDataParameterName : requestType])).responseJSON {
+        Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
             (groupsRequest) -> Void in
             
             if groupsRequest.result.isFailure {
@@ -179,7 +164,7 @@ class Parser {
                     let response = JSON(resultValue)
                     
                     dispatch_async(dispatch_get_main_queue(), {
-                        self.delegate?.getRelatedData(response, requestType: withParameter)
+                        self.delegate?.getRelatedData(response, requestType: relatedDataParameter)
                     })
                 }
             }
