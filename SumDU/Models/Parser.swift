@@ -30,24 +30,25 @@ enum ListDataType: String {
 
 // MARK: - ParserDelegate protocol
 
-/// Protocol for Parser class
-protocol ParserDelegate {
-    
+/// Protocol for Parser (returns JSON with schedule)
+protocol ParserScheduleDelegate {
     /**
-    Required method for schedule request
+     Required method for schedule request
     
-    - parameter response:  result of the schedule request in JSON type
+     - parameter response:  result of the schedule request in JSON type
     */
     func getSchedule(response: JSON)
-    
+}
+
+/// Protocol for Parser (returns JSON for Auditoriums, Groups or Teachers)
+protocol ParserDataListDelegate {
     /**
      Required method for mobile request (teachers, groups and auditorium data)
      
      - parameter response:  result of the data request in JSON type
      - parameter requestType:  type of related request
-     */
+    */
     func getRelatedData(response: JSON, requestType: ListDataType)
-    
 }
 
 // MARK: - Parser class
@@ -61,8 +62,9 @@ class Parser {
     /// Url of mobile API for data requests (teachers, groups and auditorium)
     static let mobileBaseURL = "http://m.schedule.sumdu.edu.ua"
     
-    /// Parser protocol delegate
-    var delegate: ParserDelegate?
+    /// Parser protocol delegates
+    var scheduleDelegate: ParserScheduleDelegate?
+    var dataListDelegate: ParserDataListDelegate?
     
     /// Request router
     enum Router: URLRequestConvertible {
@@ -137,7 +139,7 @@ class Parser {
                     let response = JSON(resultValue)
                     
                     dispatch_async(dispatch_get_main_queue(), {
-                        self.delegate?.getSchedule(response)
+                        self.scheduleDelegate?.getSchedule(response)
                     })
                 }
             }
@@ -164,7 +166,7 @@ class Parser {
                     let response = JSON(resultValue)
                     
                     dispatch_async(dispatch_get_main_queue(), {
-                        self.delegate?.getRelatedData(response, requestType: relatedDataParameter)
+                        self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
                     })
                 }
             }

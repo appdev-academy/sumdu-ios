@@ -15,6 +15,7 @@
 		7D181E411C006D96000C04B5 /* SumDUTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D181E401C006D96000C04B5 /* SumDUTests.swift */; };
 		7D181E4C1C006D96000C04B5 /* SumDUUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D181E4B1C006D96000C04B5 /* SumDUUITests.swift */; };
 		7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D2B5D881C19FAEB00C758B8 /* ListData.swift */; };
+		7D3460F61C1A045700774F8E /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3460F51C1A045700774F8E /* SearchViewController.swift */; };
 		7D9F955D1C160E13008B601F /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9F95581C160E13008B601F /* Parser.swift */; };
 		7D9F955E1C160E13008B601F /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9F95591C160E13008B601F /* Schedule.swift */; };
 		E11799201C09E522005D2ABA /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E117991F1C09E522005D2ABA /* NavigationController.swift */; };
@@ -52,6 +53,7 @@
 		7D181E4B1C006D96000C04B5 /* SumDUUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumDUUITests.swift; sourceTree = "<group>"; };
 		7D181E4D1C006D96000C04B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D2B5D881C19FAEB00C758B8 /* ListData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListData.swift; sourceTree = "<group>"; };
+		7D3460F51C1A045700774F8E /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		7D9F95581C160E13008B601F /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		7D9F95591C160E13008B601F /* Schedule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		90B45AB2114CAC68D0AF4B6A /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 			children = (
 				7D07F81C1C099C56007DF3FD /* ViewController.swift */,
 				E117991F1C09E522005D2ABA /* NavigationController.swift */,
+				7D3460F51C1A045700774F8E /* SearchViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -380,6 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7D07F8201C099C56007DF3FD /* ViewController.swift in Sources */,
+				7D3460F61C1A045700774F8E /* SearchViewController.swift in Sources */,
 				E11799201C09E522005D2ABA /* NavigationController.swift in Sources */,
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
