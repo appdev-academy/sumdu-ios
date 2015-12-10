@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Yura on 03.12.15.
-//  Copyright © 2015 iOSonRails. All rights reserved.
+//  Copyright © 2015 AppDevAcademy. All rights reserved.
 //
 
 import Foundation

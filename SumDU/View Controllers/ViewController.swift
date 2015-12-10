@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Maksym Skliarov on 11/21/15.
-//  Copyright © 2015 iOSonRails. All rights reserved.
+//  Copyright © 2015 AppDevAcademy. All rights reserved.
 //
 
 import UIKit

@@ -271,7 +271,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
 				LastUpgradeCheck = 0710;
-				ORGANIZATIONNAME = iOSonRails;
+				ORGANIZATIONNAME = AppDecAcademy;
 				TargetAttributes = {
 					7D181E271C006D96000C04B5 = {
 						CreatedOnToolsVersion = 7.1.1;
