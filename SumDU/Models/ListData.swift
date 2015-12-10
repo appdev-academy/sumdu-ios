@@ -18,13 +18,6 @@ struct ListData {
         case Value = "value"
     }
     
-    /// Type of ListData entity: Auditorium, Group, Teacher or Unknown
-    enum ListDataType {
-        case Auditorium
-        case Group
-        case Teacher
-    }
-    
     /// Server ID for instance
     let id: Int
     

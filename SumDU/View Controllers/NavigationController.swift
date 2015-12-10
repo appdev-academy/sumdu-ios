@@ -18,13 +18,13 @@ class NavigationController: UINavigationController, ParserDelegate {
     var allRecords: [Schedule] = []
     
     /// Array of all Groups
-    var allGroups: [Group] = []
+    var allGroups: [ListData] = []
     
     /// Array of all Teacher's
-    var allTeachers: [Teacher] = []
+    var allTeachers: [ListData] = []
     
     /// Array of all lecture halls (objects of Auditory model)
-    var allHalls: [Auditory] = []
+    var allAuditoriums: [ListData] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,45 +81,27 @@ class NavigationController: UINavigationController, ParserDelegate {
     }
     
     /// realization of ParserDelegate protocol function for getting related data (teachers, groups and auditorium data)
-    func getRelatedData(response: JSON, requestType: RelatedDataParameter) {
+    func getRelatedData(response: JSON, requestType: ListDataType) {
         
+        var recordsToUpdate: [ListData] = []
+        
+        // Make sure JSON is array and not empty
         if let jsonArray = response.array where jsonArray.count > 0 {
+            
+            for subJson in jsonArray {
+                if let record = ListData(json: subJson, type: requestType) {
+                    recordsToUpdate.append(record)
+                }
+            }
             
             // check request type and create array of objects depending on request type
             switch requestType {
-                
-            // if it Group request - generate array of all available Group's
-            case .Group:
-                for subJson in jsonArray {
-                    
-                    if let groupRecord = Group(groupJSON: subJson) {
-                        allGroups.append(groupRecord)
-                    }
-                }
-                // test AllGrups array
-//                print(allGroups[10].name)
-                
-            // if it Teachers request - generate array of all available Teacher's
-            case .Teacher:
-                for subJson in jsonArray {
-                    
-                    if let teacherRecord = Teacher(teacherJSON: subJson) {
-                        allTeachers.append(teacherRecord)
-                    }
-                }
-                // test allTeachers array
-//                print(allTeachers[25].name)
-                
-            // if it Auditorium request - generate array of all available lecture halls
-            case .Auditorium:
-                for subJson in jsonArray {
-                    
-                    if let auditoryRecord = Auditory(auditoryJSON: subJson) {
-                        allHalls.append(auditoryRecord)
-                    }
-                }
-                // test allHalls array
-//                print(allHalls[15].name)
+                case .Auditorium:
+                    allAuditoriums = recordsToUpdate
+                case .Group:
+                    allGroups = recordsToUpdate
+                case .Teacher:
+                    allTeachers = recordsToUpdate
             }
         }
     }

@@ -21,10 +21,10 @@ enum ScheduleRequestParameter: String {
     case Param = "data[PARAM]"
 }
 
-/// Parameter for mobile API requests
-enum RelatedDataParameter: String {
-    case Group = "getGroups"
+/// Type of ListData entity or request type: Auditorium, Group, Teacher or Unknown
+enum ListDataType: String {
     case Auditorium = "getAuditoriums"
+    case Group = "getGroups"
     case Teacher = "getTeachers"
 }
 
@@ -46,7 +46,7 @@ protocol ParserDelegate {
      - parameter response:  result of the data request in JSON type
      - parameter requestType:  type of related request
      */
-    func getRelatedData(response: JSON, requestType: RelatedDataParameter)
+    func getRelatedData(response: JSON, requestType: ListDataType)
     
 }
 
@@ -68,7 +68,7 @@ class Parser {
     enum Router: URLRequestConvertible {
         
         case ScheduleRequest([String: AnyObject])
-        case RelatedDataRequest(relatedDataParameter: RelatedDataParameter)
+        case RelatedDataRequest(relatedDataParameter: ListDataType)
         
         // Returns base URL for each request
         var baseURLString: String {
@@ -149,7 +149,7 @@ class Parser {
      
      - parameter withParameter:  type of related request
      */
-    func sendDataRequest(relatedDataParameter: RelatedDataParameter) {
+    func sendDataRequest(relatedDataParameter: ListDataType) {
         
         Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
             (groupsRequest) -> Void in
