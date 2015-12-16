@@ -26,7 +26,12 @@ struct ListData {
     
     /// ListData type
     let type: ListDataType
-
+    
+    var listDataCoder: ListDataCoder {
+        get {
+            return ListDataCoder(listData: self)
+        }
+    }
     
     /// Initializer for ListData entity
     init?(json: JSON, type: ListDataType) {
@@ -42,22 +47,13 @@ struct ListData {
         } else {
             return nil
         }
-       
-        //DataProcessing(id: id, name: name)
         
         self.type = type
     }
     
-    static func encode(json: JSON, type: ListDataType) {
-        let dataProcessingClassObject = ListData(json: json, type: type)
-        //NSKeyedArchiver.archiveRootObject(dataProcessingClassObject as ListData?, toFile: DataProcessing.path())
-        let data = NSKeyedArchiver.archivedDataWithRootObject(dataProcessingClassObject)
-        NSUserDefaults.standardUserDefaults().setObject(data, forKey: "student")
-    }
-    
-    static func decode() -> ListData? {
-        let dataProcessingClassObject = NSKeyedUnarchiver.unarchiveObjectWithFile(DataProcessing.path()) as? ListData
-        
-        return dataProcessingClassObject
+    init(id: Int, name: String, type: ListDataType) {
+        self.id = id
+        self.name = name
+        self.type = type
     }
 }

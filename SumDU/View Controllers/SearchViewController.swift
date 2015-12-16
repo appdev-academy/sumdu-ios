@@ -108,7 +108,7 @@ extension SearchViewController: ParserDataListDelegate {
         if let jsonArray = response.array where jsonArray.count > 0 {
             
             for subJson in jsonArray {
-                if let record = ListData.encode(subJson, type: requestType) as? ListData {
+                if let record = ListData(json: subJson, type: requestType) {
                     recordsToUpdate.append(record)
                 }
             }
