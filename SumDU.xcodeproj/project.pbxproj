@@ -19,6 +19,7 @@
 		7D9F955D1C160E13008B601F /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9F95581C160E13008B601F /* Parser.swift */; };
 		7D9F955E1C160E13008B601F /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9F95591C160E13008B601F /* Schedule.swift */; };
 		E11799201C09E522005D2ABA /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E117991F1C09E522005D2ABA /* NavigationController.swift */; };
+		E43B299E1C1B7B10007DB3B0 /* DataProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43B299D1C1B7B10007DB3B0 /* DataProcessing.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		90B45AB2114CAC68D0AF4B6A /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		D1DD90AC92C58F9DD5331ED4 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E117991F1C09E522005D2ABA /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		E43B299D1C1B7B10007DB3B0 /* DataProcessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataProcessing.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +122,7 @@
 				7D9F95581C160E13008B601F /* Parser.swift */,
 				7D9F95591C160E13008B601F /* Schedule.swift */,
 				7D2B5D881C19FAEB00C758B8 /* ListData.swift */,
+				E43B299D1C1B7B10007DB3B0 /* DataProcessing.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -388,6 +391,7 @@
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
+				E43B299E1C1B7B10007DB3B0 /* DataProcessing.swift in Sources */,
 				7D07F81D1C099C56007DF3FD /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
