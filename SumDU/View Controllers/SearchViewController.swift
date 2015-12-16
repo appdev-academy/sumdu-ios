@@ -35,6 +35,12 @@ class SearchViewController: UIViewController {
     /// Array of all Auditoriums
     var allAuditoriums: [ListData] = [] {
         didSet {
+            var listDataCoders: [ListDataCoder] = []
+            for listDataRecord in allAuditoriums {
+                listDataCoders.append(listDataRecord.listDataCoder)
+            }
+            let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
+            // TODO: Save data object
             self.tableView.reloadData()
         }
     }
