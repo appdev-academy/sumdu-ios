@@ -51,9 +51,21 @@ struct ListData {
         self.type = type
     }
     
+    /// Initializer which is used for ListDAtaCoder class
     init(id: Int, name: String, type: ListDataType) {
         self.id = id
         self.name = name
         self.type = type
+    }
+    
+    
+    /// function for storing ListData entities using NSUserDefaults class
+    static func saveListDataObjects(listDataObject: [ListData], forKey: String) {
+        var listDataCoders: [ListDataCoder] = []
+        for listDataRecord in listDataObject {
+            listDataCoders.append(listDataRecord.listDataCoder)
+        }
+        let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
+        NSUserDefaults.standardUserDefaults().setObject(data, forKey: forKey)
     }
 }

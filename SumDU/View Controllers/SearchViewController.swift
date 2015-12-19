@@ -35,24 +35,21 @@ class SearchViewController: UIViewController {
     /// Array of all Auditoriums
     var allAuditoriums: [ListData] = [] {
         didSet {
-            var listDataCoders: [ListDataCoder] = []
-            for listDataRecord in allAuditoriums {
-                listDataCoders.append(listDataRecord.listDataCoder)
-            }
-            let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
-            // TODO: Save data object
+            ListData.saveListDataObjects(allAuditoriums, forKey: keyAuditoriums)
             self.tableView.reloadData()
         }
     }
     /// Array of all Groups
     var allGroups: [ListData] = [] {
         didSet {
+            ListData.saveListDataObjects(allGroups, forKey: keyGroups)
             self.tableView.reloadData()
         }
     }
     /// Array of all Teachers
     var allTeachers: [ListData] = [] {
         didSet {
+            ListData.saveListDataObjects(allTeachers, forKey: keyTeachers)
             self.tableView.reloadData()
         }
     }
