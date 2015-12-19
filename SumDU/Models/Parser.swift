@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Yura on 28.11.15.
-//  Copyright © 2015 iOSonRails. All rights reserved.
+//  Copyright © 2015 AppDevAcademy. All rights reserved.
 //
 
 import Foundation
@@ -21,33 +21,34 @@ enum ScheduleRequestParameter: String {
     case Param = "data[PARAM]"
 }
 
-/// Parameter for mobile API requests
-enum RelatedDataParameter: String {
-    case Group = "getGroups"
+/// Type of ListData entity or request type: Auditorium, Group, Teacher or Unknown
+enum ListDataType: String {
     case Auditorium = "getAuditoriums"
+    case Group = "getGroups"
     case Teacher = "getTeachers"
 }
 
 // MARK: - ParserDelegate protocol
 
-/// Protocol for Parser class
-protocol ParserDelegate {
-    
+/// Protocol for Parser (returns JSON with schedule)
+protocol ParserScheduleDelegate {
     /**
-    Required method for schedule request
+     Required method for schedule request
     
-    - parameter response:  result of the schedule request in JSON type
+     - parameter response:  result of the schedule request in JSON type
     */
     func getSchedule(response: JSON)
-    
+}
+
+/// Protocol for Parser (returns JSON for Auditoriums, Groups or Teachers)
+protocol ParserDataListDelegate {
     /**
      Required method for mobile request (teachers, groups and auditorium data)
      
      - parameter response:  result of the data request in JSON type
      - parameter requestType:  type of related request
-     */
-    func getRelatedData(response: JSON, requestType: RelatedDataParameter)
-    
+    */
+    func getRelatedData(response: JSON, requestType: ListDataType)
 }
 
 // MARK: - Parser class
@@ -61,14 +62,15 @@ class Parser {
     /// Url of mobile API for data requests (teachers, groups and auditorium)
     static let mobileBaseURL = "http://m.schedule.sumdu.edu.ua"
     
-    /// Parser protocol delegate
-    var delegate: ParserDelegate?
+    /// Parser protocol delegates
+    var scheduleDelegate: ParserScheduleDelegate?
+    var dataListDelegate: ParserDataListDelegate?
     
     /// Request router
     enum Router: URLRequestConvertible {
         
         case ScheduleRequest([String: AnyObject])
-        case RelatedDataRequest(relatedDataParameter: RelatedDataParameter)
+        case RelatedDataRequest(relatedDataParameter: ListDataType)
         
         // Returns base URL for each request
         var baseURLString: String {
@@ -137,7 +139,7 @@ class Parser {
                     let response = JSON(resultValue)
                     
                     dispatch_async(dispatch_get_main_queue(), {
-                        self.delegate?.getSchedule(response)
+                        self.scheduleDelegate?.getSchedule(response)
                     })
                 }
             }
@@ -149,7 +151,7 @@ class Parser {
      
      - parameter withParameter:  type of related request
      */
-    func sendDataRequest(relatedDataParameter: RelatedDataParameter) {
+    func sendDataRequest(relatedDataParameter: ListDataType) {
         
         Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
             (groupsRequest) -> Void in
@@ -164,7 +166,7 @@ class Parser {
                     let response = JSON(resultValue)
                     
                     dispatch_async(dispatch_get_main_queue(), {
-                        self.delegate?.getRelatedData(response, requestType: relatedDataParameter)
+                        self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
                     })
                 }
             }

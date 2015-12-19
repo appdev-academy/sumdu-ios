@@ -3,13 +3,13 @@
 //  SumDU
 //
 //  Created by Yura on 28.11.15.
-//  Copyright © 2015 iOSonRails. All rights reserved.
+//  Copyright © 2015 AppDevAcademy. All rights reserved.
 //
 
 import UIKit
 import SwiftyJSON
 
-class NavigationController: UINavigationController, ParserDelegate {
+class NavigationController: UINavigationController, ParserScheduleDelegate {
     
     /// Object of Parser class
     var parser = Parser()
@@ -17,20 +17,11 @@ class NavigationController: UINavigationController, ParserDelegate {
     /// Array of schedule records
     var allRecords: [Schedule] = []
     
-    /// Array of all Groups
-    var allGroups: [Group] = []
-    
-    /// Array of all Teacher's
-    var allTeachers: [Teacher] = []
-    
-    /// Array of all lecture halls (objects of Auditory model)
-    var allHalls: [Auditory] = []
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // delegate relation here
-        parser.delegate = self
+        parser.scheduleDelegate = self
         
         // example of schedule request parametes
         let requestData : [String : String] =
@@ -46,15 +37,6 @@ class NavigationController: UINavigationController, ParserDelegate {
         
         // send request with parameters to get records of schedule
         parser.sendScheduleRequest(requestData)
-        
-        // Auditories request example
-        parser.sendDataRequest(.Auditorium)
-        
-        // Teachers request example
-        parser.sendDataRequest(.Teacher)
-        
-        // Groups request example
-        parser.sendDataRequest(.Group)
     }
     
     //    MARK: ParserDelegate
@@ -77,50 +59,6 @@ class NavigationController: UINavigationController, ParserDelegate {
 //                print(record.pairOrderName)
 //                print(record.pairTime)
 //            }
-        }
-    }
-    
-    /// realization of ParserDelegate protocol function for getting related data (teachers, groups and auditorium data)
-    func getRelatedData(response: JSON, requestType: RelatedDataParameter) {
-        
-        if let jsonArray = response.array where jsonArray.count > 0 {
-            
-            // check request type and create array of objects depending on request type
-            switch requestType {
-                
-            // if it Group request - generate array of all available Group's
-            case .Group:
-                for subJson in jsonArray {
-                    
-                    if let groupRecord = Group(groupJSON: subJson) {
-                        allGroups.append(groupRecord)
-                    }
-                }
-                // test AllGrups array
-//                print(allGroups[10].name)
-                
-            // if it Teachers request - generate array of all available Teacher's
-            case .Teacher:
-                for subJson in jsonArray {
-                    
-                    if let teacherRecord = Teacher(teacherJSON: subJson) {
-                        allTeachers.append(teacherRecord)
-                    }
-                }
-                // test allTeachers array
-//                print(allTeachers[25].name)
-                
-            // if it Auditorium request - generate array of all available lecture halls
-            case .Auditorium:
-                for subJson in jsonArray {
-                    
-                    if let auditoryRecord = Auditory(auditoryJSON: subJson) {
-                        allHalls.append(auditoryRecord)
-                    }
-                }
-                // test allHalls array
-//                print(allHalls[15].name)
-            }
         }
     }
 }
