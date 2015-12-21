@@ -35,21 +35,21 @@ class SearchViewController: UIViewController {
     /// Array of all Auditoriums
     var allAuditoriums: [ListData] = [] {
         didSet {
-            ListData.saveListDataObjects(allAuditoriums, forKey: keyAuditoriums)
+            saveListDataObjects(allAuditoriums, forKey: keyAuditoriums)
             self.tableView.reloadData()
         }
     }
     /// Array of all Groups
     var allGroups: [ListData] = [] {
         didSet {
-            ListData.saveListDataObjects(allGroups, forKey: keyGroups)
+            saveListDataObjects(allGroups, forKey: keyGroups)
             self.tableView.reloadData()
         }
     }
     /// Array of all Teachers
     var allTeachers: [ListData] = [] {
         didSet {
-            ListData.saveListDataObjects(allTeachers, forKey: keyTeachers)
+            saveListDataObjects(allTeachers, forKey: keyTeachers)
             self.tableView.reloadData()
         }
     }
@@ -65,6 +65,15 @@ class SearchViewController: UIViewController {
         
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         
+        // Load Auditoriums from UserDefaults
+        self.allAuditoriums = loadListDataObjects(keyAuditoriums)
+
+        // Load Groups from UserDefaults
+        self.allGroups = loadListDataObjects(keyGroups)
+
+        // Load Teachers from UserDefaults
+        self.allTeachers = loadListDataObjects(keyTeachers)
+        
         // Set DataListDelegate for Parser
         parser.dataListDelegate = self
         
@@ -76,6 +85,35 @@ class SearchViewController: UIViewController {
         
         // Groups request example
         parser.sendDataRequest(.Group)
+    }
+    
+    /// Function which stores ListData entities using NSUserDefaults class
+    func saveListDataObjects(listDataObject: [ListData], forKey: String) {
+        var listDataCoders: [ListDataCoder] = []
+        for listDataRecord in listDataObject {
+            listDataCoders.append(listDataRecord.listDataCoder)
+        }
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
+        userDefaults.setObject(data, forKey: forKey)
+        userDefaults.synchronize()
+    }
+    
+    /// Function which loads ListData entities from NSUserDefaults class
+    func loadListDataObjects(forKey: String) -> [ListData] {
+        var listData: [ListData] = []
+        
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        if let listDataCoder = userDefaults.dataForKey(forKey) {
+        
+            if let listDataArray = NSKeyedUnarchiver.unarchiveObjectWithData(listDataCoder) as? [ListDataCoder] {
+                for array in listDataArray {
+                    listData.append(ListData(id: array.listData!.id, name: array.listData!.name, type: array.listData!.type))
+                }
+                return listData
+            }
+        }
+        return listData
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
