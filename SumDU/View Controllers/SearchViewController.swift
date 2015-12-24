@@ -30,6 +30,9 @@ class SearchViewController: UIViewController {
     
     // MARK: - Variables
     
+    var searchActive : Bool = false
+    var filtered:[ListData] = []
+    
     /// Parser instance
     var parser = Parser()
     /// Array of all Auditoriums
@@ -85,6 +88,8 @@ class SearchViewController: UIViewController {
         
         // Groups request example
         parser.sendDataRequest(.Group)
+        
+        searchBar.delegate = self
     }
     
     /// Function which stores ListData entities using NSUserDefaults class
@@ -183,11 +188,23 @@ extension SearchViewController: UITableViewDataSource {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch selectedSegment {
             case .Teachers:
-                return allTeachers.count
+                if (searchActive) {
+                    return filtered.count
+                } else {
+                    return allTeachers.count
+                }
             case .Groups:
+                if (searchActive) {
+                    return filtered.count
+                } else {
                 return allGroups.count
+                }
             case .Auditoriums:
+                if (searchActive) {
+                    return filtered.count
+                } else {
                 return allAuditoriums.count
+                }
             case .Favorites:
                 return 0
         }
@@ -206,7 +223,62 @@ extension SearchViewController: UITableViewDataSource {
             case .Favorites:
                 dataList = []
         }
-        cell.textLabel?.text = dataList[indexPath.row].name
+        if(searchActive){
+            cell.textLabel?.text = filtered[indexPath.row].name
+        } else {
+            cell.textLabel?.text = dataList[indexPath.row].name
+        }
+        //cell.textLabel?.text = dataList[indexPath.row].name
         return cell
     }
+}
+
+extension SearchViewController: UISearchBarDelegate {
+    
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        self.searchBar.showsCancelButton = true
+        searchActive = true;
+    }
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        searchActive = false;
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        self.searchBar.text = ""
+        self.searchBar.showsCancelButton = false
+        searchBar.resignFirstResponder()
+        searchActive = false;
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        self.searchBar.text = ""
+        searchActive = false;
+        searchBar.resignFirstResponder()
+        self.searchBar.showsCancelButton = false
+    }
+    
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        var listData: [ListData] = []
+        switch selectedSegment {
+            case .Teachers:
+                listData = allTeachers
+                filtered = listData.filter { return $0.name.lowercaseString.containsString(searchText.lowercaseString)}
+            case .Groups:
+                listData = allGroups
+                filtered = listData.filter { return $0.name.lowercaseString.containsString(searchText.lowercaseString)}
+            case .Auditoriums:
+                listData = allAuditoriums
+                filtered = listData.filter { return $0.name.lowercaseString.containsString(searchText.lowercaseString)}
+            default: break
+        }
+        
+        if(filtered.count == 0){
+            searchActive = false;
+        } else {
+            searchActive = true;
+        }
+        self.tableView.reloadData()
+    }
+    
 }
