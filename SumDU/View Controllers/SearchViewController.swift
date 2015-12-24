@@ -89,6 +89,7 @@ class SearchViewController: UIViewController {
         // Groups request example
         parser.sendDataRequest(.Group)
         
+        //set delegate for searchBar
         searchBar.delegate = self
     }
     
@@ -228,7 +229,7 @@ extension SearchViewController: UITableViewDataSource {
         } else {
             cell.textLabel?.text = dataList[indexPath.row].name
         }
-        //cell.textLabel?.text = dataList[indexPath.row].name
+        
         return cell
     }
 }
@@ -259,6 +260,7 @@ extension SearchViewController: UISearchBarDelegate {
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        
         var listData: [ListData] = []
         switch selectedSegment {
             case .Teachers:
@@ -278,7 +280,7 @@ extension SearchViewController: UISearchBarDelegate {
         } else {
             searchActive = true;
         }
+        
         self.tableView.reloadData()
     }
-    
 }
