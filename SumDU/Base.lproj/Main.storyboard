@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
     </dependencies>
     <scenes>
         <!--Initial VC for tablet-->
@@ -188,22 +189,24 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="LabelCell" textLabel="xeF-Bm-BG5" style="IBUITableViewCellStyleDefault" id="ecW-1X-mRT">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="kCellReuseIdentifierSchedule" id="O3O-9a-INX" customClass="ScheduleCell" customModule="SumDU" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="92" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ecW-1X-mRT" id="a92-de-VmU">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="O3O-9a-INX" id="Z5o-Bf-P7z">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xeF-Bm-BG5">
-                                                    <rect key="frame" x="15" y="0.0" width="570" height="43.5"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="pairName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QFg-Dc-kHC">
+                                                    <rect key="frame" x="55" y="0.0" width="74" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="pairName" destination="QFg-Dc-kHC" id="JUu-uI-cda"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <sections/>
@@ -221,8 +224,18 @@
                             <constraint firstAttribute="trailing" secondItem="PwZ-WB-DNo" secondAttribute="trailing" id="jQY-gO-ko8"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Schedule" id="9SS-Gt-5Zd"/>
+                    <navigationItem key="navigationItem" title="Schedule" id="9SS-Gt-5Zd">
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="refresh" id="aQR-m7-6GI">
+                                <connections>
+                                    <action selector="refreshSchedule:" destination="GcZ-4f-J3p" id="8SR-z3-05g"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="action" id="fTp-M6-5QV"/>
+                        </rightBarButtonItems>
+                    </navigationItem>
                     <connections>
+                        <outlet property="scheduleNavigation" destination="9SS-Gt-5Zd" id="xHd-od-rKX"/>
                         <outlet property="tableView" destination="PwZ-WB-DNo" id="W0E-FO-C6c"/>
                     </connections>
                 </viewController>

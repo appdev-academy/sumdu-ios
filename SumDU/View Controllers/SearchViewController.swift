@@ -231,6 +231,7 @@ extension SearchViewController: UITableViewDataSource {
         }
         
         cell.textLabel?.text = dataList[indexPath.row].name
+        cell.accessoryType = .DisclosureIndicator
         return cell
     }
 }
