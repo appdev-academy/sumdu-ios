@@ -19,23 +19,23 @@ class ScheduleViewController: UIViewController {
     
     private let kCellReuseIdentifier = "kCellReuseIdentifierSchedule"
     
-    private let sections = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
+    /// Schedule table sections
+    private let allSections = [
+        keyMonday,
+        keyTuesday,
+        keyWednesday,
+        keyThursday,
+        keyFriday,
+        keySaturday
     ]
     
      // MARK: - Variables
     
-    /// Array of schedule records
-    var allRecords: [Schedule] = [] {
-        didSet {
-            self.tableView.reloadData()
-        }
-    }
+    /// Schedule records separetad by sections
+    var recordsBySections = Array<Array<Schedule>>()
+    
+    /// Sections for single schedule request
+    var sectionsInTable: [String] = []
     
     /// Object of Parser class
     var parser = Parser()
@@ -55,32 +55,52 @@ class ScheduleViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
+        // Prepea request data
+        var startDate = ""
+        var endDate = ""
+        var groupId = "0"
+        var teacherId = "0"
+        var auditoriumId = "0"
+        
+        // Detect request type
+        if let selectedType = listData?.type {
+            
+            if let selectedId = listData?.id {
+                
+                let id = String(selectedId)
+                
+                switch selectedType {
+                case ListDataType.Group: groupId = id
+                case ListDataType.Teacher: teacherId = id
+                case ListDataType.Auditorium: auditoriumId = id
+                }
+            }
+        }
+        
         // Get start date
         let currentDate = NSDate()
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy"
-        let startDate = dateFormatter.stringFromDate(currentDate)
+        startDate = dateFormatter.stringFromDate(currentDate)
         
-        
+        // Get end date
         let additionalDays = 7
         let components = NSDateComponents()
         components.day = additionalDays
-        
         // important: NSCalendarOptions(0)
         let futureDate = NSCalendar.currentCalendar()
             .dateByAddingComponents(components, toDate: currentDate, options: NSCalendarOptions(rawValue: 0))
+        endDate = dateFormatter.stringFromDate(futureDate!)
         
-        let endDate = dateFormatter.stringFromDate(futureDate!)
         
-        
-        // example of schedule request parametes
+        // Schedule request parametes
         let requestData : [String : String] =
         [
             ScheduleRequestParameter.BeginDate.rawValue: startDate,
             ScheduleRequestParameter.EndDate.rawValue: endDate,
-            ScheduleRequestParameter.GroupId.rawValue: "100597",
-            ScheduleRequestParameter.NameId.rawValue: "0",
-            ScheduleRequestParameter.LectureRoomId.rawValue: "0",
+            ScheduleRequestParameter.GroupId.rawValue: groupId,
+            ScheduleRequestParameter.NameId.rawValue: teacherId,
+            ScheduleRequestParameter.LectureRoomId.rawValue: auditoriumId,
             ScheduleRequestParameter.PublicDate.rawValue: "true",
             ScheduleRequestParameter.Param.rawValue: "0"
         ]
@@ -121,22 +141,25 @@ extension ScheduleViewController: UITableViewDelegate {
 extension ScheduleViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return self.sections[section]
+        return sectionsInTable[section]
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return self.sections.count
+        return sectionsInTable.count
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return allRecords.count;
+        return recordsBySections[section].count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCellWithIdentifier(kCellReuseIdentifier, forIndexPath: indexPath)
         
-        let text = allRecords[indexPath.row].dayOfWeek
-            + " " + allRecords[indexPath.row].pairOrderName
+        let text = recordsBySections[indexPath.section][indexPath.row].pairOrderName + " " +
+            recordsBySections[indexPath.section][indexPath.row].groupName + " в " +
+            recordsBySections[indexPath.section][indexPath.row].auditoriumName
+
         cell.textLabel?.text = text
         return cell
     }
@@ -150,13 +173,35 @@ extension ScheduleViewController: ParserScheduleDelegate {
         
         if let jsonArray = response.array where jsonArray.count > 0 {
             
-            for subJson in jsonArray {
+            // Iterate thrue all available sections
+            for oneSection in allSections {
                 
-                // append schedule object to array of all records
-                if let scheduleRecord = Schedule(record: subJson) {
-                    allRecords.append(scheduleRecord)
+                // Array of single section
+                var singleSection: [Schedule] = []
+                
+                // Iterate all elements in json array
+                for subJson in jsonArray {
+                    
+                    // Init schedule object
+                    if let scheduleRecord = Schedule(record: subJson) {
+                        
+                        // If day of week in schedule object equals to section day
+                        if oneSection == scheduleRecord.dayOfWeek {
+                            
+                            // Append schedule record in section
+                            singleSection.append(scheduleRecord)
+                        }
+                    }
+                }
+                
+                // Combine all not empty sections together
+                if singleSection.count > 0 {
+                    recordsBySections.append(singleSection)
+                    sectionsInTable.append(oneSection)
                 }
             }
         }
+        // Reload table data after fill an array
+        self.tableView.reloadData()
     }
 }
