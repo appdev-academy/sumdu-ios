@@ -234,7 +234,14 @@ extension ScheduleViewController: ParserScheduleDelegate {
                 
                 // Combine all not empty sections together
                 if singleSection.count > 0 {
-                    recordsBySections.append(singleSection)
+                    
+                    // Sorting recird in schedule section by pair
+                    let sortedSection = singleSection.sort({
+                        $0.pairOrderName.compare($1.pairOrderName) == .OrderedAscending
+                    })
+                    
+                    // Final append to array
+                    recordsBySections.append(sortedSection)
                     sectionsInTable.append(oneSection)
                 }
             }
