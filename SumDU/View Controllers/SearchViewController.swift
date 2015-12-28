@@ -30,9 +30,6 @@ class SearchViewController: UIViewController {
     
     // MARK: - Variables
     
-    var searchActive : Bool = false
-    var filtered:[ListData] = []
-    
     /// Parser instance
     var parser = Parser()
     /// Array of all Auditoriums
@@ -56,9 +53,16 @@ class SearchViewController: UIViewController {
             self.tableView.reloadData()
         }
     }
+    var dataSource: [ListData] = [] {
+        didSet {
+            self.tableView.reloadData()
+        }
+    }
+    
     /// Currently selected segment
     var selectedSegment: SelectedSegment = SelectedSegment.Teachers {
         didSet {
+            self.filterDataSourceWithQuery(self.searchBar.text)
             tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.Automatic)
         }
     }
@@ -70,12 +74,14 @@ class SearchViewController: UIViewController {
         
         // Load Auditoriums from UserDefaults
         self.allAuditoriums = loadListDataObjects(keyAuditoriums)
-
+        
         // Load Groups from UserDefaults
         self.allGroups = loadListDataObjects(keyGroups)
-
+        
         // Load Teachers from UserDefaults
         self.allTeachers = loadListDataObjects(keyTeachers)
+        
+        self.filterDataSourceWithQuery(nil)
         
         // Set DataListDelegate for Parser
         parser.dataListDelegate = self
@@ -120,6 +126,26 @@ class SearchViewController: UIViewController {
             }
         }
         return listData
+    }
+    
+    /// Filter data source with search query
+    private func filterDataSourceWithQuery(query: String?) {
+        var listDataArray: [ListData] = []
+        switch selectedSegment {
+            case .Teachers:
+                listDataArray = allTeachers
+            case .Groups:
+                listDataArray = allGroups
+            case .Auditoriums:
+                listDataArray = allAuditoriums
+            case .Favorites:
+                break
+        }
+        if let query = query where query.characters.count > 0 {
+            dataSource = listDataArray.filter { return $0.name.lowercaseString.containsString(query.lowercaseString) }
+        } else {
+            dataSource = listDataArray
+        }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -187,48 +213,13 @@ extension SearchViewController: UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch selectedSegment {
-            case .Teachers:
-                if (searchActive) {
-                    return filtered.count
-                } else {
-                    return allTeachers.count
-                }
-            case .Groups:
-                if (searchActive) {
-                    return filtered.count
-                } else {
-                return allGroups.count
-                }
-            case .Auditoriums:
-                if (searchActive) {
-                    return filtered.count
-                } else {
-                return allAuditoriums.count
-                }
-            case .Favorites:
-                return 0
-        }
+        return dataSource.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(kCellReuseIdentifier, forIndexPath: indexPath)
-        var dataList: [ListData] = allTeachers
-        switch selectedSegment {
-            case .Teachers:
-                dataList = allTeachers
-            case .Groups:
-                dataList = allGroups
-            case .Auditoriums:
-                dataList = allAuditoriums
-            case .Favorites:
-                dataList = []
-        }
-        if(searchActive){
-            cell.textLabel?.text = filtered[indexPath.row].name
-        } else {
-            cell.textLabel?.text = dataList[indexPath.row].name
-        }
+        let listDataRecord = dataSource[indexPath.row]
+        cell.textLabel?.text = listDataRecord.name
         
         return cell
     }
@@ -237,50 +228,21 @@ extension SearchViewController: UITableViewDataSource {
 extension SearchViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        self.searchBar.showsCancelButton = true
-        searchActive = true;
-    }
-    
-    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
-        searchActive = false;
+        searchBar.showsCancelButton = true
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
-        self.searchBar.text = ""
-        self.searchBar.showsCancelButton = false
+        searchBar.text = ""
+        searchBar.showsCancelButton = false
         searchBar.resignFirstResponder()
-        searchActive = false;
+        self.filterDataSourceWithQuery(nil)
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        self.searchBar.text = ""
-        searchActive = false;
         searchBar.resignFirstResponder()
-        self.searchBar.showsCancelButton = false
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        
-        var listData: [ListData] = []
-        switch selectedSegment {
-            case .Teachers:
-                listData = allTeachers
-                filtered = listData.filter { return $0.name.lowercaseString.containsString(searchText.lowercaseString)}
-            case .Groups:
-                listData = allGroups
-                filtered = listData.filter { return $0.name.lowercaseString.containsString(searchText.lowercaseString)}
-            case .Auditoriums:
-                listData = allAuditoriums
-                filtered = listData.filter { return $0.name.lowercaseString.containsString(searchText.lowercaseString)}
-            default: break
-        }
-        
-        if(filtered.count == 0){
-            searchActive = false;
-        } else {
-            searchActive = true;
-        }
-        
-        self.tableView.reloadData()
+        self.filterDataSourceWithQuery(searchText)
     }
 }
