@@ -125,9 +125,59 @@ class Parser {
      
      - parameter withParameters:  what parameters need for schedule request
      */
-    func sendScheduleRequest(withParameters: [String: String]) {
+    func sendScheduleRequest(requestData: ListData?) {
         
-        Alamofire.request(Router.ScheduleRequest(withParameters)).responseJSON {
+        // Prepea request data
+        var startDate = ""
+        var endDate = ""
+        var groupId = "0"
+        var teacherId = "0"
+        var auditoriumId = "0"
+        
+        // Detect request type
+        if let selectedType = requestData?.type, let selectedId = requestData?.id {
+            
+            let id = String(selectedId)
+            
+            switch selectedType {
+            case ListDataType.Group:
+                groupId = id
+            case ListDataType.Teacher:
+                teacherId = id
+            case ListDataType.Auditorium:
+                auditoriumId = id
+            }
+        }
+        
+        // Get start date
+        let currentDate = NSDate()
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy"
+        startDate = dateFormatter.stringFromDate(currentDate)
+        
+        // Get end date
+        let additionalDays = 7
+        let components = NSDateComponents()
+        components.day = additionalDays
+        // important: NSCalendarOptions(0)
+        let futureDate = NSCalendar.currentCalendar()
+            .dateByAddingComponents(components, toDate: currentDate, options: NSCalendarOptions(rawValue: 0))
+        endDate = dateFormatter.stringFromDate(futureDate!)
+        
+        
+        // Schedule request parametes
+        let requestData =
+            [
+                ScheduleRequestParameter.BeginDate.rawValue: startDate,
+                ScheduleRequestParameter.EndDate.rawValue: endDate,
+                ScheduleRequestParameter.GroupId.rawValue: groupId,
+                ScheduleRequestParameter.NameId.rawValue: teacherId,
+                ScheduleRequestParameter.LectureRoomId.rawValue: auditoriumId,
+                ScheduleRequestParameter.PublicDate.rawValue: "true",
+                ScheduleRequestParameter.Param.rawValue: "0"
+        ]
+        
+        Alamofire.request(Router.ScheduleRequest(requestData)).responseJSON {
             (scheduleResponse) -> Void in
             
             if scheduleResponse.result.isFailure {

@@ -176,7 +176,7 @@
         <!--Schedule-->
         <scene sceneID="XbM-Rf-DsK">
             <objects>
-                <viewController id="GcZ-4f-J3p" customClass="ScheduleViewController" customModule="SumDU" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="GcZ-4f-J3p" customClass="ScheduleViewController" customModule="SumDU" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="9Fx-WE-fAx"/>
                         <viewControllerLayoutGuide type="bottom" id="jmn-RX-PbZ"/>
@@ -190,7 +190,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="kCellReuseIdentifierSchedule" id="O3O-9a-INX" customClass="ScheduleCell" customModule="SumDU" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="O3O-9a-INX" id="Z5o-Bf-P7z">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
