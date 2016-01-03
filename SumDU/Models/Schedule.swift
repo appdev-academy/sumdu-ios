@@ -29,7 +29,7 @@ class Schedule {
     var pairTime: String
     
     /// Date of pair
-    var paitDate: String
+    var pairDate: String
     
     /// Human pair order
     var pairOrderName: String
@@ -55,7 +55,7 @@ class Schedule {
         
         // Set default values (probably bug in Xcode, can't return nil on failable initializer)
         self.pairTime = ""
-        self.paitDate = ""
+        self.pairDate = ""
         self.pairOrderName = ""
         self.groupName = ""
         self.auditoriumName = ""
@@ -68,8 +68,8 @@ class Schedule {
             return nil
         }
         
-        if let paitDate = record[ScheduleResponseParameters.PairDate.rawValue].string {
-            self.paitDate = paitDate
+        if let pairDate = record[ScheduleResponseParameters.PairDate.rawValue].string {
+            self.pairDate = pairDate
         } else {
             return nil
         }

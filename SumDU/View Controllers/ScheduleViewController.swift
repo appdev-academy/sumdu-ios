@@ -20,17 +20,7 @@ class ScheduleViewController: UIViewController {
     
     private let kCellReuseIdentifier = "kCellReuseIdentifierSchedule"
     
-    /// Schedule table sections
-    private let allSections = [
-        keyMonday,
-        keyTuesday,
-        keyWednesday,
-        keyThursday,
-        keyFriday,
-        keySaturday
-    ]
-    
-     // MARK: - Variables
+    // MARK: - Variables
     
     /// Data from SearchController
     var listData: ListData?
@@ -38,8 +28,14 @@ class ScheduleViewController: UIViewController {
     /// Object of Parser class
     var parser = Parser()
     
-    /// Parameters for shcedule request
-    var requestData : [String : String] = ["" : ""]
+    /// Schedule table sections
+    private var allSections: [String] = [] {
+        didSet {
+            self.allSections.sortInPlace({
+                $0.compare($1) == .OrderedAscending
+            })
+        }
+    }
     
     /// Schedule records separetad by sections
     var recordsBySections = Array<Array<Schedule>>() {
@@ -51,10 +47,6 @@ class ScheduleViewController: UIViewController {
     
     var refreshControl = UIRefreshControl()
     
-    /// Sections for single schedule request
-    var sectionsInTable: [String] = []
-
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -89,7 +81,7 @@ class ScheduleViewController: UIViewController {
         // send request with parameters to get records of schedule
         parser.sendScheduleRequest(listData)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -99,17 +91,17 @@ class ScheduleViewController: UIViewController {
     @IBAction func refreshSchedule(sender: AnyObject) {
         self.loadShedule()
     }
-
+    
     /*
     // MARK: - Navigation
-
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    // Get the new view controller using segue.destinationViewController.
+    // Pass the selected object to the new view controller.
     }
     */
-
+    
 }
 
 // MARK: - UITableViewDelegate
@@ -121,11 +113,11 @@ extension ScheduleViewController: UITableViewDelegate { }
 extension ScheduleViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sectionsInTable[section]
+        return allSections[section]
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return sectionsInTable.count
+        return allSections.count
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -153,8 +145,34 @@ extension ScheduleViewController: ParserScheduleDelegate {
         
         if let jsonArray = response.array where jsonArray.count > 0 {
             
+            // Temporary array for all records
+            var scheduleArray = Array<Schedule>()
+            
+            // Temporary array for records separated by sections
             var forRecordsBySections = Array<Array<Schedule>>()
-            sectionsInTable = []
+            
+            // All schedule dates
+            var scheduleDates = [String]()
+            
+            // Iterate all elements in json array
+            for subJson in jsonArray {
+                
+                // Init schedule object
+                if let scheduleRecord = Schedule(record: subJson) {
+                    
+                    // Fill schedule array
+                    scheduleArray.append(scheduleRecord)
+                    
+                    // Fill dates array
+                    scheduleDates.append(scheduleRecord.pairDate)
+                }
+            }
+            
+            // Set of unique schedule dates
+            let dateSet = Set(scheduleDates)
+            
+            // And array of unique schedule dates
+            allSections = Array(dateSet)
             
             // Iterate thrue all available sections
             for oneSection in allSections {
@@ -162,18 +180,12 @@ extension ScheduleViewController: ParserScheduleDelegate {
                 // Array of single section
                 var singleSection: [Schedule] = []
                 
-                // Iterate all elements in json array
-                for subJson in jsonArray {
+                for element in scheduleArray {
                     
-                    // Init schedule object
-                    if let scheduleRecord = Schedule(record: subJson) {
+                    if oneSection == element.pairDate {
                         
-                        // If day of week in schedule object equals to section day
-                        if oneSection == scheduleRecord.dayOfWeek {
-                            
-                            // Append schedule record in section
-                            singleSection.append(scheduleRecord)
-                        }
+                        // Append schedule record in section
+                        singleSection.append(element)
                     }
                 }
                 
@@ -187,13 +199,12 @@ extension ScheduleViewController: ParserScheduleDelegate {
                     
                     // Final append to array
                     forRecordsBySections.append(sortedSection)
-                    sectionsInTable.append(oneSection)
                 }
             }
             // Move data from tempopary var to public
             recordsBySections = forRecordsBySections
         }
-
+        
         // Tell refresh control it can stop showing up now
         if self.refreshControl.refreshing
         {

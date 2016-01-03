@@ -17,8 +17,6 @@ enum ScheduleRequestParameter: String {
     case GroupId = "data[KOD_GROUP]"
     case NameId = "data[ID_FIO]"
     case LectureRoomId = "data[ID_AUD]"
-    case PublicDate = "data[PUB_DATE]"
-    case Param = "data[PARAM]"
 }
 
 /// Type of ListData entity or request type: Auditorium, Group, Teacher or Unknown
@@ -128,8 +126,6 @@ class Parser {
     func sendScheduleRequest(requestData: ListData?) {
         
         // Prepea request data
-        var startDate = ""
-        var endDate = ""
         var groupId = "0"
         var teacherId = "0"
         var auditoriumId = "0"
@@ -140,41 +136,32 @@ class Parser {
             let id = String(selectedId)
             
             switch selectedType {
-            case ListDataType.Group:
-                groupId = id
-            case ListDataType.Teacher:
-                teacherId = id
-            case ListDataType.Auditorium:
-                auditoriumId = id
+                case ListDataType.Group: groupId = id
+                case ListDataType.Teacher: teacherId = id
+                case ListDataType.Auditorium: auditoriumId = id
             }
         }
         
         // Get start date
-        let currentDate = NSDate()
+        let startDate = NSDate()
         let dateFormatter = NSDateFormatter()
+        let locale = NSLocale(localeIdentifier: "en_US")
+        
         dateFormatter.dateFormat = "dd.MM.yyyy"
-        startDate = dateFormatter.stringFromDate(currentDate)
+        dateFormatter.locale = locale
         
         // Get end date
-        let additionalDays = 7
-        let components = NSDateComponents()
-        components.day = additionalDays
-        // important: NSCalendarOptions(0)
-        let futureDate = NSCalendar.currentCalendar()
-            .dateByAddingComponents(components, toDate: currentDate, options: NSCalendarOptions(rawValue: 0))
-        endDate = dateFormatter.stringFromDate(futureDate!)
-        
+        let additionalDays: NSTimeInterval = 30*60*60*24
+        let endDate = startDate.dateByAddingTimeInterval(additionalDays)
         
         // Schedule request parametes
         let requestData =
             [
-                ScheduleRequestParameter.BeginDate.rawValue: startDate,
-                ScheduleRequestParameter.EndDate.rawValue: endDate,
+                ScheduleRequestParameter.BeginDate.rawValue: dateFormatter.stringFromDate(startDate),
+                ScheduleRequestParameter.EndDate.rawValue: dateFormatter.stringFromDate(endDate),
                 ScheduleRequestParameter.GroupId.rawValue: groupId,
                 ScheduleRequestParameter.NameId.rawValue: teacherId,
                 ScheduleRequestParameter.LectureRoomId.rawValue: auditoriumId,
-                ScheduleRequestParameter.PublicDate.rawValue: "true",
-                ScheduleRequestParameter.Param.rawValue: "0"
         ]
         
         Alamofire.request(Router.ScheduleRequest(requestData)).responseJSON {
