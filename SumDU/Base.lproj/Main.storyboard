@@ -266,7 +266,11 @@
                                     <action selector="refreshSchedule:" destination="GcZ-4f-J3p" id="8SR-z3-05g"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem systemItem="action" id="fTp-M6-5QV"/>
+                            <barButtonItem systemItem="action" id="fTp-M6-5QV">
+                                <connections>
+                                    <action selector="share:" destination="GcZ-4f-J3p" id="vHV-JP-i9V"/>
+                                </connections>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>

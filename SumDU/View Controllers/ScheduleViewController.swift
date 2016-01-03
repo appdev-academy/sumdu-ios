@@ -92,6 +92,12 @@ class ScheduleViewController: UIViewController {
         self.loadShedule()
     }
     
+    /// Share schedule
+    @IBAction func share(sender: UIBarButtonItem) {
+        let share = UIActivityViewController(activityItems: recordsBySections, applicationActivities: nil)
+        self.presentViewController(share, animated: true, completion: nil)
+    }
+    
     /*
     // MARK: - Navigation
     
