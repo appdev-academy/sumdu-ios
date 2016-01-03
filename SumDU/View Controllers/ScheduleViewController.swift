@@ -127,11 +127,20 @@ extension ScheduleViewController: UITableViewDataSource {
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCellWithIdentifier(kCellReuseIdentifier, forIndexPath: indexPath) as! ScheduleCell
-        let text = recordsBySections[indexPath.section][indexPath.row].pairOrderName + " " +
-            recordsBySections[indexPath.section][indexPath.row].groupName + " в " +
-            recordsBySections[indexPath.section][indexPath.row].auditoriumName
         
-        cell.pairName.text = text
+        let scheduleRecord = recordsBySections[indexPath.section][indexPath.row]
+        
+        if scheduleRecord.pairName.characters.count > 0 {
+            cell.pairName.text = scheduleRecord.pairName
+        } else {
+            // TODO: update cell constraint if label is empty (for all lables)
+        }
+        
+        cell.pairTime.text = scheduleRecord.pairTime
+        cell.pairType.text = scheduleRecord.pairType
+        cell.auditoriumName.text = scheduleRecord.auditoriumName
+        cell.teacherName.text = scheduleRecord.teacherName
+        cell.groupName.text = scheduleRecord.groupName
         
         return cell
     }
@@ -144,6 +153,10 @@ extension ScheduleViewController: ParserScheduleDelegate {
     func getSchedule(response: JSON) {
         
         if let jsonArray = response.array where jsonArray.count > 0 {
+            
+            // TODO: check sections logic
+            
+            // TODO: order sections by date
             
             // Temporary array for all records
             var scheduleArray = Array<Schedule>()
