@@ -139,7 +139,7 @@ extension ScheduleViewController: UITableViewDataSource {
         if scheduleRecord.pairName.characters.count > 0 {
             cell.pairName.text = scheduleRecord.pairName
         } else {
-            // TODO: update cell constraint if label is empty (for all lables)
+            // TODO: update cell constraint if label is empty (for all labels)
         }
         
         cell.pairTime.text = scheduleRecord.pairTime
@@ -211,10 +211,10 @@ extension ScheduleViewController: ParserScheduleDelegate {
                 // Combine all not empty sections together
                 if singleSection.count > 0 {
                     
-                    // Sorting recird in schedule section by pair
-                    let sortedSection = singleSection.sort({
+                    // Sorting record in schedule section by pair
+                    let sortedSection = singleSection.sort {
                         $0.pairOrderName.compare($1.pairOrderName) == .OrderedAscending
-                    })
+                    }
                     
                     // Final append to array
                     forRecordsBySections.append(sortedSection)
@@ -225,8 +225,7 @@ extension ScheduleViewController: ParserScheduleDelegate {
         }
         
         // Tell refresh control it can stop showing up now
-        if self.refreshControl.refreshing
-        {
+        if self.refreshControl.refreshing {
             self.refreshControl.endRefreshing()
         }
     }
