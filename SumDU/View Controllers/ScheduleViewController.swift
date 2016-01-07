@@ -28,24 +28,18 @@ class ScheduleViewController: UIViewController {
     /// Object of Parser class
     var parser = Parser()
     
-    /// Schedule table sections
-    private var allSections: [String] = [] {
-        didSet {
-            self.allSections.sortInPlace({
-                $0.compare($1) == .OrderedAscending
-            })
-        }
-    }
-    
     /// Schedule records separetad by sections
-    var recordsBySections = Array<Array<Schedule>>() {
+    var recordsBySection: [Section] = [] {
         didSet {
             // Reload table data after fill an array
             tableView.reloadData()
         }
     }
     
+    /// Control refresh
     var refreshControl = UIRefreshControl()
+    
+    // MARK: - Functions
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,20 +88,9 @@ class ScheduleViewController: UIViewController {
     
     /// Share schedule
     @IBAction func share(sender: UIBarButtonItem) {
-        let share = UIActivityViewController(activityItems: recordsBySections, applicationActivities: nil)
+        let share = UIActivityViewController(activityItems: [], applicationActivities: nil)
         self.presentViewController(share, animated: true, completion: nil)
     }
-    
-    /*
-    // MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    // Get the new view controller using segue.destinationViewController.
-    // Pass the selected object to the new view controller.
-    }
-    */
-    
 }
 
 // MARK: - UITableViewDelegate
@@ -119,29 +102,34 @@ extension ScheduleViewController: UITableViewDelegate { }
 extension ScheduleViewController: UITableViewDataSource {
     
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return allSections[section]
+        
+        // Create a date formatter
+        let dateFormatter = NSDateFormatter()
+        let locale = NSLocale(localeIdentifier: "uk_UA_POSIX")
+        dateFormatter.dateFormat = "dd MMMM, EEEE"
+        dateFormatter.locale = locale
+        
+        // Generate section header
+        let sectionHeader = dateFormatter.stringFromDate(recordsBySection[section].date)
+        
+        return sectionHeader
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return allSections.count
+        return recordsBySection.count
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return recordsBySections[section].count
+        return recordsBySection[section].records.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCellWithIdentifier(kCellReuseIdentifier, forIndexPath: indexPath) as! ScheduleCell
         
-        let scheduleRecord = recordsBySections[indexPath.section][indexPath.row]
+        let scheduleRecord = recordsBySection[indexPath.section].records[indexPath.row]
         
-        if scheduleRecord.pairName.characters.count > 0 {
-            cell.pairName.text = scheduleRecord.pairName
-        } else {
-            // TODO: update cell constraint if label is empty (for all labels)
-        }
-        
+        cell.pairName.text = scheduleRecord.pairName
         cell.pairTime.text = scheduleRecord.pairTime
         cell.pairType.text = scheduleRecord.pairType
         cell.auditoriumName.text = scheduleRecord.auditoriumName
@@ -160,68 +148,62 @@ extension ScheduleViewController: ParserScheduleDelegate {
         
         if let jsonArray = response.array where jsonArray.count > 0 {
             
-            // TODO: check sections logic
+            // All schedule records
+            var allScheduleRecords: [Schedule] = []
             
-            // TODO: order sections by date
+            // All schedule records sepatated by sections
+            var forRecordsBySection: [Section] = []
             
-            // Temporary array for all records
-            var scheduleArray = Array<Schedule>()
+            // Set of the unique schedule dates
+            var sectionsDate = [NSDate]()
             
-            // Temporary array for records separated by sections
-            var forRecordsBySections = Array<Array<Schedule>>()
-            
-            // All schedule dates
-            var scheduleDates = [String]()
-            
-            // Iterate all elements in json array
+            // Iterate JSON array
             for subJson in jsonArray {
                 
                 // Init schedule object
                 if let scheduleRecord = Schedule(record: subJson) {
                     
-                    // Fill schedule array
-                    scheduleArray.append(scheduleRecord)
-                    
                     // Fill dates array
-                    scheduleDates.append(scheduleRecord.pairDate)
+                    sectionsDate.append(scheduleRecord.pairDate)
+                    
+                    // Fill schedule array
+                    allScheduleRecords.append(scheduleRecord)
                 }
             }
             
-            // Set of unique schedule dates
-            let dateSet = Set(scheduleDates)
+            // Order set of dates
+            let orderedDates = Set(sectionsDate).sort {
+                $0.compare($1) == .OrderedAscending
+            }
             
-            // And array of unique schedule dates
-            allSections = Array(dateSet)
-            
-            // Iterate thrue all available sections
-            for oneSection in allSections {
+            // Iterate all dates
+            for singleDate in orderedDates {
                 
-                // Array of single section
-                var singleSection: [Schedule] = []
+                // For schedule records in single section
+                var scheduleRecordsInSection: [Schedule] = []
                 
-                for element in scheduleArray {
+                // Iterate all schedule records
+                for singleScheduleRecord in allScheduleRecords {
                     
-                    if oneSection == element.pairDate {
+                    // If section date equals date of schedule record
+                    if singleDate == singleScheduleRecord.pairDate {
                         
-                        // Append schedule record in section
-                        singleSection.append(element)
+                        // Append schedule record to section array
+                        scheduleRecordsInSection.append(singleScheduleRecord)
                     }
                 }
                 
-                // Combine all not empty sections together
-                if singleSection.count > 0 {
-                    
-                    // Sorting record in schedule section by pair
-                    let sortedSection = singleSection.sort {
-                        $0.pairOrderName.compare($1.pairOrderName) == .OrderedAscending
-                    }
-                    
-                    // Final append to array
-                    forRecordsBySections.append(sortedSection)
+                // Sort schedule records in single section by pair order name
+                scheduleRecordsInSection.sortInPlace {
+                    $0.pairOrderName < $1.pairOrderName
                 }
+                
+                // Append to array of sections
+                forRecordsBySection.append(Section(title: singleDate, records: scheduleRecordsInSection))
             }
+            
             // Move data from tempopary var to public
-            recordsBySections = forRecordsBySections
+            recordsBySection = forRecordsBySection
         }
         
         // Tell refresh control it can stop showing up now

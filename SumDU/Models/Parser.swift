@@ -145,7 +145,7 @@ class Parser {
         // Get start date
         let startDate = NSDate()
         let dateFormatter = NSDateFormatter()
-        let locale = NSLocale(localeIdentifier: "en_US")
+        let locale = NSLocale(localeIdentifier: "en_US_POSIX")
         
         dateFormatter.dateFormat = "dd.MM.yyyy"
         dateFormatter.locale = locale

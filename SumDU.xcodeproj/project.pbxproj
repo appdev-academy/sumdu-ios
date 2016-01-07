@@ -21,6 +21,7 @@
 		E11799201C09E522005D2ABA /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E117991F1C09E522005D2ABA /* NavigationController.swift */; };
 		E1376CF71C2EDEC900DFD349 /* Days.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1376CF61C2EDEC900DFD349 /* Days.swift */; };
 		E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17F12281C2F1C09001AB284 /* ScheduleCell.swift */; };
+		E19526A31C3E5C3B008AD541 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19526A21C3E5C3B008AD541 /* Section.swift */; };
 		E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA623A1C26A71400584099 /* ScheduleViewController.swift */; };
 		E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */; };
 		E4583E951C25495F0031F164 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4583E941C25495F0031F164 /* Keys.swift */; };
@@ -66,6 +67,7 @@
 		E117991F1C09E522005D2ABA /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		E1376CF61C2EDEC900DFD349 /* Days.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Days.swift; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
+		E19526A21C3E5C3B008AD541 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		E1DA623A1C26A71400584099 /* ScheduleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDataCoder.swift; sourceTree = "<group>"; };
 		E4583E941C25495F0031F164 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				7D9F95591C160E13008B601F /* Schedule.swift */,
 				7D2B5D881C19FAEB00C758B8 /* ListData.swift */,
 				E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */,
+				E19526A21C3E5C3B008AD541 /* Section.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -412,6 +415,7 @@
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
 				E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
+				E19526A31C3E5C3B008AD541 /* Section.swift in Sources */,
 				E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */,
 				E4583E951C25495F0031F164 /* Keys.swift in Sources */,
 				E1376CF71C2EDEC900DFD349 /* Days.swift in Sources */,

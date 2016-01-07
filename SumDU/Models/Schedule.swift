@@ -48,7 +48,7 @@ class Schedule {
     
     
     /// Date of pair
-    var pairDate: String
+    var pairDate: NSDate
     
     /// Human pair order
     var pairOrderName: String
@@ -71,7 +71,7 @@ class Schedule {
         self.teacherName = ""
         self.groupName = ""
         
-        self.pairDate = ""
+        self.pairDate = NSDate()
         self.pairOrderName = ""
         self.dayOfWeek = ""
         
@@ -114,7 +114,7 @@ class Schedule {
         
         
         if let pairDate = record[ScheduleResponseParameters.PairDate.rawValue].string {
-            self.pairDate = pairDate
+            self.pairDate = NSDate(dateString:pairDate)
         } else {
             return nil
         }
@@ -130,5 +130,18 @@ class Schedule {
         } else {
             return nil
         }
+    }
+}
+
+/// MARK: - NSDate extension
+extension NSDate
+{
+    convenience
+    init(dateString:String) {
+        let dateStringFormatter = NSDateFormatter()
+        dateStringFormatter.dateFormat = "dd.MM.yyyy"
+        dateStringFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+        let d = dateStringFormatter.dateFromString(dateString)!
+        self.init(timeInterval:0, sinceDate:d)
     }
 }
