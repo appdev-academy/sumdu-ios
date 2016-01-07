@@ -39,6 +39,9 @@ class ScheduleViewController: UIViewController {
     /// Control refresh
     var refreshControl = UIRefreshControl()
     
+    /// URL for add shedule ivents to calendar
+    var calendarURL: NSURL?
+    
     // MARK: - Functions
     
     override func viewDidLoad() {
@@ -54,6 +57,10 @@ class ScheduleViewController: UIViewController {
         
         // Set title to navigation bar
         scheduleNavigation.title = listData?.name
+        let attributes = [
+            NSFontAttributeName: UIFont(name: "HelveticaNeue", size: 14)!
+        ]
+        self.navigationController?.navigationBar.titleTextAttributes = attributes
         
         // Set up the refresh control
         self.refreshControl.attributedTitle = NSAttributedString(string: "Потягніть для оновлення")
@@ -88,8 +95,13 @@ class ScheduleViewController: UIViewController {
     
     /// Share schedule
     @IBAction func share(sender: UIBarButtonItem) {
-        let share = UIActivityViewController(activityItems: [], applicationActivities: nil)
-        self.presentViewController(share, animated: true, completion: nil)
+        
+        parser.generateCalendarURL(listData)
+        
+        if let url = calendarURL {
+            UIApplication.sharedApplication().openURL(url)
+        }
+        
     }
 }
 
@@ -244,5 +256,10 @@ extension ScheduleViewController: ParserScheduleDelegate {
         if self.refreshControl.refreshing {
             self.refreshControl.endRefreshing()
         }
+    }
+    
+    /// Get calendar URL
+    func getCalendar(url: NSURL?) {
+        calendarURL = url
     }
 }
