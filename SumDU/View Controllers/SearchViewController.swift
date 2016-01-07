@@ -69,7 +69,7 @@ class SearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         
         // Load Auditoriums from UserDefaults
@@ -96,7 +96,7 @@ class SearchViewController: UIViewController {
         parser.sendDataRequest(.Group)
         
         //set delegate for searchBar
-        searchBar.delegate = self
+        self.searchBar.delegate = self
     }
     
     /// Function which stores ListData entities using NSUserDefaults class
@@ -239,10 +239,56 @@ extension SearchViewController: UISearchBarDelegate {
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        searchBar.showsCancelButton = true
         searchBar.resignFirstResponder()
+        enableCancelButton(searchBar)
+    }
+    
+    func enableCancelButton(searchBar: UISearchBar) {
+        let btnCancel: UIButton = searchBar.valueForKey("_cancelButton") as! UIButton
+        btnCancel.enabled = true
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         self.filterDataSourceWithQuery(searchText)
+    }
+}
+
+extension SearchViewController: UIScrollViewDelegate {
+    
+    override func viewWillAppear(animated: Bool) {
+        self.startKeyboardObserver()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        self.stopKeyboardObserver()
+    }
+    
+    private func startKeyboardObserver(){
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    private func stopKeyboardObserver() {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        if let userInfo = notification.userInfo {
+            if let keyboardSize: CGSize = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue.size {
+                let contentInset = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height,  0.0);
+                
+                self.tableView.contentInset = contentInset
+                self.tableView.scrollIndicatorInsets = contentInset
+                
+                self.tableView.contentOffset = CGPointMake(self.tableView.contentOffset.x, 0 + keyboardSize.height)
+            }
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        self.tableView.contentInset = UIEdgeInsetsZero;
+        self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
     }
 }
