@@ -14,8 +14,6 @@ class ScheduleCell: UITableViewCell {
     
     @IBOutlet weak var pairName: UILabel!
     @IBOutlet weak var pairTime: UILabel!
-    @IBOutlet weak var pairType: UILabel!
-    @IBOutlet weak var auditoriumName: UILabel!
     @IBOutlet weak var teacherName: UILabel!
     @IBOutlet weak var groupName: UILabel!
     

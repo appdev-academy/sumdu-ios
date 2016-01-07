@@ -129,12 +129,46 @@ extension ScheduleViewController: UITableViewDataSource {
         
         let scheduleRecord = recordsBySection[indexPath.section].records[indexPath.row]
         
-        cell.pairName.text = scheduleRecord.pairName
+        // Set pair name and type
+        var pairNameInCell = "-/-"
+        
+        if scheduleRecord.pairName.characters.count > 0 {
+            pairNameInCell = scheduleRecord.pairName
+        }
+        
+        if scheduleRecord.pairType.characters.count > 0 && scheduleRecord.pairName.characters.count > 0 {
+            pairNameInCell += " (" + scheduleRecord.pairType + ")"
+        }
+        
+        if scheduleRecord.pairType.characters.count > 0 && scheduleRecord.pairName.characters.count == 0 {
+            pairNameInCell = scheduleRecord.pairType
+        }
+        
+        cell.pairName.text = pairNameInCell
+        
+        // Set teacher name for pair
+        var pairTeacterNameInCell = scheduleRecord.auditoriumName
+        
+        if scheduleRecord.teacherName.characters.count > 0 {
+            pairTeacterNameInCell = scheduleRecord.teacherName
+            
+            if scheduleRecord.auditoriumName.characters.count > 0 {
+                pairTeacterNameInCell += ", " + scheduleRecord.auditoriumName
+            }
+        }
+        
+        cell.teacherName.text = pairTeacterNameInCell
+        
+        // Set pair time in cell
         cell.pairTime.text = scheduleRecord.pairTime
-        cell.pairType.text = scheduleRecord.pairType
-        cell.auditoriumName.text = scheduleRecord.auditoriumName
-        cell.teacherName.text = scheduleRecord.teacherName
-        cell.groupName.text = scheduleRecord.groupName
+        
+        // Set pair groups
+        var groupNameForCell = ""
+        
+        if scheduleRecord.groupName.characters.count > 0 {
+            groupNameForCell = " для " + scheduleRecord.groupName
+        }
+        cell.groupName.text = groupNameForCell
         
         return cell
     }
