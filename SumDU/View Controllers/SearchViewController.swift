@@ -64,6 +64,9 @@ class SearchViewController: UIViewController {
         }
     }
     
+    /// Remember data of selected cell
+    var selectedCell: ListData?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -162,10 +165,13 @@ class SearchViewController: UIViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // TODO: Set up destination view controller data source here
-//        if let scheduleViewController = segue.destinationViewController as? ScheduleViewController {
-//            
-//        }
+        // Setting up destination view controller data source here
+        if segue.identifier == "ShowSchedule" {
+            if let scheduleViewController = segue.destinationViewController as? ScheduleViewController {
+                scheduleViewController.listData = selectedCell
+    }
+        }
+    
     }
     
     @IBAction private func selectionDidChange(sender: UISegmentedControl) {
@@ -179,7 +185,7 @@ class SearchViewController: UIViewController {
             case 3:
                 self.selectedSegment = .Favorites
             default:
-                print("Unkown selected segment in SearchViewController")
+                print("Unknown selected segment in SearchViewController")
         }
     }
     
@@ -242,6 +248,23 @@ extension SearchViewController: ParserDataListDelegate {
 extension SearchViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        
+        var dataList: [ListData] = allTeachers
+        switch selectedSegment {
+        case .Teachers:
+            dataList = allTeachers
+        case .Groups:
+            dataList = allGroups
+        case .Auditoriums:
+            dataList = allAuditoriums
+        case .Favorites:
+            dataList = []
+        }
+        
+        // Remember selected sell
+        selectedCell = dataList[indexPath.item]
+        
         self.performSegueWithIdentifier("ShowSchedule", sender: nil)
     }
 }
