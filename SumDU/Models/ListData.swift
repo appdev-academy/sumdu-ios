@@ -42,7 +42,7 @@ struct ListData {
             return nil
         }
         
-        if let name = json[ResponseLabel.Label.rawValue].string {
+        if let name = json[ResponseLabel.Label.rawValue].string where name.characters.count > 0 {
             self.name = name
         } else {
             return nil

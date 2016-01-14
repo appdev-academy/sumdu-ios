@@ -278,6 +278,10 @@ class Parser {
                     
                     let response = JSON(resultValue)
                     
+                    let defaults = NSUserDefaults.standardUserDefaults()
+                    defaults.setObject(NSDate(), forKey: keyLastUpdatedAtDate)
+                    defaults.synchronize()
+                    
                     dispatch_async(dispatch_get_main_queue(), {
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
                     })

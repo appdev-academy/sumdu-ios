@@ -19,6 +19,7 @@
 		7D9F955D1C160E13008B601F /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9F95581C160E13008B601F /* Parser.swift */; };
 		7D9F955E1C160E13008B601F /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9F95591C160E13008B601F /* Schedule.swift */; };
 		E11799201C09E522005D2ABA /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E117991F1C09E522005D2ABA /* NavigationController.swift */; };
+		E40668B31C3EF6400011EF25 /* NSDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40668B21C3EF6400011EF25 /* NSDate.swift */; };
 		E1376CF71C2EDEC900DFD349 /* Days.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1376CF61C2EDEC900DFD349 /* Days.swift */; };
 		E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17F12281C2F1C09001AB284 /* ScheduleCell.swift */; };
 		E19526A31C3E5C3B008AD541 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19526A21C3E5C3B008AD541 /* Section.swift */; };
@@ -65,6 +66,7 @@
 		90B45AB2114CAC68D0AF4B6A /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		D1DD90AC92C58F9DD5331ED4 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E117991F1C09E522005D2ABA /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		E40668B21C3EF6400011EF25 /* NSDate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDate.swift; sourceTree = "<group>"; };
 		E1376CF61C2EDEC900DFD349 /* Days.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Days.swift; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		E19526A21C3E5C3B008AD541 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 			children = (
 				E4583E941C25495F0031F164 /* Keys.swift */,
 				E1376CF61C2EDEC900DFD349 /* Days.swift */,
+				E40668B21C3EF6400011EF25 /* NSDate.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -417,6 +420,7 @@
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
 				E19526A31C3E5C3B008AD541 /* Section.swift in Sources */,
 				E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */,
+				E40668B31C3EF6400011EF25 /* NSDate.swift in Sources */,
 				E4583E951C25495F0031F164 /* Keys.swift in Sources */,
 				E1376CF71C2EDEC900DFD349 /* Days.swift in Sources */,
 				E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */,
