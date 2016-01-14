@@ -35,22 +35,19 @@ class SearchViewController: UIViewController {
     /// Array of all Auditoriums
     var allAuditoriums: [ListData] = [] {
         didSet {
-            saveListDataObjects(allAuditoriums, forKey: keyAuditoriums)
-            self.tableView.reloadData()
+            self.reloadListData(self.allAuditoriums, forKey: keyAuditoriums)
         }
     }
     /// Array of all Groups
     var allGroups: [ListData] = [] {
         didSet {
-            saveListDataObjects(allGroups, forKey: keyGroups)
-            self.tableView.reloadData()
+            self.reloadListData(self.allGroups, forKey: keyGroups)
         }
     }
     /// Array of all Teachers
     var allTeachers: [ListData] = [] {
         didSet {
-            saveListDataObjects(allTeachers, forKey: keyTeachers)
-            self.tableView.reloadData()
+            self.reloadListData(self.allTeachers, forKey: keyTeachers)
         }
     }
     var dataSource: [ListData] = [] {
@@ -69,59 +66,42 @@ class SearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         
-        isAppLaunchedBefore()
-        
+        // Load and filter initial data
+        self.allTeachers = self.loadListDataObjects(keyTeachers)
+        self.allGroups = self.loadListDataObjects(keyGroups)
+        self.allAuditoriums = self.loadListDataObjects(keyAuditoriums)
         self.filterDataSourceWithQuery(nil)
         
-        // Set DataListDelegate for Parser
-        parser.dataListDelegate = self
+        self.registerForNotifications()
         
-        //set delegate for searchBar
+        // Set DataListDelegate for Parser
+        self.parser.dataListDelegate = self
+        
+        // Set delegate for searchBar
         self.searchBar.delegate = self
-
     }
     
-    /// Load data from site by specific period
-    func scheduleLoadingData(startDate: NSDate) {
-        if var endDate = NSUserDefaults.standardUserDefaults().valueForKey("endDate") as? NSDate {
-
-            if endDate.compare(startDate) == NSComparisonResult.OrderedAscending {
-                self.parser.sendDataRequest(.Auditorium)
-                self.parser.sendDataRequest(.Teacher)
-                self.parser.sendDataRequest(.Group)
-            
-                endDate = startDate.dateByAddingTimeInterval(days)
-                NSUserDefaults.standardUserDefaults().setObject(endDate, forKey: "endDate")
-            }
-        }
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.checkUpdatedAtDateAndLoadData()
     }
     
-    /// Check if app is lauched before
-    func isAppLaunchedBefore() -> Bool {
-        if(NSUserDefaults.standardUserDefaults().boolForKey("HasLaunchedOnce")) {
-            
-            let startDate = NSDate()
-            scheduleLoadingData(startDate)
-            
-            // Load Auditoriums from UserDefaults
-            self.allAuditoriums = loadListDataObjects(keyAuditoriums)
-            // Load Groups from UserDefaults
-            self.allGroups = loadListDataObjects(keyGroups)
-            // Load Teachers from UserDefaults
-            self.allTeachers = loadListDataObjects(keyTeachers)
-            
-            return true
-        } else {
-            NSUserDefaults.standardUserDefaults().setBool(true, forKey: "HasLaunchedOnce")
-            
-            let startDate = NSDate()
-            let endDate = startDate.dateByAddingTimeInterval(20)
-            NSUserDefaults.standardUserDefaults().setObject(endDate, forKey: "endDate")
-            
-            return false
+    deinit {
+        self.deregisterFromNotifications()
+    }
+    
+    /// Check if lists of Teachers, Groups and Auditoriums was updated more than 3 days ago
+    func checkUpdatedAtDateAndLoadData() {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let lastUpdatedAtDate = defaults.objectForKey(keyLastUpdatedAtDate) as? NSDate
+        if (lastUpdatedAtDate == nil) || (lastUpdatedAtDate != nil && lastUpdatedAtDate!.compare(NSDate().dateBySubtractingDays(3)) == .OrderedAscending) {
+            self.parser.sendDataRequest(.Auditorium)
+            self.parser.sendDataRequest(.Teacher)
+            self.parser.sendDataRequest(.Group)
         }
     }
     
@@ -152,6 +132,13 @@ class SearchViewController: UIViewController {
             }
         }
         return listData
+    }
+    
+    /// Save corresponding array of ListData and update UI
+    private func reloadListData(listData: [ListData], forKey key: String) {
+        self.saveListDataObjects(listData, forKey: key)
+        self.filterDataSourceWithQuery(self.searchBar.text)
+        self.tableView.reloadData()
     }
     
     /// Filter data source with search query
@@ -195,6 +182,33 @@ class SearchViewController: UIViewController {
                 print("Unkown selected segment in SearchViewController")
         }
     }
+    
+    // MARK: - Notifications
+    
+    private func registerForNotifications() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    private func deregisterFromNotifications() {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        if let userInfo = notification.userInfo {
+            if let keyboardSize: CGSize = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue.size {
+                let contentInset = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height,  0.0);
+                
+                self.tableView.contentInset = contentInset
+                self.tableView.scrollIndicatorInsets = contentInset
+            }
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        self.tableView.contentInset = UIEdgeInsetsZero;
+        self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
+    }
 }
 
 extension SearchViewController: ParserDataListDelegate {
@@ -215,11 +229,11 @@ extension SearchViewController: ParserDataListDelegate {
             // Assign array of corresponding objects
             switch requestType {
                 case .Auditorium:
-                    allAuditoriums = recordsToUpdate
+                    self.allAuditoriums = recordsToUpdate
                 case .Group:
-                    allGroups = recordsToUpdate
+                    self.allGroups = recordsToUpdate
                 case .Teacher:
-                    allTeachers = recordsToUpdate
+                    self.allTeachers = recordsToUpdate
             }
         }
     }
@@ -267,57 +281,9 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
         searchBar.resignFirstResponder()
-        enableCancelButton(searchBar)
-    }
-    
-    func enableCancelButton(searchBar: UISearchBar) {
-        let btnCancel: UIButton = searchBar.valueForKey("_cancelButton") as! UIButton
-        btnCancel.enabled = true
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         self.filterDataSourceWithQuery(searchText)
-    }
-}
-
-extension SearchViewController: UIScrollViewDelegate {
-    
-    override func viewWillAppear(animated: Bool) {
-        self.startKeyboardObserver()
-        let startDate = NSDate()
-        
-        scheduleLoadingData(startDate)
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        self.stopKeyboardObserver()
-    }
-    
-    private func startKeyboardObserver(){
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
-    }
-    
-    private func stopKeyboardObserver() {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
-    }
-    
-    func keyboardWillShow(notification: NSNotification) {
-        if let userInfo = notification.userInfo {
-            if let keyboardSize: CGSize = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue.size {
-                let contentInset = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height,  0.0);
-                
-                self.tableView.contentInset = contentInset
-                self.tableView.scrollIndicatorInsets = contentInset
-                
-                self.tableView.contentOffset = CGPointMake(self.tableView.contentOffset.x, 0 + keyboardSize.height)
-            }
-        }
-    }
-    
-    func keyboardWillHide(notification: NSNotification) {
-        self.tableView.contentInset = UIEdgeInsetsZero;
-        self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
     }
 }
