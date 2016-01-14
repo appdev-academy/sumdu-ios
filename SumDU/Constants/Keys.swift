@@ -6,6 +6,7 @@
 //  Copyright © 2015 AppDecAcademy. All rights reserved.
 //
 
-let keyAuditoriums      = "com.iosonrails.sumdu.auditoriums"
-let keyGroups           = "com.iosonrails.sumdu.groups"
-let keyTeachers         = "com.iosonrails.sumdu.teachers"
+let keyAuditoriums          = "academy.appdev.sumdu.auditoriums"
+let keyGroups               = "academy.appdev.sumdu.groups"
+let keyTeachers             = "academy.appdev.sumdu.teachers"
+let keyLastUpdatedAtDate    = "academy.appdev.sumdu.last-updated-at-date"
