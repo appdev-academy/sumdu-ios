@@ -136,6 +136,7 @@ class Schedule {
 /// MARK: - NSDate extension
 extension NSDate
 {
+    //TODO: optional init
     convenience
     init(dateString:String) {
         let dateStringFormatter = NSDateFormatter()
