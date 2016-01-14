@@ -72,31 +72,57 @@ class SearchViewController: UIViewController {
 
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         
-        // Load Auditoriums from UserDefaults
-        self.allAuditoriums = loadListDataObjects(keyAuditoriums)
-        
-        // Load Groups from UserDefaults
-        self.allGroups = loadListDataObjects(keyGroups)
-        
-        // Load Teachers from UserDefaults
-        self.allTeachers = loadListDataObjects(keyTeachers)
+        isAppLaunchedBefore()
         
         self.filterDataSourceWithQuery(nil)
         
         // Set DataListDelegate for Parser
         parser.dataListDelegate = self
         
-        // Auditories request example
-        parser.sendDataRequest(.Auditorium)
-        
-        // Teachers request example
-        parser.sendDataRequest(.Teacher)
-        
-        // Groups request example
-        parser.sendDataRequest(.Group)
-        
         //set delegate for searchBar
         self.searchBar.delegate = self
+
+    }
+    
+    /// Load data from site by specific period
+    func scheduleLoadingData(startDate: NSDate) {
+        if var endDate = NSUserDefaults.standardUserDefaults().valueForKey("endDate") as? NSDate {
+
+            if endDate.compare(startDate) == NSComparisonResult.OrderedAscending {
+                self.parser.sendDataRequest(.Auditorium)
+                self.parser.sendDataRequest(.Teacher)
+                self.parser.sendDataRequest(.Group)
+            
+                endDate = startDate.dateByAddingTimeInterval(days)
+                NSUserDefaults.standardUserDefaults().setObject(endDate, forKey: "endDate")
+            }
+        }
+    }
+    
+    /// Check if app is lauched before
+    func isAppLaunchedBefore() -> Bool {
+        if(NSUserDefaults.standardUserDefaults().boolForKey("HasLaunchedOnce")) {
+            
+            let startDate = NSDate()
+            scheduleLoadingData(startDate)
+            
+            // Load Auditoriums from UserDefaults
+            self.allAuditoriums = loadListDataObjects(keyAuditoriums)
+            // Load Groups from UserDefaults
+            self.allGroups = loadListDataObjects(keyGroups)
+            // Load Teachers from UserDefaults
+            self.allTeachers = loadListDataObjects(keyTeachers)
+            
+            return true
+        } else {
+            NSUserDefaults.standardUserDefaults().setBool(true, forKey: "HasLaunchedOnce")
+            
+            let startDate = NSDate()
+            let endDate = startDate.dateByAddingTimeInterval(20)
+            NSUserDefaults.standardUserDefaults().setObject(endDate, forKey: "endDate")
+            
+            return false
+        }
     }
     
     /// Function which stores ListData entities using NSUserDefaults class
@@ -258,6 +284,9 @@ extension SearchViewController: UIScrollViewDelegate {
     
     override func viewWillAppear(animated: Bool) {
         self.startKeyboardObserver()
+        let startDate = NSDate()
+        
+        scheduleLoadingData(startDate)
     }
     
     override func viewWillDisappear(animated: Bool) {
