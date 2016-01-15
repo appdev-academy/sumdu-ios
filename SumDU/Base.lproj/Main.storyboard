@@ -161,7 +161,11 @@
                         </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Пошук" id="gz8-Rj-7ae">
-                        <barButtonItem key="backBarButtonItem" id="VzN-E2-fUz"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="dMp-Xm-J9P">
+                            <connections>
+                                <action selector="refreshListDataObjects:" destination="rWU-h3-QzD" id="8eE-KA-ggK"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="searchBar" destination="zYR-O0-G46" id="6SL-ss-sDr"/>

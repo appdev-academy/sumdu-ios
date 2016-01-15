@@ -97,6 +97,13 @@ class SearchViewController: UIViewController {
         self.deregisterFromNotifications()
     }
     
+    /// Refresh [ListData] objects
+    @IBAction func refreshListDataObjects(sender: AnyObject) {
+        self.parser.sendDataRequest(.Auditorium)
+        self.parser.sendDataRequest(.Teacher)
+        self.parser.sendDataRequest(.Group)
+    }
+    
     /// Check if lists of Teachers, Groups and Auditoriums was updated more than 3 days ago
     func checkUpdatedAtDateAndLoadData() {
         let defaults = NSUserDefaults.standardUserDefaults()
