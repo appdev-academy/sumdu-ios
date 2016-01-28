@@ -26,10 +26,10 @@ class ScheduleViewController: UIViewController {
     var listData: ListData?
     
     /// Object of Parser class
-    var parser = Parser()
+    private var parser = Parser()
     
     /// Schedule records separetad by sections
-    var recordsBySection: [Section] = [] {
+    private var recordsBySection: [Section] = [] {
         didSet {
             // Reload table data after fill an array
             tableView.reloadData()
@@ -37,10 +37,10 @@ class ScheduleViewController: UIViewController {
     }
     
     /// Control refresh
-    var refreshControl = UIRefreshControl()
+    private var refreshControl = UIRefreshControl()
     
     /// URL for add shedule ivents to calendar
-    var calendarURL: NSURL?
+    private var calendarURL: NSURL?
     
     // MARK: - Functions
     
@@ -68,17 +68,17 @@ class ScheduleViewController: UIViewController {
         self.tableView?.addSubview(refreshControl)
         
         // Load schedule for selected row
-        self.loadShedule()
+        self.loadSchedule()
         
     }
     
     /// Refresh shcedule table
     func refresh() {
-        self.loadShedule()
+        self.loadSchedule()
     }
     
     /// Prepea and send schedule request in controller
-    func loadShedule() {
+    func loadSchedule() {
         // send request with parameters to get records of schedule
         parser.sendScheduleRequest(listData)
     }
@@ -90,7 +90,7 @@ class ScheduleViewController: UIViewController {
     
     /// Reload schedule, send new request
     @IBAction func refreshSchedule(sender: AnyObject) {
-        self.loadShedule()
+        self.loadSchedule()
     }
     
     /// Share schedule

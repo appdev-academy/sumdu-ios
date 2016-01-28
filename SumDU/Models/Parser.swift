@@ -270,7 +270,7 @@ class Parser {
             (groupsRequest) -> Void in
             
             if groupsRequest.result.isFailure {
-                NSLog("Error: \(groupsRequest.result.error!)")
+                Alert.showNetworkingError()
             }
             
             if groupsRequest.result.isSuccess {
@@ -281,6 +281,8 @@ class Parser {
                     let defaults = NSUserDefaults.standardUserDefaults()
                     defaults.setObject(NSDate(), forKey: keyLastUpdatedAtDate)
                     defaults.synchronize()
+                    
+                    Alert.showSuccessStatus()
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)

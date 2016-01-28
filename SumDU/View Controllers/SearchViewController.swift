@@ -8,6 +8,8 @@
 
 import UIKit
 import SwiftyJSON
+import SVProgressHUD
+
 
 class SearchViewController: UIViewController {
     
@@ -23,6 +25,7 @@ class SearchViewController: UIViewController {
     @IBOutlet private weak var searchBar: UISearchBar!
     @IBOutlet private weak var typeSegmentedControl: UISegmentedControl!
     @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private var refreshButton: UIBarButtonItem!
     
     // MARK: - Constants
     
@@ -173,12 +176,12 @@ class SearchViewController: UIViewController {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Setting up destination view controller data source here
+        // TODO: Make segue work for iPhone only, for iPad just change listData
         if segue.identifier == "ShowSchedule" {
             if let scheduleViewController = segue.destinationViewController as? ScheduleViewController {
                 scheduleViewController.listData = selectedCell
-    }
+            }
         }
-    
     }
     
     @IBAction private func selectionDidChange(sender: UISegmentedControl) {
