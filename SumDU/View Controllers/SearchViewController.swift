@@ -25,7 +25,7 @@ class SearchViewController: UIViewController {
     @IBOutlet private weak var searchBar: UISearchBar!
     @IBOutlet private weak var typeSegmentedControl: UISegmentedControl!
     @IBOutlet private weak var tableView: UITableView!
-    @IBOutlet var refreshButton: UIBarButtonItem!
+    @IBOutlet private var refreshButton: UIBarButtonItem!
     
     // MARK: - Constants
     
@@ -72,7 +72,7 @@ class SearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         
         // Load and filter initial data
@@ -98,17 +98,6 @@ class SearchViewController: UIViewController {
     
     deinit {
         self.deregisterFromNotifications()
-    }
-    
-    /// Function which forbits interaction with UIViewController if Enternet is not avaiable
-    class func loadedDataWithErrors() {
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-        SVProgressHUD.showWithStatus("check your internet connection")
-    }
-    
-    /// Function executes when you successfully loaded [ListData] data
-    class func sucessfullyLoadedData() {
-        SVProgressHUD.showSuccessWithStatus("Success!")
     }
     
     /// Refresh [ListData] objects
@@ -187,12 +176,12 @@ class SearchViewController: UIViewController {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Setting up destination view controller data source here
+        // TODO: Make segue work for iPhone only, for iPad just change listData
         if segue.identifier == "ShowSchedule" {
             if let scheduleViewController = segue.destinationViewController as? ScheduleViewController {
                 scheduleViewController.listData = selectedCell
-    }
+            }
         }
-    
     }
     
     @IBAction private func selectionDidChange(sender: UISegmentedControl) {

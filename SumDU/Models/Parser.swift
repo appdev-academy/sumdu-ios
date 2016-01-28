@@ -270,8 +270,7 @@ class Parser {
             (groupsRequest) -> Void in
             
             if groupsRequest.result.isFailure {
-                NSLog("Error: \(groupsRequest.result.error!)")
-                SearchViewController.loadedDataWithErrors()
+                Alert.showNetworkingError()
             }
             
             if groupsRequest.result.isSuccess {
@@ -283,7 +282,7 @@ class Parser {
                     defaults.setObject(NSDate(), forKey: keyLastUpdatedAtDate)
                     defaults.synchronize()
                     
-                    SearchViewController.sucessfullyLoadedData()
+                    Alert.showSuccessStatus()
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
