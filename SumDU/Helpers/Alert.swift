@@ -21,10 +21,10 @@ class Alert {
     // MARK: - Helpers
     
     class func showSuccessStatus() {
-        Alert.showWithStatus(NSLocalizedString("Success!", comment: ""))
+        Alert.showWithStatus(NSLocalizedString("Успіх!", comment: ""))
     }
     
     class func showNetworkingError() {
-        Alert.showWithError(NSLocalizedString("Check your internet connection", comment: ""))
+        Alert.showWithError(NSLocalizedString("Перевірте Інтернет з'єднання!", comment: ""))
     }
 }
