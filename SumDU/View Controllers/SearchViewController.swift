@@ -26,7 +26,6 @@ class SearchViewController: UIViewController {
     @IBOutlet private weak var typeSegmentedControl: UISegmentedControl!
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private var refreshButton: UIBarButtonItem!
-    @IBOutlet private weak var selectSegment: UISegmentedControl!
     
     // MARK: - Constants
     
@@ -73,10 +72,12 @@ class SearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        selectSegment.setTitle(NSLocalizedString("Викладач", comment: ""), forSegmentAtIndex: 0)
-        selectSegment.setTitle(NSLocalizedString("Група", comment: ""), forSegmentAtIndex: 1)
-        selectSegment.setTitle(NSLocalizedString("Аудиторія", comment: ""), forSegmentAtIndex: 2)
-        selectSegment.setTitle(NSLocalizedString("Історія", comment: ""), forSegmentAtIndex: 3)
+        typeSegmentedControl.setTitle(NSLocalizedString("Teacher", comment: ""), forSegmentAtIndex: 0)
+        typeSegmentedControl.setTitle(NSLocalizedString("Group", comment: ""), forSegmentAtIndex: 1)
+        typeSegmentedControl.setTitle(NSLocalizedString("Auditorium", comment: ""), forSegmentAtIndex: 2)
+        typeSegmentedControl.setTitle(NSLocalizedString("History", comment: ""), forSegmentAtIndex: 3)
+        
+        self.navigationItem.title = NSLocalizedString("Schedule", comment: "")
         
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         

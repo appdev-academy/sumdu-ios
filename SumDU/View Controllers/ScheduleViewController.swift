@@ -63,7 +63,7 @@ class ScheduleViewController: UIViewController {
         self.navigationController?.navigationBar.titleTextAttributes = attributes
         
         // Set up the refresh control
-        self.refreshControl.attributedTitle = NSAttributedString(string: "Потягніть для оновлення")
+        self.refreshControl.attributedTitle = NSAttributedString(string: NSLocalizedString("Pull to refresh", comment: ""))
         self.refreshControl.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
         self.tableView?.addSubview(refreshControl)
         
@@ -117,7 +117,7 @@ extension ScheduleViewController: UITableViewDataSource {
         
         // Create a date formatter
         let dateFormatter = NSDateFormatter()
-        let locale = NSLocale(localeIdentifier: "uk_UA_POSIX")
+        let locale = NSLocale(localeIdentifier: NSLocalizedString("en_US", comment: ""))
         dateFormatter.dateFormat = "dd MMMM, EEEE"
         dateFormatter.locale = locale
         
@@ -178,7 +178,7 @@ extension ScheduleViewController: UITableViewDataSource {
         var groupNameForCell = ""
         
         if scheduleRecord.groupName.characters.count > 0 {
-            groupNameForCell = " для " + scheduleRecord.groupName
+            groupNameForCell = NSLocalizedString(" for ", comment: "") + scheduleRecord.groupName
         }
         cell.groupName.text = groupNameForCell
         
