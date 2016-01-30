@@ -281,6 +281,11 @@ class Parser {
             
             if groupsRequest.result.isFailure {
                 Alert.showNetworkingError()
+                // Dismiss progress
+                SVProgressHUD.dismiss()
+                let defaults = NSUserDefaults.standardUserDefaults()
+                defaults.removeObjectForKey(keyForRefreshButtonPressed)
+                defaults.synchronize()
             }
             
             if groupsRequest.result.isSuccess {
@@ -291,15 +296,18 @@ class Parser {
                     let defaults = NSUserDefaults.standardUserDefaults()
                     defaults.setObject(NSDate(), forKey: keyLastUpdatedAtDate)
                     defaults.synchronize()
-                    if let isRefreshButtonPressed = defaults.objectForKey(keyForRefreshButtonPressed) {
-                        if isRefreshButtonPressed.isEqualToValue(true) {
-                            Alert.showSuccessStatus()
-                        }
-                    }
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
-                        // Dismiss progress
+                        if let isRefreshButtonPressed = defaults.objectForKey(keyForRefreshButtonPressed) {
+                            if isRefreshButtonPressed.isEqualToValue(true) {
+                                Alert.showSuccessStatus()
+                                defaults.removeObjectForKey(keyForRefreshButtonPressed)
+                            } else {
+                                SVProgressHUD.dismiss()
+                            }
+                            SVProgressHUD.dismiss()
+                        }
                         SVProgressHUD.dismiss()
                     })
                 }
