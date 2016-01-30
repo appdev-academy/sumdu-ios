@@ -242,8 +242,7 @@ class Parser {
         let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
         
         // Start of showing progress and block user interface
-        SVProgressHUD.setDefaultMaskType(SVProgressHUDMaskType.Gradient)
-        SVProgressHUD.show()
+        SVProgressHUD.showWithMaskType(SVProgressHUDMaskType.Gradient)
         
         // Send request
         Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
@@ -275,8 +274,7 @@ class Parser {
     func sendDataRequest(relatedDataParameter: ListDataType) {
         
         // Start of showing progress and block user interface
-        SVProgressHUD.setDefaultMaskType(SVProgressHUDMaskType.Gradient)
-        SVProgressHUD.show()
+        SVProgressHUD.showWithMaskType(SVProgressHUDMaskType.Gradient)
         
         Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
             (groupsRequest) -> Void in
@@ -293,6 +291,8 @@ class Parser {
                     let defaults = NSUserDefaults.standardUserDefaults()
                     defaults.setObject(NSDate(), forKey: keyLastUpdatedAtDate)
                     defaults.synchronize()
+                    
+                    Alert.showSuccessStatus()
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
