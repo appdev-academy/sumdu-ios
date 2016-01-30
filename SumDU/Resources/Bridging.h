@@ -6,9 +6,4 @@
 //  Copyright © 2016 AppDecAcademy. All rights reserved.
 //
 
-#ifndef Bridging_h
-#define Bridging_h
-
 #import <SVProgressHUD/SVProgressHUD.h>
-
-#endif /* Bridging_h */

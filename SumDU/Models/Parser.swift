@@ -281,8 +281,11 @@ class Parser {
                     let defaults = NSUserDefaults.standardUserDefaults()
                     defaults.setObject(NSDate(), forKey: keyLastUpdatedAtDate)
                     defaults.synchronize()
-                    
-                    Alert.showSuccessStatus()
+                    if let isRefreshButtonPressed = defaults.objectForKey(keyForRefreshButtonPressed) {
+                        if isRefreshButtonPressed.isEqualToValue(true) {
+                            Alert.showSuccessStatus()
+                        }
+                    }
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)

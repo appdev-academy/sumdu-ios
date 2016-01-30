@@ -1,0 +1,18 @@
+/* Class = "UINavigationItem"; title = "Schedule"; ObjectID = "9SS-Gt-5Zd"; */
+"9SS-Gt-5Zd.title" = "Розклад";
+
+/* Class = "UISegmentedControl"; Jgf-z8-fQo.segmentTitles[0] = "Teacher"; ObjectID = "Jgf-z8-fQo"; */
+"Jgf-z8-fQo.segmentTitles[0]" = "Викладач";
+
+/* Class = "UISegmentedControl"; Jgf-z8-fQo.segmentTitles[1] = "Group"; ObjectID = "Jgf-z8-fQo"; */
+"Jgf-z8-fQo.segmentTitles[1]" = "Група";
+
+/* Class = "UISegmentedControl"; Jgf-z8-fQo.segmentTitles[2] = "Auditorium"; ObjectID = "Jgf-z8-fQo"; */
+"Jgf-z8-fQo.segmentTitles[2]" = "Аудиторiя";
+
+/* Class = "UISegmentedControl"; Jgf-z8-fQo.segmentTitles[3] = "History"; ObjectID = "Jgf-z8-fQo"; */
+"Jgf-z8-fQo.segmentTitles[3]" = "Історія";
+
+/* Class = "UINavigationItem"; title = "Search"; ObjectID = "gz8-Rj-7ae"; */
+"gz8-Rj-7ae.title" = "Пошук";
+
