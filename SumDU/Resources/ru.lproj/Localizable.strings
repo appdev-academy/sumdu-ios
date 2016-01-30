@@ -2,29 +2,11 @@
 " for " = " для ";
 
 /* No comment provided by engineer. */
-"Auditorium" = "Аудитория";
+"Done" = "Готово";
 
 /* No comment provided by engineer. */
-"Check Internet connection!" = "Проверьте Интернет соединение";
-
-/* No comment provided by engineer. */
-"Group" = "Группа";
-
-/* No comment provided by engineer. */
-"History" = "История";
+"Please, check your network connection or try again later" = "Пожалуйста, проверьте ваше подключение к сети или попробуйте обновить позже";
 
 /* No comment provided by engineer. */
 "Pull to refresh" = "Потяните для обновления";
-
-/* No comment provided by engineer. */
-"Schedule" = "Расписание";
-
-/* No comment provided by engineer. */
-"Success!" = "Успешно!";
-
-/* No comment provided by engineer. */
-"Teacher" = "Преподаватель";
-
-/* No comment provided by engineer. */
-"en_US" = "ru_RU";
 

@@ -117,9 +117,7 @@ extension ScheduleViewController: UITableViewDataSource {
         
         // Create a date formatter
         let dateFormatter = NSDateFormatter()
-        let locale = NSLocale(localeIdentifier: NSLocalizedString("en_US", comment: ""))
         dateFormatter.dateFormat = "dd MMMM, EEEE"
-        dateFormatter.locale = locale
         
         // Generate section header
         let sectionHeader = dateFormatter.stringFromDate(recordsBySection[section].date)

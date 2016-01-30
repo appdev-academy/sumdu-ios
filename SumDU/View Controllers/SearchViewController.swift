@@ -72,12 +72,6 @@ class SearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        typeSegmentedControl.setTitle(NSLocalizedString("Teacher", comment: ""), forSegmentAtIndex: 0)
-        typeSegmentedControl.setTitle(NSLocalizedString("Group", comment: ""), forSegmentAtIndex: 1)
-        typeSegmentedControl.setTitle(NSLocalizedString("Auditorium", comment: ""), forSegmentAtIndex: 2)
-        typeSegmentedControl.setTitle(NSLocalizedString("History", comment: ""), forSegmentAtIndex: 3)
-        
-        self.navigationItem.title = NSLocalizedString("Schedule", comment: "")
         
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         
