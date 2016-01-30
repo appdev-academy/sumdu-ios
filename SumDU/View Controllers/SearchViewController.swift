@@ -104,6 +104,7 @@ class SearchViewController: UIViewController {
     @IBAction func refreshListDataObjects(sender: AnyObject) {
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(true, forKey: keyForRefreshButtonPressed)
+        defaults.synchronize()
         
         self.parser.sendDataRequest(.Auditorium)
         self.parser.sendDataRequest(.Teacher)
