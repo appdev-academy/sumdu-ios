@@ -9,6 +9,7 @@
 import Foundation
 import Alamofire
 import SwiftyJSON
+import SVProgressHUD
 
 /// Request parameter for schedule
 enum ScheduleRequestParameter: String {
@@ -240,12 +241,16 @@ class Parser {
         // Get data for request
         let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
         
+        // Start of showing progress and block user interface
+        SVProgressHUD.setDefaultMaskType(SVProgressHUDMaskType.Gradient)
+        SVProgressHUD.show()
+        
         // Send request
         Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
             (scheduleResponse) -> Void in
             
             if scheduleResponse.result.isFailure {
-                NSLog("Error: \(scheduleResponse.result.error!)")
+                Alert.showNetworkingError()
             }
             
             if scheduleResponse.result.isSuccess {
@@ -254,6 +259,8 @@ class Parser {
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         self.scheduleDelegate?.getSchedule(response)
+                        // Dismiss progress
+                        SVProgressHUD.dismiss()
                     })
                 }
             }
@@ -266,6 +273,11 @@ class Parser {
      - parameter withParameter:  type of related request
      */
     func sendDataRequest(relatedDataParameter: ListDataType) {
+        
+        // Start of showing progress and block user interface
+        SVProgressHUD.setDefaultMaskType(SVProgressHUDMaskType.Gradient)
+        SVProgressHUD.show()
+        
         Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
             (groupsRequest) -> Void in
             
@@ -282,10 +294,10 @@ class Parser {
                     defaults.setObject(NSDate(), forKey: keyLastUpdatedAtDate)
                     defaults.synchronize()
                     
-                    Alert.showSuccessStatus()
-                    
                     dispatch_async(dispatch_get_main_queue(), {
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
+                        // Dismiss progress
+                        SVProgressHUD.dismiss()
                     })
                 }
             }

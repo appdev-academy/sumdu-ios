@@ -176,8 +176,7 @@ class SearchViewController: UIViewController {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Setting up destination view controller data source here
-        // TODO: Make segue work for iPhone only, for iPad just change listData
-        if segue.identifier == "ShowSchedule" {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone && segue.identifier == "ShowSchedule" {
             if let scheduleViewController = segue.destinationViewController as? ScheduleViewController {
                 scheduleViewController.listData = selectedCell
             }
