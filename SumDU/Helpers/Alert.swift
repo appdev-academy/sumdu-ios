@@ -11,11 +11,15 @@ import SVProgressHUD
 
 class Alert {
     class func showWithStatus(status: String) {
-        SVProgressHUD.showSuccessWithStatus(status, maskType: SVProgressHUDMaskType.Gradient)
+        dispatch_async(dispatch_get_main_queue(), {
+            SVProgressHUD.showSuccessWithStatus(status, maskType: SVProgressHUDMaskType.Gradient)
+        })
     }
     
     class func showWithError(error: String) {
-        SVProgressHUD.showErrorWithStatus(error, maskType: SVProgressHUDMaskType.Gradient)
+        dispatch_async(dispatch_get_main_queue(), {
+            SVProgressHUD.showErrorWithStatus(error, maskType: SVProgressHUDMaskType.Gradient)
+        })
     }
     
     // MARK: - Helpers
