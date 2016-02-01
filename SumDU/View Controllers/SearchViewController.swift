@@ -248,11 +248,11 @@ extension SearchViewController: ParserDataListDelegate {
             // Assign array of corresponding objects
             switch requestType {
                 case .Auditorium:
-                    self.allAuditoriums = recordsToUpdate
+                    self.allAuditoriums = recordsToUpdate.sort {$0.name.localizedCaseInsensitiveCompare($1.name) == NSComparisonResult.OrderedAscending}
                 case .Group:
-                    self.allGroups = recordsToUpdate
+                    self.allGroups = recordsToUpdate.sort {$0.name.localizedCaseInsensitiveCompare($1.name) == NSComparisonResult.OrderedAscending}
                 case .Teacher:
-                    self.allTeachers = recordsToUpdate
+                    self.allTeachers = recordsToUpdate.sort {$0.name.localizedCaseInsensitiveCompare($1.name) == NSComparisonResult.OrderedAscending}
             }
         }
     }
