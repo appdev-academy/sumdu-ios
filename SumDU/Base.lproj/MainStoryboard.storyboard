@@ -198,7 +198,7 @@
                                         <rect key="frame" x="0.0" y="25" width="280" height="107"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="O3O-9a-INX" id="Z5o-Bf-P7z">
-                                            <rect key="frame" x="0.0" y="0.0" width="280" height="107"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="280" height="106.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="Pair Time Label" textAlignment="natural" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OIH-JI-fXT">

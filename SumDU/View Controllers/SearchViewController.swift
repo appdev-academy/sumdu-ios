@@ -38,23 +38,31 @@ class SearchViewController: UIViewController {
     /// Array of all Auditoriums
     var allAuditoriums: [ListData] = [] {
         didSet {
-            self.reloadListData(self.allAuditoriums, forKey: keyAuditoriums)
+            self.reloadListData(self.allAuditoriums, forKey: Key.getKey(.Auditoriums))
         }
     }
     /// Array of all Groups
     var allGroups: [ListData] = [] {
         didSet {
-            self.reloadListData(self.allGroups, forKey: keyGroups)
+            self.reloadListData(self.allGroups, forKey: Key.getKey(.Groups))
         }
     }
     /// Array of all Teachers
     var allTeachers: [ListData] = [] {
         didSet {
-            self.reloadListData(self.allTeachers, forKey: keyTeachers)
+            self.reloadListData(self.allTeachers, forKey: Key.getKey(.Teachers))
         }
     }
     var dataSource: [ListData] = [] {
         didSet {
+            self.tableView.reloadData()
+        }
+    }
+    
+    var history: [ListData] = [] {
+        didSet {
+            self.history = removeHistoryRecord(uniq(self.history))
+            self.saveListDataObjects(self.history, forKey: Key.getKey(.History))
             self.tableView.reloadData()
         }
     }
@@ -76,9 +84,11 @@ class SearchViewController: UIViewController {
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         
         // Load and filter initial data
-        self.allTeachers = self.loadListDataObjects(keyTeachers)
-        self.allGroups = self.loadListDataObjects(keyGroups)
-        self.allAuditoriums = self.loadListDataObjects(keyAuditoriums)
+        self.allTeachers = self.loadListDataObjects(Key.getKey(.Teachers))
+        self.allGroups = self.loadListDataObjects(Key.getKey(.Groups))
+        self.allAuditoriums = self.loadListDataObjects(Key.getKey(.Auditoriums))
+        self.history = self.loadListDataObjects(Key.getKey(.History))
+        
         self.filterDataSourceWithQuery(nil)
         
         self.registerForNotifications()
@@ -103,7 +113,7 @@ class SearchViewController: UIViewController {
     /// Refresh [ListData] objects
     @IBAction func refreshListDataObjects(sender: AnyObject) {
         let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(true, forKey: keyForRefreshButtonPressed)
+        defaults.setObject(true, forKey: Key.getKey(.ButtonPressed))
         defaults.synchronize()
         
         self.parser.sendDataRequest(.Auditorium)
@@ -114,7 +124,7 @@ class SearchViewController: UIViewController {
     /// Check if lists of Teachers, Groups and Auditoriums was updated more than 3 days ago
     func checkUpdatedAtDateAndLoadData() {
         let defaults = NSUserDefaults.standardUserDefaults()
-        let lastUpdatedAtDate = defaults.objectForKey(keyLastUpdatedAtDate) as? NSDate
+        let lastUpdatedAtDate = defaults.objectForKey(Key.getKey(.LastUpdatedAtDate)) as? NSDate
         if (lastUpdatedAtDate == nil) || (lastUpdatedAtDate != nil && lastUpdatedAtDate!.compare(NSDate().dateBySubtractingDays(3)) == .OrderedAscending) {
             self.parser.sendDataRequest(.Auditorium)
             self.parser.sendDataRequest(.Teacher)
@@ -158,6 +168,26 @@ class SearchViewController: UIViewController {
         self.tableView.reloadData()
     }
     
+    /// Select only uniq data from History
+    private func uniq <T: Equatable>(lst: [T]) -> [T] {
+        var seen: [T] = []
+        return lst.filter { x in
+            let unseen = seen.indexOf(x) == nil
+            if (unseen) {
+                seen.append(x)
+            }
+            return unseen
+        }
+    }
+    
+    /// Remove the oldest saved data from History
+    private func removeHistoryRecord(var array: [ListData]) -> [ListData] {
+        while array.count > 50 {
+            array.removeFirst()
+        }
+        return array
+    }
+    
     /// Filter data source with search query
     private func filterDataSourceWithQuery(query: String?) {
         var listDataArray: [ListData] = []
@@ -169,7 +199,7 @@ class SearchViewController: UIViewController {
             case .Auditoriums:
                 listDataArray = allAuditoriums
             case .Favorites:
-                break
+                listDataArray = history
         }
         if let query = query where query.characters.count > 0 {
             dataSource = listDataArray.filter { return $0.name.lowercaseString.containsString(query.lowercaseString) }
@@ -272,12 +302,12 @@ extension SearchViewController: UITableViewDelegate {
         case .Auditoriums:
             dataList = allAuditoriums
         case .Favorites:
-            dataList = []
+            dataList = history
         }
         
         // Remember selected sell
         selectedCell = dataList[indexPath.item]
-        
+        history.append(selectedCell!)
         self.performSegueWithIdentifier("ShowSchedule", sender: nil)
     }
 }
