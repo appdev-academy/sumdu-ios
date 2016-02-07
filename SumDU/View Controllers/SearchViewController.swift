@@ -38,19 +38,19 @@ class SearchViewController: UIViewController {
     /// Array of all Auditoriums
     var allAuditoriums: [ListData] = [] {
         didSet {
-            self.reloadListData(self.allAuditoriums, forKey: Key.getKey(.Auditoriums))
+            self.reloadListData(self.allAuditoriums, forKey: UserDefaultsKey.Auditoriums.key)
         }
     }
     /// Array of all Groups
     var allGroups: [ListData] = [] {
         didSet {
-            self.reloadListData(self.allGroups, forKey: Key.getKey(.Groups))
+            self.reloadListData(self.allGroups, forKey: UserDefaultsKey.Groups.key)
         }
     }
     /// Array of all Teachers
     var allTeachers: [ListData] = [] {
         didSet {
-            self.reloadListData(self.allTeachers, forKey: Key.getKey(.Teachers))
+            self.reloadListData(self.allTeachers, forKey: UserDefaultsKey.Teachers.key)
         }
     }
     var dataSource: [ListData] = [] {
@@ -62,7 +62,7 @@ class SearchViewController: UIViewController {
     var history: [ListData] = [] {
         didSet {
             self.history = removeHistoryRecord(uniq(self.history))
-            self.saveListDataObjects(self.history, forKey: Key.getKey(.History))
+            self.saveListDataObjects(self.history, forKey: UserDefaultsKey.History.key)
             self.tableView.reloadData()
         }
     }
@@ -84,10 +84,10 @@ class SearchViewController: UIViewController {
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         
         // Load and filter initial data
-        self.allTeachers = self.loadListDataObjects(Key.getKey(.Teachers))
-        self.allGroups = self.loadListDataObjects(Key.getKey(.Groups))
-        self.allAuditoriums = self.loadListDataObjects(Key.getKey(.Auditoriums))
-        self.history = self.loadListDataObjects(Key.getKey(.History))
+        self.allTeachers = self.loadListDataObjects(UserDefaultsKey.Teachers.key)
+        self.allGroups = self.loadListDataObjects(UserDefaultsKey.Groups.key)
+        self.allAuditoriums = self.loadListDataObjects(UserDefaultsKey.Auditoriums.key)
+        self.history = self.loadListDataObjects(UserDefaultsKey.History.key)
         
         self.filterDataSourceWithQuery(nil)
         
@@ -113,7 +113,7 @@ class SearchViewController: UIViewController {
     /// Refresh [ListData] objects
     @IBAction func refreshListDataObjects(sender: AnyObject) {
         let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(true, forKey: Key.getKey(.ButtonPressed))
+        defaults.setObject(true, forKey: UserDefaultsKey.ButtonPressed.key)
         defaults.synchronize()
         
         self.parser.sendDataRequest(.Auditorium)
@@ -124,7 +124,7 @@ class SearchViewController: UIViewController {
     /// Check if lists of Teachers, Groups and Auditoriums was updated more than 3 days ago
     func checkUpdatedAtDateAndLoadData() {
         let defaults = NSUserDefaults.standardUserDefaults()
-        let lastUpdatedAtDate = defaults.objectForKey(Key.getKey(.LastUpdatedAtDate)) as? NSDate
+        let lastUpdatedAtDate = defaults.objectForKey(UserDefaultsKey.LastUpdatedAtDate.key) as? NSDate
         if (lastUpdatedAtDate == nil) || (lastUpdatedAtDate != nil && lastUpdatedAtDate!.compare(NSDate().dateBySubtractingDays(3)) == .OrderedAscending) {
             self.parser.sendDataRequest(.Auditorium)
             self.parser.sendDataRequest(.Teacher)
@@ -292,22 +292,9 @@ extension SearchViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        
-        var dataList: [ListData] = allTeachers
-        switch selectedSegment {
-        case .Teachers:
-            dataList = allTeachers
-        case .Groups:
-            dataList = allGroups
-        case .Auditoriums:
-            dataList = allAuditoriums
-        case .Favorites:
-            dataList = history
-        }
-        
         // Remember selected sell
-        selectedCell = dataList[indexPath.item]
-        history.append(selectedCell!)
+        self.selectedCell = dataSource[indexPath.row]
+        self.history.append(selectedCell!)
         self.performSegueWithIdentifier("ShowSchedule", sender: nil)
     }
 }

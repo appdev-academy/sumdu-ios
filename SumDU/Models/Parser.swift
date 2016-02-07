@@ -284,7 +284,7 @@ class Parser {
                 // Dismiss progress
                 SVProgressHUD.dismiss()
                 let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.removeObjectForKey(Key.getKey(.ButtonPressed))
+                defaults.removeObjectForKey(UserDefaultsKey.ButtonPressed.key)
                 defaults.synchronize()
             }
             
@@ -294,15 +294,15 @@ class Parser {
                     let response = JSON(resultValue)
                     
                     let defaults = NSUserDefaults.standardUserDefaults()
-                    defaults.setObject(NSDate(), forKey: Key.getKey(.LastUpdatedAtDate))
+                    defaults.setObject(NSDate(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
                     defaults.synchronize()
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
-                        if let isRefreshButtonPressed = defaults.objectForKey(Key.getKey(.ButtonPressed)) {
+                        if let isRefreshButtonPressed = defaults.objectForKey(UserDefaultsKey.ButtonPressed.key) {
                             if isRefreshButtonPressed.isEqualToValue(true) {
                                 Alert.showSuccessStatus()
-                                defaults.removeObjectForKey(Key.getKey(.ButtonPressed))
+                                defaults.removeObjectForKey(UserDefaultsKey.ButtonPressed.key)
                             } else {
                                 SVProgressHUD.dismiss()
                             }
