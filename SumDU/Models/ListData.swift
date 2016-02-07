@@ -59,3 +59,9 @@ struct ListData {
     }
     
 }
+
+extension ListData: Equatable {}
+
+    func ==(lhs: ListData, rhs:ListData) -> Bool {
+        return lhs.name == rhs.name
+    }
