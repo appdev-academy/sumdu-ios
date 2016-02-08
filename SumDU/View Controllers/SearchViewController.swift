@@ -210,10 +210,8 @@ class SearchViewController: UIViewController {
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Setting up destination view controller data source here
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone && segue.identifier == "ShowSchedule" {
-            if let scheduleViewController = segue.destinationViewController as? ScheduleViewController {
-                scheduleViewController.listData = selectedCell
-            }
+        if let scheduleViewController = segue.destinationViewController as? ScheduleViewController where segue.identifier == "ShowSchedule" {
+            scheduleViewController.listData = selectedCell
         }
     }
     
@@ -295,7 +293,9 @@ extension SearchViewController: UITableViewDelegate {
         // Remember selected sell
         self.selectedCell = dataSource[indexPath.row]
         self.history.append(selectedCell!)
-        self.performSegueWithIdentifier("ShowSchedule", sender: nil)
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            self.performSegueWithIdentifier("ShowSchedule", sender: nil)
+        }
     }
 }
 
