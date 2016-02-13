@@ -31,7 +31,7 @@ class ScheduleViewController: UIViewController {
     /// Schedule records separetad by sections
     private var recordsBySection: [Section] = [] {
         didSet {
-            // Reload table data after fill an array
+            self.saveSectionData(self.recordsBySection, forKey: UserDefaultsKey.Section.key)
             tableView.reloadData()
         }
     }
@@ -72,15 +72,68 @@ class ScheduleViewController: UIViewController {
         
     }
     
-    /// Refresh shcedule table
-    func refresh() {
-        self.loadSchedule()
+    /// Save schedule information to userDefaults
+    private func saveSectionData(listDataCoder: [Section], forKey: String) {
+        var sectionCoder: [SectionCoder] = []
+        for sectionCoderRecord in listDataCoder {
+            sectionCoder.append(sectionCoderRecord.sectionCoder)
+        }
+        
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let data = NSKeyedArchiver.archivedDataWithRootObject(sectionCoder)
+        userDefaults.setObject(data, forKey: forKey)
+        userDefaults.synchronize()
     }
     
-    /// Prepea and send schedule request in controller
-    func loadSchedule() {
-        // send request with parameters to get records of schedule
+    /// Load schedule information from userDefaults
+    func loadSectionDataObjects(forKey: String) -> [Section] {
+        var section: [Section] = []
+        
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        if let listScheduleCoder = userDefaults.dataForKey(forKey) {
+            
+            if let listScheduleDataArray = NSKeyedUnarchiver.unarchiveObjectWithData(listScheduleCoder) as? [SectionCoder] {
+                for array in listScheduleDataArray {
+                    section.append(Section(date: array.section!.date, records: array.section!.records))
+                }
+            }
+        }
+        return section
+    }
+    
+    /// Refresh shcedule table
+    func refresh() {
         parser.sendScheduleRequest(listData)
+        self.tableView.reloadData()
+        self.refreshControl.endRefreshing()
+    }
+    
+    /// Compare the current date with stored date in userDefaults
+    private func isCurrentDate(date: String) {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let currentDate = defaults.objectForKey(UserDefaultsKey.CurrentDate.key) as? String
+
+        if currentDate == nil {
+            defaults.setObject(date, forKey: UserDefaultsKey.CurrentDate.key)
+            defaults.setObject(false, forKey: UserDefaultsKey.IsCurrentDate.key)
+        } else if currentDate <= date {
+            defaults.setObject(true, forKey: UserDefaultsKey.IsCurrentDate.key)
+        } else {
+            defaults.setObject(false, forKey: UserDefaultsKey.IsCurrentDate.key)
+        }
+    }
+    
+    /// Prepear and send schedule request in controller
+    private func loadSchedule() {
+        // send request with parameters to get records of schedule
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let isCurrentDate = defaults.objectForKey(UserDefaultsKey.IsCurrentDate.key) as? Bool
+
+        if isCurrentDate == false || isCurrentDate == nil {
+            self.parser.sendScheduleRequest(listData)
+        } else {
+            self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.Section.key)
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -90,7 +143,7 @@ class ScheduleViewController: UIViewController {
     
     /// Reload schedule, send new request
     @IBAction func refreshSchedule(sender: AnyObject) {
-        self.loadSchedule()
+        self.parser.sendScheduleRequest(listData)
     }
     
     /// Share schedule
@@ -121,7 +174,8 @@ extension ScheduleViewController: UITableViewDataSource {
         
         // Generate section header
         let sectionHeader = dateFormatter.stringFromDate(recordsBySection[section].date)
-        
+
+        isCurrentDate(sectionHeader)
         return sectionHeader
     }
     
@@ -243,7 +297,7 @@ extension ScheduleViewController: ParserScheduleDelegate {
                 }
                 
                 // Append to array of sections
-                forRecordsBySection.append(Section(title: singleDate, records: scheduleRecordsInSection))
+                forRecordsBySection.append(Section(date: singleDate, records: scheduleRecordsInSection))
             }
             
             // Move data from tempopary var to public

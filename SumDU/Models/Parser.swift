@@ -164,9 +164,9 @@ class Parser {
             let id = String(selectedId)
             
             switch selectedType {
-            case ListDataType.Group: groupId = id
-            case ListDataType.Teacher: teacherId = id
-            case ListDataType.Auditorium: auditoriumId = id
+                case ListDataType.Group: groupId = id
+                case ListDataType.Teacher: teacherId = id
+                case ListDataType.Auditorium: auditoriumId = id
             }
         }
         

@@ -9,6 +9,15 @@
 import Foundation
 
 extension NSDate {
+    
+    convenience
+    init(dateString:String) {
+        let dateStringFormatter = NSDateFormatter()
+        dateStringFormatter.dateFormat = "dd.MM.yyyy"
+        let date = dateStringFormatter.dateFromString(dateString)!
+        self.init(timeInterval:0, sinceDate:date)
+    }
+    
     func dateByAddingDays(days: Int) -> NSDate {
         let timeInterval = NSTimeInterval(days*24*60*60)
         let newDate = self.dateByAddingTimeInterval(timeInterval)

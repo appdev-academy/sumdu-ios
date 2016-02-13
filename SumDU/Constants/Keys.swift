@@ -16,6 +16,9 @@ enum UserDefaultsKey: String {
     case LastUpdatedAtDate = "last-updated-at-date"
     case History = "history"
     case ButtonPressed = "is-refresh-button-pressed"
+    case Section = "Section"
+    case CurrentDate = "current-date"
+    case IsCurrentDate = "is-current-date"
     
     var key: String {
         get {
@@ -33,6 +36,12 @@ enum UserDefaultsKey: String {
                     return prefix + History.rawValue
                 case .ButtonPressed:
                     return prefix + ButtonPressed.rawValue
+                case .Section:
+                    return prefix + Section.rawValue
+                case .CurrentDate:
+                    return prefix + CurrentDate.rawValue
+                case .IsCurrentDate:
+                    return prefix + IsCurrentDate.rawValue
             }
         }
     }
