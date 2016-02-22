@@ -31,7 +31,7 @@ class ScheduleViewController: UIViewController {
     /// Schedule records separetad by sections
     private var recordsBySection: [Section] = [] {
         didSet {
-            self.saveSectionData(self.recordsBySection, forKey: UserDefaultsKey.Section.key)
+            self.saveSectionData(self.recordsBySection, forKey: UserDefaultsKey.scheduleKey(listData!))
             tableView.reloadData()
         }
     }
@@ -69,7 +69,7 @@ class ScheduleViewController: UIViewController {
         
         // Load schedule for selected row
         self.loadSchedule()
-        
+        self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData!))
     }
     
     /// Save schedule information to userDefaults
@@ -103,37 +103,22 @@ class ScheduleViewController: UIViewController {
     
     /// Refresh shcedule table
     func refresh() {
-        parser.sendScheduleRequest(listData)
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setObject(true, forKey: UserDefaultsKey.ButtonPressed.key)
+        self.parser.sendScheduleRequest(listData)
         self.tableView.reloadData()
         self.refreshControl.endRefreshing()
-    }
-    
-    /// Compare the current date with stored date in userDefaults
-    private func isCurrentDate(date: String) {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        let currentDate = defaults.objectForKey(UserDefaultsKey.CurrentDate.key) as? String
-
-        if currentDate == nil {
-            defaults.setObject(date, forKey: UserDefaultsKey.CurrentDate.key)
-            defaults.setObject(false, forKey: UserDefaultsKey.IsCurrentDate.key)
-        } else if currentDate <= date {
-            defaults.setObject(true, forKey: UserDefaultsKey.IsCurrentDate.key)
-        } else {
-            defaults.setObject(false, forKey: UserDefaultsKey.IsCurrentDate.key)
-        }
+        defaults.synchronize()
     }
     
     /// Prepear and send schedule request in controller
     private func loadSchedule() {
         // send request with parameters to get records of schedule
         let defaults = NSUserDefaults.standardUserDefaults()
-        let isCurrentDate = defaults.objectForKey(UserDefaultsKey.IsCurrentDate.key) as? Bool
-
-        if isCurrentDate == false || isCurrentDate == nil {
-            self.parser.sendScheduleRequest(listData)
-        } else {
-            self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.Section.key)
-        }
+        defaults.setObject(false, forKey: UserDefaultsKey.ButtonPressed.key)
+        defaults.synchronize()
+        self.parser.sendScheduleRequest(listData)
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -143,7 +128,10 @@ class ScheduleViewController: UIViewController {
     
     /// Reload schedule, send new request
     @IBAction func refreshSchedule(sender: AnyObject) {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setObject(true, forKey: UserDefaultsKey.ButtonPressed.key)
         self.parser.sendScheduleRequest(listData)
+        defaults.synchronize()
     }
     
     /// Share schedule
@@ -175,7 +163,6 @@ extension ScheduleViewController: UITableViewDataSource {
         // Generate section header
         let sectionHeader = dateFormatter.stringFromDate(recordsBySection[section].date)
 
-        isCurrentDate(sectionHeader)
         return sectionHeader
     }
     

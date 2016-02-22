@@ -9,6 +9,8 @@
 
 import Foundation
 
+let userDefaultsPrefix: String = "academy.appdev.sumdu.user-defaults"
+
 enum UserDefaultsKey: String {
     case Auditoriums = "auditoriums"
     case Groups = "groups"
@@ -17,32 +19,39 @@ enum UserDefaultsKey: String {
     case History = "history"
     case ButtonPressed = "is-refresh-button-pressed"
     case Section = "Section"
-    case CurrentDate = "current-date"
-    case IsCurrentDate = "is-current-date"
+    case IsConnetionPresent = "is-connection-present"
     
     var key: String {
         get {
-            let prefix: String = "academy.appdev.sumdu.user-defaults"
             switch self {
                 case .Auditoriums:
-                    return prefix + Auditoriums.rawValue
+                    return userDefaultsPrefix + Auditoriums.rawValue
                 case .Groups:
-                    return prefix + Groups.rawValue
+                    return userDefaultsPrefix + Groups.rawValue
                 case .Teachers:
-                    return prefix + Teachers.rawValue
+                    return userDefaultsPrefix + Teachers.rawValue
                 case .LastUpdatedAtDate:
-                    return prefix + LastUpdatedAtDate.rawValue
+                    return userDefaultsPrefix + LastUpdatedAtDate.rawValue
                 case .History:
-                    return prefix + History.rawValue
+                    return userDefaultsPrefix + History.rawValue
                 case .ButtonPressed:
-                    return prefix + ButtonPressed.rawValue
+                    return userDefaultsPrefix + ButtonPressed.rawValue
                 case .Section:
-                    return prefix + Section.rawValue
-                case .CurrentDate:
-                    return prefix + CurrentDate.rawValue
-                case .IsCurrentDate:
-                    return prefix + IsCurrentDate.rawValue
+                    return userDefaultsPrefix + Section.rawValue
+                case .IsConnetionPresent:
+                    return userDefaultsPrefix + IsConnetionPresent.rawValue
             }
+        }
+    }
+    
+    static func scheduleKey(listData: ListData) -> String {
+        switch listData.type {
+            case .Auditorium:
+                return userDefaultsPrefix + "-auditorium-\(listData.id)"
+            case .Group:
+                return userDefaultsPrefix + "-group-\(listData.id)"
+            case .Teacher:
+                return userDefaultsPrefix + "-teacher-\(listData.id)"
         }
     }
 }

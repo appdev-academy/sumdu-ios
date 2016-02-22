@@ -238,11 +238,9 @@ class Parser {
      */
     func sendScheduleRequest(requestData: ListData?) {
         
+        Alert.showWithStatus()
         // Get data for request
         let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
-        
-        // Start of showing progress and block user interface
-        SVProgressHUD.showWithMaskType(SVProgressHUDMaskType.Gradient)
         
         // Send request
         Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
@@ -250,16 +248,30 @@ class Parser {
             
             if scheduleResponse.result.isFailure {
                 Alert.showNetworkingError()
+                let defaults = NSUserDefaults.standardUserDefaults()
+                defaults.setObject(false, forKey: UserDefaultsKey.IsConnetionPresent.key)
+                defaults.synchronize()
             }
             
             if scheduleResponse.result.isSuccess {
                 if let resultValue = scheduleResponse.result.value {
                     let response = JSON(resultValue)
                     
+                    let defaults = NSUserDefaults.standardUserDefaults()
+                    defaults.setObject(true, forKey: UserDefaultsKey.IsConnetionPresent.key)
+                    let connection = defaults.objectForKey(UserDefaultsKey.IsConnetionPresent.key) as? Bool
+                    let buttonPressed = defaults.objectForKey(UserDefaultsKey.ButtonPressed.key) as? Bool
+
+                    if connection == true && buttonPressed == true {
+                        Alert.showSuccessStatus()
+                    } else {
+                        Alert.dismiss()
+                    }
+                    defaults.setObject(false, forKey: UserDefaultsKey.ButtonPressed.key)
+                    defaults.synchronize()
+
                     dispatch_async(dispatch_get_main_queue(), {
                         self.scheduleDelegate?.getSchedule(response)
-                        // Dismiss progress
-                        SVProgressHUD.dismiss()
                     })
                 }
             }
@@ -274,16 +286,15 @@ class Parser {
     func sendDataRequest(relatedDataParameter: ListDataType) {
         
         // Start of showing progress and block user interface
-        SVProgressHUD.showWithMaskType(SVProgressHUDMaskType.Gradient)
+        Alert.showWithStatus()
         
         Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
             (groupsRequest) -> Void in
             
             if groupsRequest.result.isFailure {
                 Alert.showNetworkingError()
-                // Dismiss progress
-                SVProgressHUD.dismiss()
                 let defaults = NSUserDefaults.standardUserDefaults()
+                defaults.setObject(false, forKey: UserDefaultsKey.IsConnetionPresent.key)
                 defaults.removeObjectForKey(UserDefaultsKey.ButtonPressed.key)
                 defaults.synchronize()
             }
@@ -295,20 +306,19 @@ class Parser {
                     
                     let defaults = NSUserDefaults.standardUserDefaults()
                     defaults.setObject(NSDate(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
+                    defaults.setObject(true, forKey: UserDefaultsKey.IsConnetionPresent.key)
+                    let connection = defaults.objectForKey(UserDefaultsKey.IsConnetionPresent.key) as? Bool
+                    let buttonPressed = defaults.objectForKey(UserDefaultsKey.ButtonPressed.key) as? Bool
+                    
+                    if connection == true && buttonPressed == true{
+                        Alert.showSuccessStatus()
+                    } else {
+                        Alert.dismiss()
+                    }
                     defaults.synchronize()
                     
                     dispatch_async(dispatch_get_main_queue(), {
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
-                        if let isRefreshButtonPressed = defaults.objectForKey(UserDefaultsKey.ButtonPressed.key) {
-                            if isRefreshButtonPressed.isEqualToValue(true) {
-                                Alert.showSuccessStatus()
-                                defaults.removeObjectForKey(UserDefaultsKey.ButtonPressed.key)
-                            } else {
-                                SVProgressHUD.dismiss()
-                            }
-                            SVProgressHUD.dismiss()
-                        }
-                        SVProgressHUD.dismiss()
                     })
                 }
             }
