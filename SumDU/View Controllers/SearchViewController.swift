@@ -76,7 +76,7 @@ class SearchViewController: UIViewController {
     }
     
     /// Remember data of selected cell
-    var selectedCell: ListData?
+    var selectedListDataObject: ListData?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -142,19 +142,21 @@ class SearchViewController: UIViewController {
     
     /// Function which loads ListData entities from NSUserDefaults class
     func loadListDataObjects(forKey: String) -> [ListData] {
-        var listData: [ListData] = []
+        var listDataRecords: [ListData] = []
         
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let listDataCoder = userDefaults.dataForKey(forKey) {
-        
+            
             if let listDataArray = NSKeyedUnarchiver.unarchiveObjectWithData(listDataCoder) as? [ListDataCoder] {
-                for array in listDataArray {
-                    listData.append(ListData(id: array.listData!.id, name: array.listData!.name, type: array.listData!.type))
+                for listDataStruct in listDataArray {
+                    if let listData = listDataStruct.listData {
+                        listDataRecords.append(listData)
+                    }
                 }
-                return listData
+                return listDataRecords
             }
         }
-        return listData
+        return listDataRecords
     }
     
     /// Save corresponding array of ListData and update UI
@@ -207,7 +209,7 @@ class SearchViewController: UIViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Setting up destination view controller data source here
         if let scheduleViewController = segue.destinationViewController as? ScheduleViewController where segue.identifier == "ShowSchedule" {
-            scheduleViewController.listData = selectedCell
+            scheduleViewController.listData = selectedListDataObject
         }
     }
     
@@ -287,8 +289,8 @@ extension SearchViewController: UITableViewDelegate {
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         // Remember selected sell
-        self.selectedCell = dataSource[indexPath.row]
-        self.history.append(selectedCell!)
+        self.selectedListDataObject = dataSource[indexPath.row]
+        self.history.append(selectedListDataObject!)
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
             self.performSegueWithIdentifier("ShowSchedule", sender: nil)
         }

@@ -69,7 +69,9 @@ class ScheduleViewController: UIViewController {
         
         // Load schedule for selected row
         self.loadSchedule()
-        self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData!))
+        if let listData = self.listData {
+            self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData))
+        }
     }
     
     /// Save schedule information to userDefaults
