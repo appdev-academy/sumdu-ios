@@ -236,9 +236,12 @@ class Parser {
      
      - parameter requestData: what parameters need for schedule request
      */
-    func sendScheduleRequest(requestData: ListData?, updateButtonPressed: Bool) {
+    func sendScheduleRequest(requestData: ListData?, updateButtonPressed: Bool, isInHistory: Bool) {
         
-        Alert.showWithStatus()
+        // Show alert if request starts not from segue
+        if !isInHistory {
+            Alert.showWithStatus()
+        }
         
         // Get data for request
         let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
@@ -262,7 +265,10 @@ class Parser {
                     })
                 }
             } else {
-                Alert.showNetworkingError()
+                // Show alert if request starts not from segue
+                if !isInHistory {
+                    Alert.showNetworkingError()
+                }
             }
         }
     }
