@@ -77,10 +77,10 @@ protocol ParserDataListDelegate {
 /// Class that parses responses from server
 class Parser {
     
-    /// Main url for schedule requests
+    /// Main URL for schedule requests
     static let baseURL       = "http://schedule.sumdu.edu.ua"
     
-    /// Url of mobile API for data requests (teachers, groups and auditorium)
+    /// URL of mobile API for data requests (teachers, groups and auditorium)
     static let mobileBaseURL = "http://m.schedule.sumdu.edu.ua"
     
     /// Parser protocol delegates
@@ -234,46 +234,35 @@ class Parser {
     /**
      Function for sending schedule request
      
-     - parameter requestData:  what parameters need for schedule request
+     - parameter requestData: what parameters need for schedule request
      */
-    func sendScheduleRequest(requestData: ListData?) {
+    func sendScheduleRequest(requestData: ListData?, updateButtonPressed: Bool) {
         
         Alert.showWithStatus()
+        
         // Get data for request
         let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
         
         // Send request
         Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
-            (scheduleResponse) -> Void in
+            response in
             
-            if scheduleResponse.result.isFailure {
-                Alert.showNetworkingError()
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.setObject(false, forKey: UserDefaultsKey.IsConnetionPresent.key)
-                defaults.synchronize()
-            }
-            
-            if scheduleResponse.result.isSuccess {
-                if let resultValue = scheduleResponse.result.value {
-                    let response = JSON(resultValue)
+            if response.result.isSuccess {
+                if let resultValue = response.result.value {
                     
-                    let defaults = NSUserDefaults.standardUserDefaults()
-                    defaults.setObject(true, forKey: UserDefaultsKey.IsConnetionPresent.key)
-                    let connection = defaults.objectForKey(UserDefaultsKey.IsConnetionPresent.key) as? Bool
-                    let buttonPressed = defaults.objectForKey(UserDefaultsKey.ButtonPressed.key) as? Bool
-
-                    if connection == true && buttonPressed == true {
+                    if updateButtonPressed == true {
                         Alert.showSuccessStatus()
                     } else {
                         Alert.dismiss()
                     }
-                    defaults.setObject(false, forKey: UserDefaultsKey.ButtonPressed.key)
-                    defaults.synchronize()
-
+                    
                     dispatch_async(dispatch_get_main_queue(), {
+                        let response = JSON(resultValue)
                         self.scheduleDelegate?.getSchedule(response)
                     })
                 }
+            } else {
+                Alert.showNetworkingError()
             }
         }
     }
@@ -281,46 +270,37 @@ class Parser {
     /**
      Send request for related data (groups, teachers, auditories)
      
-     - parameter withParameter:  type of related request
+     - parameter withParameter: type of related request
      */
-    func sendDataRequest(relatedDataParameter: ListDataType) {
+    func sendDataRequest(relatedDataParameter: ListDataType, updateButtonPressed: Bool) {
         
         // Start of showing progress and block user interface
         Alert.showWithStatus()
         
         Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
-            (groupsRequest) -> Void in
+            response in
             
-            if groupsRequest.result.isFailure {
-                Alert.showNetworkingError()
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.setObject(false, forKey: UserDefaultsKey.IsConnetionPresent.key)
-                defaults.removeObjectForKey(UserDefaultsKey.ButtonPressed.key)
-                defaults.synchronize()
-            }
-            
-            if groupsRequest.result.isSuccess {
-                if let resultValue = groupsRequest.result.value {
-                    
-                    let response = JSON(resultValue)
+            if response.result.isSuccess {
+                if let resultValue = response.result.value {
                     
                     let defaults = NSUserDefaults.standardUserDefaults()
                     defaults.setObject(NSDate(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
-                    defaults.setObject(true, forKey: UserDefaultsKey.IsConnetionPresent.key)
-                    let connection = defaults.objectForKey(UserDefaultsKey.IsConnetionPresent.key) as? Bool
-                    let buttonPressed = defaults.objectForKey(UserDefaultsKey.ButtonPressed.key) as? Bool
+                    defaults.synchronize()
                     
-                    if connection == true && buttonPressed == true{
+                    if updateButtonPressed {
                         Alert.showSuccessStatus()
                     } else {
                         Alert.dismiss()
                     }
-                    defaults.synchronize()
                     
                     dispatch_async(dispatch_get_main_queue(), {
+                        let response = JSON(resultValue)
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
                     })
                 }
+            } else {
+                // Show error
+                Alert.showNetworkingError()
             }
         }
     }

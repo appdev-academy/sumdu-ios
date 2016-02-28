@@ -112,13 +112,9 @@ class SearchViewController: UIViewController {
     
     /// Refresh [ListData] objects
     @IBAction func refreshListDataObjects(sender: AnyObject) {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(true, forKey: UserDefaultsKey.ButtonPressed.key)
-        defaults.synchronize()
-        
-        self.parser.sendDataRequest(.Auditorium)
-        self.parser.sendDataRequest(.Teacher)
-        self.parser.sendDataRequest(.Group)
+        self.parser.sendDataRequest(.Auditorium, updateButtonPressed: true)
+        self.parser.sendDataRequest(.Teacher, updateButtonPressed: true)
+        self.parser.sendDataRequest(.Group, updateButtonPressed: true)
     }
     
     /// Check if lists of Teachers, Groups and Auditoriums was updated more than 3 days ago
@@ -126,9 +122,9 @@ class SearchViewController: UIViewController {
         let defaults = NSUserDefaults.standardUserDefaults()
         let lastUpdatedAtDate = defaults.objectForKey(UserDefaultsKey.LastUpdatedAtDate.key) as? NSDate
         if (lastUpdatedAtDate == nil) || (lastUpdatedAtDate != nil && lastUpdatedAtDate!.compare(NSDate().dateBySubtractingDays(3)) == .OrderedAscending) {
-            self.parser.sendDataRequest(.Auditorium)
-            self.parser.sendDataRequest(.Teacher)
-            self.parser.sendDataRequest(.Group)
+            self.parser.sendDataRequest(.Auditorium, updateButtonPressed: false)
+            self.parser.sendDataRequest(.Teacher, updateButtonPressed: false)
+            self.parser.sendDataRequest(.Group, updateButtonPressed: false)
         }
     }
     

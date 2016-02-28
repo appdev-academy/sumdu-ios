@@ -103,22 +103,14 @@ class ScheduleViewController: UIViewController {
     
     /// Refresh shcedule table
     func refresh() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(true, forKey: UserDefaultsKey.ButtonPressed.key)
-        self.parser.sendScheduleRequest(listData)
+        self.parser.sendScheduleRequest(listData, updateButtonPressed: true)
         self.tableView.reloadData()
         self.refreshControl.endRefreshing()
-        defaults.synchronize()
     }
     
-    /// Prepear and send schedule request in controller
+    /// Prepare and send schedule request in controller
     private func loadSchedule() {
-        // send request with parameters to get records of schedule
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(false, forKey: UserDefaultsKey.ButtonPressed.key)
-        defaults.synchronize()
-        self.parser.sendScheduleRequest(listData)
-        
+        self.parser.sendScheduleRequest(listData, updateButtonPressed: false)
     }
     
     override func didReceiveMemoryWarning() {
@@ -128,10 +120,7 @@ class ScheduleViewController: UIViewController {
     
     /// Reload schedule, send new request
     @IBAction func refreshSchedule(sender: AnyObject) {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(true, forKey: UserDefaultsKey.ButtonPressed.key)
-        self.parser.sendScheduleRequest(listData)
-        defaults.synchronize()
+        self.parser.sendScheduleRequest(listData, updateButtonPressed: true)
     }
     
     /// Share schedule
