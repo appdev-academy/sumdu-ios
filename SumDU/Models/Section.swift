@@ -16,8 +16,14 @@ class Section {
     /// array of section records
     var records: [Schedule]
     
-    init(title: NSDate, records: [Schedule]) {
-        self.date = title
+    var sectionCoder: SectionCoder {
+        get {
+            return SectionCoder(section: self)
+        }
+    }
+
+    init(date: NSDate, records: [Schedule]) {
+        self.date = date
         self.records = records
     }
 }

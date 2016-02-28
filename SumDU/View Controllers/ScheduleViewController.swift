@@ -31,7 +31,7 @@ class ScheduleViewController: UIViewController {
     /// Schedule records separetad by sections
     private var recordsBySection: [Section] = [] {
         didSet {
-            // Reload table data after fill an array
+            self.saveSectionData(self.recordsBySection, forKey: UserDefaultsKey.scheduleKey(listData!))
             tableView.reloadData()
         }
     }
@@ -69,18 +69,56 @@ class ScheduleViewController: UIViewController {
         
         // Load schedule for selected row
         self.loadSchedule()
+        if let listData = self.listData {
+            self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData))
+        }
+    }
+    
+    /// Save schedule information to userDefaults
+    private func saveSectionData(listDataCoder: [Section], forKey: String) {
+        var sectionCoder: [SectionCoder] = []
+        for sectionCoderRecord in listDataCoder {
+            sectionCoder.append(sectionCoderRecord.sectionCoder)
+        }
         
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let data = NSKeyedArchiver.archivedDataWithRootObject(sectionCoder)
+        userDefaults.setObject(data, forKey: forKey)
+        userDefaults.synchronize()
+    }
+    
+    /// Load schedule information from userDefaults
+    func loadSectionDataObjects(forKey: String) -> [Section] {
+        var section: [Section] = []
+        
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        if let listScheduleCoder = userDefaults.dataForKey(forKey) {
+            
+            if let listScheduleDataArray = NSKeyedUnarchiver.unarchiveObjectWithData(listScheduleCoder) as? [SectionCoder] {
+                for array in listScheduleDataArray {
+                    section.append(Section(date: array.section!.date, records: array.section!.records))
+                }
+            }
+        }
+        return section
     }
     
     /// Refresh shcedule table
     func refresh() {
-        self.loadSchedule()
+        self.parser.sendScheduleRequest(listData, updateButtonPressed: true, isInHistory: false)
+        self.tableView.reloadData()
+        self.refreshControl.endRefreshing()
     }
     
-    /// Prepea and send schedule request in controller
-    func loadSchedule() {
-        // send request with parameters to get records of schedule
-        parser.sendScheduleRequest(listData)
+    /// Prepare and send schedule request in controller
+    private func loadSchedule() {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let allKeys = userDefaults.dictionaryRepresentation().keys
+        if let listData = listData where allKeys.contains(UserDefaultsKey.scheduleKey(listData)) {
+            self.parser.sendScheduleRequest(listData, updateButtonPressed: false, isInHistory: true)
+        } else {
+            self.parser.sendScheduleRequest(listData, updateButtonPressed: false, isInHistory: false)
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -90,7 +128,7 @@ class ScheduleViewController: UIViewController {
     
     /// Reload schedule, send new request
     @IBAction func refreshSchedule(sender: AnyObject) {
-        self.loadSchedule()
+        self.parser.sendScheduleRequest(listData, updateButtonPressed: true, isInHistory: false)
     }
     
     /// Share schedule
@@ -121,7 +159,7 @@ extension ScheduleViewController: UITableViewDataSource {
         
         // Generate section header
         let sectionHeader = dateFormatter.stringFromDate(recordsBySection[section].date)
-        
+
         return sectionHeader
     }
     
@@ -243,7 +281,7 @@ extension ScheduleViewController: ParserScheduleDelegate {
                 }
                 
                 // Append to array of sections
-                forRecordsBySection.append(Section(title: singleDate, records: scheduleRecordsInSection))
+                forRecordsBySection.append(Section(date: singleDate, records: scheduleRecordsInSection))
             }
             
             // Move data from tempopary var to public

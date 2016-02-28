@@ -77,10 +77,10 @@ protocol ParserDataListDelegate {
 /// Class that parses responses from server
 class Parser {
     
-    /// Main url for schedule requests
+    /// Main URL for schedule requests
     static let baseURL       = "http://schedule.sumdu.edu.ua"
     
-    /// Url of mobile API for data requests (teachers, groups and auditorium)
+    /// URL of mobile API for data requests (teachers, groups and auditorium)
     static let mobileBaseURL = "http://m.schedule.sumdu.edu.ua"
     
     /// Parser protocol delegates
@@ -164,9 +164,9 @@ class Parser {
             let id = String(selectedId)
             
             switch selectedType {
-            case ListDataType.Group: groupId = id
-            case ListDataType.Teacher: teacherId = id
-            case ListDataType.Auditorium: auditoriumId = id
+                case ListDataType.Group: groupId = id
+                case ListDataType.Teacher: teacherId = id
+                case ListDataType.Auditorium: auditoriumId = id
             }
         }
         
@@ -234,33 +234,40 @@ class Parser {
     /**
      Function for sending schedule request
      
-     - parameter requestData:  what parameters need for schedule request
+     - parameter requestData: what parameters need for schedule request
      */
-    func sendScheduleRequest(requestData: ListData?) {
+    func sendScheduleRequest(requestData: ListData?, updateButtonPressed: Bool, isInHistory: Bool) {
+        
+        // Show alert if request starts not from segue
+        if !isInHistory {
+            Alert.showWithStatus()
+        }
         
         // Get data for request
         let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
         
-        // Start of showing progress and block user interface
-        SVProgressHUD.showWithMaskType(SVProgressHUDMaskType.Gradient)
-        
         // Send request
         Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
-            (scheduleResponse) -> Void in
+            response in
             
-            if scheduleResponse.result.isFailure {
-                Alert.showNetworkingError()
-            }
-            
-            if scheduleResponse.result.isSuccess {
-                if let resultValue = scheduleResponse.result.value {
-                    let response = JSON(resultValue)
+            if response.result.isSuccess {
+                if let resultValue = response.result.value {
+                    
+                    if updateButtonPressed == true {
+                        Alert.showSuccessStatus()
+                    } else {
+                        Alert.dismiss()
+                    }
                     
                     dispatch_async(dispatch_get_main_queue(), {
+                        let response = JSON(resultValue)
                         self.scheduleDelegate?.getSchedule(response)
-                        // Dismiss progress
-                        SVProgressHUD.dismiss()
                     })
+                }
+            } else {
+                // Show alert if request starts not from segue
+                if !isInHistory {
+                    Alert.showNetworkingError()
                 }
             }
         }
@@ -269,48 +276,37 @@ class Parser {
     /**
      Send request for related data (groups, teachers, auditories)
      
-     - parameter withParameter:  type of related request
+     - parameter withParameter: type of related request
      */
-    func sendDataRequest(relatedDataParameter: ListDataType) {
+    func sendDataRequest(relatedDataParameter: ListDataType, updateButtonPressed: Bool) {
         
         // Start of showing progress and block user interface
-        SVProgressHUD.showWithMaskType(SVProgressHUDMaskType.Gradient)
+        Alert.showWithStatus()
         
         Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
-            (groupsRequest) -> Void in
+            response in
             
-            if groupsRequest.result.isFailure {
-                Alert.showNetworkingError()
-                // Dismiss progress
-                SVProgressHUD.dismiss()
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.removeObjectForKey(UserDefaultsKey.ButtonPressed.key)
-                defaults.synchronize()
-            }
-            
-            if groupsRequest.result.isSuccess {
-                if let resultValue = groupsRequest.result.value {
-                    
-                    let response = JSON(resultValue)
+            if response.result.isSuccess {
+                if let resultValue = response.result.value {
                     
                     let defaults = NSUserDefaults.standardUserDefaults()
                     defaults.setObject(NSDate(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
                     defaults.synchronize()
                     
+                    if updateButtonPressed {
+                        Alert.showSuccessStatus()
+                    } else {
+                        Alert.dismiss()
+                    }
+                    
                     dispatch_async(dispatch_get_main_queue(), {
+                        let response = JSON(resultValue)
                         self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
-                        if let isRefreshButtonPressed = defaults.objectForKey(UserDefaultsKey.ButtonPressed.key) {
-                            if isRefreshButtonPressed.isEqualToValue(true) {
-                                Alert.showSuccessStatus()
-                                defaults.removeObjectForKey(UserDefaultsKey.ButtonPressed.key)
-                            } else {
-                                SVProgressHUD.dismiss()
-                            }
-                            SVProgressHUD.dismiss()
-                        }
-                        SVProgressHUD.dismiss()
                     })
                 }
+            } else {
+                // Show error
+                Alert.showNetworkingError()
             }
         }
     }

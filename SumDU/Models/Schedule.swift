@@ -56,6 +56,12 @@ class Schedule {
     /// Day of week for pair
     var dayOfWeek: String
     
+    var scheduleCoder: ScheduleCoder {
+        get {
+            return ScheduleCoder(schedule: self)
+        }
+    }
+    
     /**
      Initializer for schedule class
      
@@ -131,18 +137,18 @@ class Schedule {
             return nil
         }
     }
-}
-
-/// MARK: - NSDate extension
-extension NSDate
-{
-    //TODO: optional init
-    convenience
-    init(dateString:String) {
-        let dateStringFormatter = NSDateFormatter()
-        dateStringFormatter.dateFormat = "dd.MM.yyyy"
-        dateStringFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
-        let d = dateStringFormatter.dateFromString(dateString)!
-        self.init(timeInterval:0, sinceDate:d)
+    
+    /// Initializer which is used for ScheduleCoder class
+    init(pairName: String, pairTime: String, pairType: String, auditoriumName: String, teacherName: String, groupName: String, pairDate: NSDate, pairOrderName: String, dayOfWeek: String) {
+        
+        self.pairName = pairName
+        self.pairTime = pairTime
+        self.pairType = pairType
+        self.auditoriumName = auditoriumName
+        self.teacherName = teacherName
+        self.groupName = groupName
+        self.pairDate = pairDate
+        self.pairOrderName = pairOrderName
+        self.dayOfWeek = dayOfWeek
     }
 }

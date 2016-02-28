@@ -9,31 +9,30 @@
 
 import Foundation
 
+let userDefaultsPrefix: String = "academy.appdev.sumdu.user-defaults"
+
 enum UserDefaultsKey: String {
-    case Auditoriums = "auditoriums"
-    case Groups = "groups"
-    case Teachers = "teachers"
-    case LastUpdatedAtDate = "last-updated-at-date"
-    case History = "history"
-    case ButtonPressed = "is-refresh-button-pressed"
+    case Auditoriums            = "auditoriums"
+    case Groups                 = "groups"
+    case Teachers               = "teachers"
+    case LastUpdatedAtDate      = "last-updated-at-date"
+    case History                = "history"
+    case Section                = "Section"
     
     var key: String {
         get {
-            let prefix: String = "academy.appdev.sumdu.user-defaults"
-            switch self {
-                case .Auditoriums:
-                    return prefix + Auditoriums.rawValue
-                case .Groups:
-                    return prefix + Groups.rawValue
-                case .Teachers:
-                    return prefix + Teachers.rawValue
-                case .LastUpdatedAtDate:
-                    return prefix + LastUpdatedAtDate.rawValue
-                case .History:
-                    return prefix + History.rawValue
-                case .ButtonPressed:
-                    return prefix + ButtonPressed.rawValue
-            }
+            return userDefaultsPrefix + self.rawValue
+        }
+    }
+    
+    static func scheduleKey(listData: ListData) -> String {
+        switch listData.type {
+            case .Auditorium:
+                return userDefaultsPrefix + "-auditorium-\(listData.id)"
+            case .Group:
+                return userDefaultsPrefix + "-group-\(listData.id)"
+            case .Teacher:
+                return userDefaultsPrefix + "-teacher-\(listData.id)"
         }
     }
 }

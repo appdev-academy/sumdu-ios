@@ -22,6 +22,18 @@ class Alert {
         })
     }
     
+    class func showWithStatus() {
+        dispatch_async(dispatch_get_main_queue(), {
+            SVProgressHUD.showWithMaskType(SVProgressHUDMaskType.Gradient)
+        })
+    }
+    
+    class func dismiss() {
+        dispatch_async(dispatch_get_main_queue(), {
+            SVProgressHUD.dismiss()
+        })
+    }
+    
     // MARK: - Helpers
     
     class func showSuccessStatus() {
