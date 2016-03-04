@@ -320,6 +320,20 @@ extension SearchViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
+        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive
+    }
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        if searchBar.text != "" {
+            searchBar.showsCancelButton = true
+            searchBar.resignFirstResponder()
+        } else {
+            searchBar.text = ""
+            searchBar.showsCancelButton = false
+            searchBar.resignFirstResponder()
+            self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.None
+            self.filterDataSourceWithQuery(nil)
+        }
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {

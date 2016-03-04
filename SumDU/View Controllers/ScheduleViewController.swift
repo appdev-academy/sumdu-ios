@@ -95,8 +95,10 @@ class ScheduleViewController: UIViewController {
         if let listScheduleCoder = userDefaults.dataForKey(forKey) {
             
             if let listScheduleDataArray = NSKeyedUnarchiver.unarchiveObjectWithData(listScheduleCoder) as? [SectionCoder] {
-                for array in listScheduleDataArray {
-                    section.append(Section(date: array.section!.date, records: array.section!.records))
+                for scheduleDataStruct in listScheduleDataArray {
+                    if let sectionData = scheduleDataStruct.section {
+                        section.append(sectionData)
+                    }
                 }
             }
         }
