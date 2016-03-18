@@ -23,7 +23,17 @@ class ScheduleViewController: UIViewController {
     // MARK: - Variables
     
     /// Data from SearchController
-    var listData: ListData?
+    var listData: ListData? {
+        didSet {
+            self.saveListDataObject(self.listData, forKey: UserDefaultsKey.ScheduleListData.key)
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                if listData == self.listData {
+                    scheduleNavigation.title = listData?.name
+                    self.loadSchedule()
+                }
+            }
+        }
+    }
     
     /// Object of Parser class
     private var parser = Parser()
@@ -55,8 +65,6 @@ class ScheduleViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
-        // Set title to navigation bar
-        scheduleNavigation.title = listData?.name
         let attributes = [
             NSFontAttributeName: UIFont(name: "HelveticaNeue", size: 14)!
         ]
@@ -67,10 +75,19 @@ class ScheduleViewController: UIViewController {
         self.refreshControl.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
         self.tableView?.addSubview(refreshControl)
         
-        // Load schedule for selected row
-        self.loadSchedule()
-        if let listData = self.listData {
-            self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData))
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            // Set title to navigation bar
+            scheduleNavigation.title = listData?.name
+            
+            // Load schedule for selected row
+            self.loadSchedule()
+            if let listData = self.listData {
+                self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData))
+            }
+        } else {
+            if let listData = self.loadListDataObject(UserDefaultsKey.ScheduleListData.key) {
+                self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData))
+            }
         }
     }
     
@@ -105,6 +122,33 @@ class ScheduleViewController: UIViewController {
         return section
     }
     
+    /// Function which stores ListData entity
+    func saveListDataObject(listDataObject: ListData?, forKey: String) {
+        var listDataCoders: [ListDataCoder] = []
+        if let lisData = listDataObject {
+            listDataCoders.append(lisData.listDataCoder)
+            let userDefaults = NSUserDefaults.standardUserDefaults()
+            let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
+            userDefaults.setObject(data, forKey: forKey)
+            userDefaults.synchronize()
+        }
+    }
+    
+    /// Function which loads ListData entity
+    func loadListDataObject(forKey: String) -> ListData? {
+        var listDataRecord: ListData?
+        
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        if let listDataCoder = userDefaults.dataForKey(forKey) {
+            
+            if let listData = NSKeyedUnarchiver.unarchiveObjectWithData(listDataCoder) as? ListDataCoder {
+                listDataRecord = listData.listData!
+                return listDataRecord
+            }
+        }
+        return listDataRecord
+    }
+    
     /// Refresh shcedule table
     func refresh() {
         self.parser.sendScheduleRequest(listData, updateButtonPressed: true, isInHistory: false)
@@ -116,7 +160,7 @@ class ScheduleViewController: UIViewController {
     private func loadSchedule() {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         let allKeys = userDefaults.dictionaryRepresentation().keys
-        if let listData = listData where allKeys.contains(UserDefaultsKey.scheduleKey(listData)) {
+        if let listData = self.listData where allKeys.contains(UserDefaultsKey.scheduleKey(listData)) {
             self.parser.sendScheduleRequest(listData, updateButtonPressed: false, isInHistory: true)
         } else {
             self.parser.sendScheduleRequest(listData, updateButtonPressed: false, isInHistory: false)

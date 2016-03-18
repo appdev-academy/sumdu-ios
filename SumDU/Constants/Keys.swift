@@ -17,7 +17,8 @@ enum UserDefaultsKey: String {
     case Teachers               = "teachers"
     case LastUpdatedAtDate      = "last-updated-at-date"
     case History                = "history"
-    case Section                = "Section"
+    case Section                = "section"
+    case ScheduleListData       = "listdata-for-schedule"
     
     var key: String {
         get {
