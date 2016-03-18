@@ -71,7 +71,7 @@ class ScheduleViewController: UIViewController {
         tableView.dataSource = self
         
         let attributes = [
-            NSFontAttributeName: UIFont(name: "HelveticaNeue", size: 14)!
+            NSFontAttributeName: UIFont.boldSystemFontOfSize(16.0)
         ]
         self.navigationController?.navigationBar.titleTextAttributes = attributes
         
