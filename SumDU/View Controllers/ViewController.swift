@@ -41,6 +41,8 @@ class ViewController: UIViewController, SearchViewControllerDelegate {
             if let navigationController = segue.destinationViewController as? UINavigationController {
                 if let scheduleViewController = navigationController.viewControllers.first as? ScheduleViewController {
                     self.scheduleViewController = scheduleViewController
+                    self.scheduleViewController?.shareSchedule.enabled = false
+                    self.scheduleViewController?.refreshButton.enabled = false
                 }
             }
         }

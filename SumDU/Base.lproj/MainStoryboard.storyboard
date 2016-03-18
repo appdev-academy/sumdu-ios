@@ -389,7 +389,9 @@
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="refreshButton" destination="aQR-m7-6GI" id="tP2-lD-Yh8"/>
                         <outlet property="scheduleNavigation" destination="9SS-Gt-5Zd" id="xHd-od-rKX"/>
+                        <outlet property="shareSchedule" destination="fTp-M6-5QV" id="cr5-Kd-uDG"/>
                         <outlet property="tableView" destination="PwZ-WB-DNo" id="W0E-FO-C6c"/>
                     </connections>
                 </viewController>

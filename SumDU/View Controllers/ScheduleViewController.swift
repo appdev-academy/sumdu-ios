@@ -16,6 +16,9 @@ class ScheduleViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var scheduleNavigation: UINavigationItem!
     
+    @IBOutlet weak var shareSchedule: UIBarButtonItem!
+    @IBOutlet weak var refreshButton: UIBarButtonItem!
+    
     // MARK: - Constants
     
     private let kCellReuseIdentifier = "kCellReuseIdentifierSchedule"
@@ -28,7 +31,9 @@ class ScheduleViewController: UIViewController {
             self.saveListDataObject(self.listData, forKey: UserDefaultsKey.ScheduleListData.key)
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                 if listData == self.listData {
-                    scheduleNavigation.title = listData?.name
+                    self.scheduleNavigation.title = listData?.name
+                    self.refreshButton.enabled = true
+                    self.shareSchedule.enabled = true
                     self.loadSchedule()
                 }
             }
