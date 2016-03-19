@@ -32,7 +32,7 @@ class SearchViewController: UIViewController {
     private let kCellReuseIdentifier = "kCellReuseIdentifier"
     
     // MARK: - Variables
-    
+    var delegate: SearchViewControllerDelegate?
     /// Parser instance
     var parser = Parser()
     /// Array of all Auditoriums
@@ -294,6 +294,9 @@ extension SearchViewController: UITableViewDelegate {
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
             self.performSegueWithIdentifier("ShowSchedule", sender: nil)
         }
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            self.delegate?.setListDataObject(self.selectedListDataObject!)
+        }
     }
 }
 
@@ -351,4 +354,8 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         self.filterDataSourceWithQuery(searchText)
     }
+}
+
+protocol SearchViewControllerDelegate {
+    func setListDataObject(listData: ListData)
 }
