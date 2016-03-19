@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
+  <file original="SumDU/Base.lproj/Main.storyboard" source-language="en" target-language="ru" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="7.2" build-num="7C68"/>
+    </header>
+    <body>
+      <trans-unit id="7Lw-S9-r2f.text">
+        <source>TeacherName</source>
+        <note>Class = "UILabel"; text = "TeacherName"; ObjectID = "7Lw-S9-r2f";</note>
+      </trans-unit>
+      <trans-unit id="9SS-Gt-5Zd.title">
+        <source>Schedule</source>
+        <note>Class = "UINavigationItem"; title = "Schedule"; ObjectID = "9SS-Gt-5Zd";</note>
+      </trans-unit>
+      <trans-unit id="Jgf-z8-fQo.segmentTitles[0]">
+        <source>Викладач</source>
+        <note>Class = "UISegmentedControl"; Jgf-z8-fQo.segmentTitles[0] = "Викладач"; ObjectID = "Jgf-z8-fQo";</note>
+      </trans-unit>
+      <trans-unit id="Jgf-z8-fQo.segmentTitles[1]">
+        <source>Група</source>
+        <note>Class = "UISegmentedControl"; Jgf-z8-fQo.segmentTitles[1] = "Група"; ObjectID = "Jgf-z8-fQo";</note>
+      </trans-unit>
+      <trans-unit id="Jgf-z8-fQo.segmentTitles[2]">
+        <source>Аудиторiя</source>
+        <note>Class = "UISegmentedControl"; Jgf-z8-fQo.segmentTitles[2] = "Аудиторiя"; ObjectID = "Jgf-z8-fQo";</note>
+      </trans-unit>
+      <trans-unit id="Jgf-z8-fQo.segmentTitles[3]">
+        <source>Вибране</source>
+        <note>Class = "UISegmentedControl"; Jgf-z8-fQo.segmentTitles[3] = "Вибране"; ObjectID = "Jgf-z8-fQo";</note>
+      </trans-unit>
+      <trans-unit id="OIH-JI-fXT.text">
+        <source>PairTime</source>
+        <note>Class = "UILabel"; text = "PairTime"; ObjectID = "OIH-JI-fXT";</note>
+      </trans-unit>
+      <trans-unit id="QFg-Dc-kHC.text">
+        <source>PairName</source>
+        <note>Class = "UILabel"; text = "PairName"; ObjectID = "QFg-Dc-kHC";</note>
+      </trans-unit>
+      <trans-unit id="gz8-Rj-7ae.title">
+        <source>Пошук</source>
+        <note>Class = "UINavigationItem"; title = "Пошук"; ObjectID = "gz8-Rj-7ae";</note>
+      </trans-unit>
+      <trans-unit id="xmP-5b-5Iw.text">
+        <source>GroupName</source>
+        <note>Class = "UILabel"; text = "GroupName"; ObjectID = "xmP-5b-5Iw";</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="SumDU/Resources/Info.plist" source-language="en" target-language="ru" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="7.2" build-num="7C68"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleName">
+        <source>$(PRODUCT_NAME)</source>
+      </trans-unit>
+      <trans-unit id="CFBundleShortVersionString">
+        <source>1.0</source>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="SumDU/Resources/Localizable.strings" source-language="en" target-language="ru" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="7.2" build-num="7C68"/>
+    </header>
+    <body>
+      <trans-unit id=" for ">
+        <source> for </source>
+		<target> для </target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Auditorium">
+        <source>Auditorium</source>
+		<target>Аудитория</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Check Internet connection!">
+        <source>Check Internet connection!</source>
+		<target>Проверьте Интернет соединение</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Group">
+        <source>Group</source>
+		<target>Группа</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="History">
+        <source>History</source>
+		<target>История</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Pull to refresh">
+        <source>Pull to refresh</source>
+		<target>Потяните для обновления</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Schedule">
+        <source>Schedule</source>
+		<target>Расписание</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Success!">
+        <source>Success!</source>
+		<target>Успешно!</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Teacher">
+        <source>Teacher</source>
+		<target>Преподаватель</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="en_US">
+        <source>en_US</source>
+		<target>ru_RU</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="SumDUTests/Info.plist" source-language="en" target-language="ru" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="7.2" build-num="7C68"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleName">
+        <source>$(PRODUCT_NAME)</source>
+      </trans-unit>
+      <trans-unit id="CFBundleShortVersionString">
+        <source>1.0</source>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="SumDUUITests/Info.plist" source-language="en" target-language="ru" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="7.2" build-num="7C68"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleName">
+        <source>$(PRODUCT_NAME)</source>
+      </trans-unit>
+      <trans-unit id="CFBundleShortVersionString">
+        <source>1.0</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
