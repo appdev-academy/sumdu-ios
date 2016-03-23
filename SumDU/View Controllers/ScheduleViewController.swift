@@ -35,6 +35,9 @@ class ScheduleViewController: UIViewController {
                     self.refreshButton.enabled = true
                     self.shareSchedule.enabled = true
                     self.loadSchedule()
+                    if listData != nil {
+                        self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData!))
+                    }
                 }
             }
         }
@@ -77,7 +80,7 @@ class ScheduleViewController: UIViewController {
         
         // Set up the refresh control
         self.refreshControl.attributedTitle = NSAttributedString(string: NSLocalizedString("Pull to refresh", comment: ""))
-        self.refreshControl.addTarget(self, action: "refresh", forControlEvents: UIControlEvents.ValueChanged)
+        self.refreshControl.addTarget(self, action: #selector(ScheduleViewController.refresh), forControlEvents: UIControlEvents.ValueChanged)
         self.tableView?.addSubview(refreshControl)
         
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
@@ -86,10 +89,6 @@ class ScheduleViewController: UIViewController {
             
             // Load schedule for selected row
             self.loadSchedule()
-            if let listData = self.listData {
-                self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData))
-            }
-        } else {
             if let listData = self.loadListDataObject(UserDefaultsKey.ScheduleListData.key) {
                 self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData))
             }
