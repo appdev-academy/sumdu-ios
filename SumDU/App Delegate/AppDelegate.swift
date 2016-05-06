@@ -16,10 +16,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
+        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            let storyboard = UIStoryboard(name: "MainStoryboard", bundle: NSBundle.mainBundle())
-            let rootViewController = storyboard.instantiateViewControllerWithIdentifier("MainPadController")
-            window?.rootViewController = rootViewController
+            if let window = self.window {
+                window.backgroundColor = UIColor.whiteColor()
+                window.rootViewController = ViewController()
+                window.makeKeyAndVisible()
+            }
+        }
+        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            if let window = self.window {
+                window.backgroundColor = UIColor.whiteColor()
+                window.rootViewController = SearchViewController()
+                window.makeKeyAndVisible()
+            }
         }
         
         return true

@@ -22,7 +22,6 @@
 		B4E40A7B1C5CEC9B0057E53D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4E40A7D1C5CEC9B0057E53D /* Localizable.strings */; };
 		B4E40A801C5CEC9B0057E53D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4E40A821C5CEC9B0057E53D /* InfoPlist.strings */; };
 		B4EEB8251C5A153800879965 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EEB8241C5A153800879965 /* Alert.swift */; };
-		E11799201C09E522005D2ABA /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E117991F1C09E522005D2ABA /* NavigationController.swift */; };
 		E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17F12281C2F1C09001AB284 /* ScheduleCell.swift */; };
 		E19526A31C3E5C3B008AD541 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19526A21C3E5C3B008AD541 /* Section.swift */; };
 		E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD3B491C5CB88D0028B9A0 /* ScheduleCoder.swift */; };
@@ -30,6 +29,10 @@
 		E40668B31C3EF6400011EF25 /* NSDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40668B21C3EF6400011EF25 /* NSDate.swift */; };
 		E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */; };
 		E4583E951C25495F0031F164 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4583E941C25495F0031F164 /* Keys.swift */; };
+		E49802F41CDA65850034B724 /* Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F31CDA65850034B724 /* Constraints.swift */; };
+		E49802F61CDA66760034B724 /* SearchTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F51CDA66760034B724 /* SearchTextField.swift */; };
+		E49802F81CDA67520034B724 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F71CDA67520034B724 /* SearchBar.swift */; };
+		E49802FA1CDA67FF0034B724 /* SearchBarContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F91CDA67FF0034B724 /* SearchBarContainer.swift */; };
 		E4B3E0FA1C68F7C2005B8103 /* SectionCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B3E0F91C68F7C2005B8103 /* SectionCoder.swift */; };
 /* End PBXBuildFile section */
 
@@ -78,7 +81,6 @@
 		B4E40A861C5CECD40057E53D /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B4EEB8241C5A153800879965 /* Alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		D1DD90AC92C58F9DD5331ED4 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E117991F1C09E522005D2ABA /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		E19526A21C3E5C3B008AD541 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		E1CD3B491C5CB88D0028B9A0 /* ScheduleCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCoder.swift; sourceTree = "<group>"; };
@@ -86,6 +88,10 @@
 		E40668B21C3EF6400011EF25 /* NSDate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDate.swift; sourceTree = "<group>"; };
 		E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDataCoder.swift; sourceTree = "<group>"; };
 		E4583E941C25495F0031F164 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
+		E49802F31CDA65850034B724 /* Constraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constraints.swift; sourceTree = "<group>"; };
+		E49802F51CDA66760034B724 /* SearchTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchTextField.swift; path = SumDU/Constants/SearchTextField.swift; sourceTree = SOURCE_ROOT; };
+		E49802F71CDA67520034B724 /* SearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBar.swift; path = SumDU/Constants/SearchBar.swift; sourceTree = SOURCE_ROOT; };
+		E49802F91CDA67FF0034B724 /* SearchBarContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBarContainer.swift; path = SumDU/Constants/SearchBarContainer.swift; sourceTree = SOURCE_ROOT; };
 		E4A85CAD1C53A4B20075AAD1 /* Bridging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridging.h; sourceTree = "<group>"; };
 		E4B3E0F91C68F7C2005B8103 /* SectionCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionCoder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -140,7 +146,6 @@
 			isa = PBXGroup;
 			children = (
 				7D07F81C1C099C56007DF3FD /* ViewController.swift */,
-				E117991F1C09E522005D2ABA /* NavigationController.swift */,
 				7D3460F51C1A045700774F8E /* SearchViewController.swift */,
 				E1DA623A1C26A71400584099 /* ScheduleViewController.swift */,
 				E17F12281C2F1C09001AB284 /* ScheduleCell.swift */,
@@ -165,6 +170,9 @@
 		7D07F8221C099CAF007DF3FD /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				E49802F51CDA66760034B724 /* SearchTextField.swift */,
+				E49802F71CDA67520034B724 /* SearchBar.swift */,
+				E49802F91CDA67FF0034B724 /* SearchBarContainer.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -255,6 +263,7 @@
 			children = (
 				E4583E941C25495F0031F164 /* Keys.swift */,
 				E40668B21C3EF6400011EF25 /* NSDate.swift */,
+				E49802F31CDA65850034B724 /* Constraints.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -445,15 +454,18 @@
 			files = (
 				7D07F8201C099C56007DF3FD /* ViewController.swift in Sources */,
 				7D3460F61C1A045700774F8E /* SearchViewController.swift in Sources */,
-				E11799201C09E522005D2ABA /* NavigationController.swift in Sources */,
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
+				E49802F41CDA65850034B724 /* Constraints.swift in Sources */,
+				E49802F81CDA67520034B724 /* SearchBar.swift in Sources */,
 				E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */,
 				B4EEB8251C5A153800879965 /* Alert.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
 				E19526A31C3E5C3B008AD541 /* Section.swift in Sources */,
 				E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */,
 				E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */,
+				E49802F61CDA66760034B724 /* SearchTextField.swift in Sources */,
+				E49802FA1CDA67FF0034B724 /* SearchBarContainer.swift in Sources */,
 				E40668B31C3EF6400011EF25 /* NSDate.swift in Sources */,
 				E4583E951C25495F0031F164 /* Keys.swift in Sources */,
 				E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */,

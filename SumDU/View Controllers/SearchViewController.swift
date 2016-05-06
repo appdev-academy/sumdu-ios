@@ -9,7 +9,7 @@
 import UIKit
 import SwiftyJSON
 import SVProgressHUD
-
+import Cartography
 
 class SearchViewController: UIViewController {
     
@@ -18,20 +18,49 @@ class SearchViewController: UIViewController {
         case Groups
         case Auditoriums
         case Favorites
+        
+        var name: String {
+            
+            switch self {
+            case .Teachers:
+                return NSLocalizedString("Teachers", comment: "")
+                
+            case .Groups:
+                return NSLocalizedString("Groups", comment: "")
+                
+            case .Auditoriums:
+                return NSLocalizedString("Auditoriums", comment: "")
+                
+            default: return ""
+            }
+        }
     }
     
     // MARK: - Outlets
     
-    @IBOutlet private weak var searchBar: UISearchBar!
+//    @IBOutlet private weak var searchBar: UISearchBar!
     @IBOutlet private weak var typeSegmentedControl: UISegmentedControl!
-    @IBOutlet private weak var tableView: UITableView!
+//    @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private var refreshButton: UIBarButtonItem!
+    
+    // MARK: - UI objects
+    private var collectionViewMenu: UICollectionView!
+    private var bottomCollectionView: UICollectionView!
+    
+    //private let searchBar = SearchBar(frame: CGRectZero)
+    private let searchBarContainer = SearchBarContainer(frame: CGRectZero)
+//    private let containerForSegmentedControl = UIView(frame: CGRectZero)
+//    private let highlightedSegmentedControlLine = UIView(frame: CGRectZero)
+//    private let lineUderCollectionView = UIView(frame: CGRectZero)
+//    private let collectionViewForTableViewCell = CollectionViewForTableViewCell(frame: CGRectZero)
     
     // MARK: - Constants
     
     private let kCellReuseIdentifier = "kCellReuseIdentifier"
+    private let screenSize = UIScreen.mainScreen().bounds.size
     
     // MARK: - Variables
+    
     var delegate: SearchViewControllerDelegate?
     /// Parser instance
     var parser = Parser()
@@ -55,7 +84,7 @@ class SearchViewController: UIViewController {
     }
     var dataSource: [ListData] = [] {
         didSet {
-            self.tableView.reloadData()
+//            self.tableView.reloadData()
         }
     }
     
@@ -63,15 +92,31 @@ class SearchViewController: UIViewController {
         didSet {
             self.history = removeHistoryRecord(uniq(self.history))
             self.saveListDataObjects(self.history, forKey: UserDefaultsKey.History.key)
-            self.tableView.reloadData()
+//            self.tableView.reloadData()
         }
     }
     
     /// Currently selected segment
-    var selectedSegment: SelectedSegment = SelectedSegment.Teachers {
+    var selectedSegment: SelectedSegment = SelectedSegment.Favorites {
         didSet {
-            self.filterDataSourceWithQuery(self.searchBar.text)
-            tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.Automatic)
+            self.filterDataSourceWithQuery(self.searchBarContainer.searchBar.getTextField?.text)
+//            tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.Automatic)
+            
+            switch self.selectedSegment {
+                
+            case .Favorites: break
+//                self.setDynamicConstraints(0.0, width: CollectionViewCellConstrains.imageWidth.rawValue)
+                
+            case .Teachers: break
+//                self.setDynamicConstraints(self.calculateIndentBetweenObjectsIntoCollectionVIewCell() + CollectionViewCellConstrains.imageWidth.rawValue + 1.0, width: self.calculateLabelWidth(SelectedSegment.Teachers.name))
+                
+            case .Groups: break
+//                self.setDynamicConstraints(self.calculateIndentBetweenObjectsIntoCollectionVIewCell()*2 + self.calculateLabelWidth(SelectedSegment.Teachers.name) + CollectionViewCellConstrains.imageWidth.rawValue + 1.0, width: self.calculateLabelWidth(SelectedSegment.Groups.name))
+                
+            case .Auditoriums: break
+//                self.setDynamicConstraints(self.calculateIndentBetweenObjectsIntoCollectionVIewCell()*3 + self.calculateLabelWidth(SelectedSegment.Teachers.name) + self.calculateLabelWidth(SelectedSegment.Groups.name) + CollectionViewCellConstrains.imageWidth.rawValue + 1.0, width: self.calculateLabelWidth(SelectedSegment.Auditoriums.name))
+                
+            }
         }
     }
     
@@ -81,7 +126,7 @@ class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
+//        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         
         // Load and filter initial data
         self.allTeachers = self.loadListDataObjects(UserDefaultsKey.Teachers.key)
@@ -97,7 +142,12 @@ class SearchViewController: UIViewController {
         self.parser.dataListDelegate = self
         
         // Set delegate for searchBar
-        self.searchBar.delegate = self
+        self.searchBarContainer.searchBar.getTextField?.delegate = self
+        
+        self.view.addSubview(self.searchBarContainer)
+        
+        self.setConstrain()
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -108,6 +158,54 @@ class SearchViewController: UIViewController {
     
     deinit {
         self.deregisterFromNotifications()
+    }
+    
+    private func setConstrain() {
+        
+//        guard let collectionViewMenu = self.collectionViewMenu else {
+//            return
+//        }
+        
+        let views = [ self.searchBarContainer,
+//                      self.containerForSegmentedControl,
+//                      collectionViewMenu,
+//                      self.highlightedSegmentedControlLine,
+//                      self.lineUderCollectionView,
+                      ]
+        
+        constrain(views) {
+            views in
+            
+            let searchBarContainer = views[0]
+//            let containerForSegmentedControl = views[1]
+//            let collectionViewMenu = views[2]
+//            let highlightedSegmentedControlLine = views[3]
+//            let lineUderCollectionView = views[4]
+            
+            searchBarContainer.top == searchBarContainer.superview!.top + 30
+            searchBarContainer.leading == searchBarContainer.superview!.leading + 14
+            searchBarContainer.trailing == searchBarContainer.superview!.trailing - 14
+            searchBarContainer.height == 44.0
+            
+//            containerForSegmentedControl.top == searchBarContainer.bottom + 1
+//            containerForSegmentedControl.leading == containerForSegmentedControl.superview!.leading
+//            containerForSegmentedControl.trailing == containerForSegmentedControl.superview!.trailing
+//            containerForSegmentedControl.height == CollectionViewConstrains.CollectionViewCellHeight.rawValue + 2.0
+//            
+//            collectionViewMenu.top == containerForSegmentedControl.top + 1
+//            collectionViewMenu.leading == containerForSegmentedControl.leading
+//            collectionViewMenu.trailing == containerForSegmentedControl.trailing
+//            collectionViewMenu.height == CollectionViewConstrains.CollectionViewCellHeight.rawValue
+//            
+//            lineUderCollectionView.leading == containerForSegmentedControl.leading
+//            lineUderCollectionView.trailing == containerForSegmentedControl.trailing
+//            lineUderCollectionView.top == containerForSegmentedControl.bottom
+//            lineUderCollectionView.height == 1.0
+//            
+//            highlightedSegmentedControlLine.height == 2.0
+//            highlightedSegmentedControlLine.bottom == lineUderCollectionView.bottom
+            
+        }
     }
     
     /// Refresh [ListData] objects
@@ -162,8 +260,8 @@ class SearchViewController: UIViewController {
     /// Save corresponding array of ListData and update UI
     private func reloadListData(listData: [ListData], forKey key: String) {
         self.saveListDataObjects(listData, forKey: key)
-        self.filterDataSourceWithQuery(self.searchBar.text)
-        self.tableView.reloadData()
+        self.filterDataSourceWithQuery(self.searchBarContainer.searchBar.getTextField?.text)
+//        self.tableView.reloadData()
     }
     
     /// Select only uniq data from History
@@ -244,15 +342,15 @@ class SearchViewController: UIViewController {
             if let keyboardSize: CGSize = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue.size {
                 let contentInset = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height,  0.0);
                 
-                self.tableView.contentInset = contentInset
-                self.tableView.scrollIndicatorInsets = contentInset
+//                self.tableView.contentInset = contentInset
+//                self.tableView.scrollIndicatorInsets = contentInset
             }
         }
     }
     
     func keyboardWillHide(notification: NSNotification) {
-        self.tableView.contentInset = UIEdgeInsetsZero;
-        self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
+//        self.tableView.contentInset = UIEdgeInsetsZero;
+//        self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
     }
 }
 
@@ -323,7 +421,7 @@ extension SearchViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
-        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive
+//        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
@@ -334,7 +432,7 @@ extension SearchViewController: UISearchBarDelegate {
             searchBar.text = ""
             searchBar.showsCancelButton = false
             searchBar.resignFirstResponder()
-            self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.None
+//            self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.None
             self.filterDataSourceWithQuery(nil)
         }
     }
@@ -354,6 +452,10 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         self.filterDataSourceWithQuery(searchText)
     }
+}
+
+extension SearchViewController: UITextFieldDelegate {
+    
 }
 
 protocol SearchViewControllerDelegate {
