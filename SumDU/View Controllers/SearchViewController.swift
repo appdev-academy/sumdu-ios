@@ -13,11 +13,11 @@ import Cartography
 
 class SearchViewController: UIViewController {
     
-    enum SelectedSegment {
+    enum SelectedSegment: Int {
+        case Favorites
         case Teachers
         case Groups
         case Auditoriums
-        case Favorites
         
         var name: String {
             
@@ -39,8 +39,7 @@ class SearchViewController: UIViewController {
     // MARK: - Outlets
     
 //    @IBOutlet private weak var searchBar: UISearchBar!
-    @IBOutlet private weak var typeSegmentedControl: UISegmentedControl!
-//    @IBOutlet private weak var tableView: UITableView!
+//    @IBOutlet private weak var typeSegmentedControl: UISegmentedControl!
     @IBOutlet private var refreshButton: UIBarButtonItem!
     
     // MARK: - UI objects
@@ -49,18 +48,20 @@ class SearchViewController: UIViewController {
     
     //private let searchBar = SearchBar(frame: CGRectZero)
     private let searchBarContainer = SearchBarContainer(frame: CGRectZero)
-//    private let containerForSegmentedControl = UIView(frame: CGRectZero)
-//    private let highlightedSegmentedControlLine = UIView(frame: CGRectZero)
-//    private let lineUderCollectionView = UIView(frame: CGRectZero)
-//    private let collectionViewForTableViewCell = CollectionViewForTableViewCell(frame: CGRectZero)
+    private let containerForSegmentedControl = UIView(frame: CGRectZero)
+    private let highlightedSegmentedControlLine = UIView(frame: CGRectZero)
+    private let lineUderCollectionView = UIView(frame: CGRectZero)
+    private let collectionViewForTableViewCell = CollectionViewForTableViewCell(frame: CGRectZero)
     
     // MARK: - Constants
     
-    private let kCellReuseIdentifier = "kCellReuseIdentifier"
+//    private let kCellReuseIdentifier = "kCellReuseIdentifier"
     private let screenSize = UIScreen.mainScreen().bounds.size
     
     // MARK: - Variables
     
+    private var tableView: UITableView?
+    private var group = ConstraintGroup()
     var delegate: SearchViewControllerDelegate?
     /// Parser instance
     var parser = Parser()
@@ -84,7 +85,7 @@ class SearchViewController: UIViewController {
     }
     var dataSource: [ListData] = [] {
         didSet {
-//            self.tableView.reloadData()
+            self.tableView?.reloadData()
         }
     }
     
@@ -92,7 +93,7 @@ class SearchViewController: UIViewController {
         didSet {
             self.history = removeHistoryRecord(uniq(self.history))
             self.saveListDataObjects(self.history, forKey: UserDefaultsKey.History.key)
-//            self.tableView.reloadData()
+            self.tableView?.reloadData()
         }
     }
     
@@ -100,21 +101,21 @@ class SearchViewController: UIViewController {
     var selectedSegment: SelectedSegment = SelectedSegment.Favorites {
         didSet {
             self.filterDataSourceWithQuery(self.searchBarContainer.searchBar.getTextField?.text)
-//            tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.Automatic)
+            self.tableView?.reloadSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.Automatic)
             
             switch self.selectedSegment {
                 
-            case .Favorites: break
-//                self.setDynamicConstraints(0.0, width: CollectionViewCellConstrains.imageWidth.rawValue)
+            case .Favorites:
+                self.setDynamicConstraints(0.0, width: CollectionViewCellConstrains.imageWidth.rawValue)
                 
-            case .Teachers: break
-//                self.setDynamicConstraints(self.calculateIndentBetweenObjectsIntoCollectionVIewCell() + CollectionViewCellConstrains.imageWidth.rawValue + 1.0, width: self.calculateLabelWidth(SelectedSegment.Teachers.name))
+            case .Teachers:
+                self.setDynamicConstraints(self.calculateIndentBetweenObjectsIntoCollectionVIewCell() + CollectionViewCellConstrains.imageWidth.rawValue + 1.0, width: self.calculateLabelWidth(SelectedSegment.Teachers.name))
                 
-            case .Groups: break
-//                self.setDynamicConstraints(self.calculateIndentBetweenObjectsIntoCollectionVIewCell()*2 + self.calculateLabelWidth(SelectedSegment.Teachers.name) + CollectionViewCellConstrains.imageWidth.rawValue + 1.0, width: self.calculateLabelWidth(SelectedSegment.Groups.name))
+            case .Groups:
+                self.setDynamicConstraints(self.calculateIndentBetweenObjectsIntoCollectionVIewCell()*2 + self.calculateLabelWidth(SelectedSegment.Teachers.name) + CollectionViewCellConstrains.imageWidth.rawValue + 1.0, width: self.calculateLabelWidth(SelectedSegment.Groups.name))
                 
-            case .Auditoriums: break
-//                self.setDynamicConstraints(self.calculateIndentBetweenObjectsIntoCollectionVIewCell()*3 + self.calculateLabelWidth(SelectedSegment.Teachers.name) + self.calculateLabelWidth(SelectedSegment.Groups.name) + CollectionViewCellConstrains.imageWidth.rawValue + 1.0, width: self.calculateLabelWidth(SelectedSegment.Auditoriums.name))
+            case .Auditoriums:
+                self.setDynamicConstraints(self.calculateIndentBetweenObjectsIntoCollectionVIewCell()*3 + self.calculateLabelWidth(SelectedSegment.Teachers.name) + self.calculateLabelWidth(SelectedSegment.Groups.name) + CollectionViewCellConstrains.imageWidth.rawValue + 1.0, width: self.calculateLabelWidth(SelectedSegment.Auditoriums.name))
                 
             }
         }
@@ -126,7 +127,29 @@ class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
+        self.searchBarContainer.refreshBarButton.addTarget(self, action: #selector(SearchViewController.refreshListDataObjects(_:)), forControlEvents: .TouchUpInside)
+        
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.scrollDirection = .Horizontal
+        self.collectionViewMenu = UICollectionView(frame: self.view.bounds, collectionViewLayout: flowLayout)
+        self.collectionViewMenu.registerClass(CollectionViewMenuCell.self, forCellWithReuseIdentifier: "collectionMenuCell")
+        self.collectionViewMenu.delegate = self
+        self.collectionViewMenu.dataSource = self
+        self.collectionViewMenu.showsVerticalScrollIndicator = false
+        self.collectionViewMenu.showsHorizontalScrollIndicator = false
+        self.collectionViewMenu.pagingEnabled = true
+        self.collectionViewMenu.backgroundColor = UIColor.whiteColor()
+        
+        self.containerForSegmentedControl.addSubview(self.collectionViewMenu)
+        
+        self.highlightedSegmentedControlLine.backgroundColor = colorForSelectedObjects
+        self.highlightedSegmentedControlLine.layer.zPosition = 2.0
+        self.containerForSegmentedControl.addSubview(self.highlightedSegmentedControlLine)
+        
+        self.lineUderCollectionView.backgroundColor = lineColor
+        self.lineUderCollectionView.layer.zPosition = 1.0
+        self.containerForSegmentedControl.addSubview(self.lineUderCollectionView)
+        
         
         // Load and filter initial data
         self.allTeachers = self.loadListDataObjects(UserDefaultsKey.Teachers.key)
@@ -145,9 +168,12 @@ class SearchViewController: UIViewController {
         self.searchBarContainer.searchBar.getTextField?.delegate = self
         
         self.view.addSubview(self.searchBarContainer)
+        self.view.addSubview(self.containerForSegmentedControl)
         
-        self.setConstrain()
+        self.selectedSegment = .Favorites
         
+        self.setupBottomCollectionView()
+        self.setupConstraints()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -160,56 +186,121 @@ class SearchViewController: UIViewController {
         self.deregisterFromNotifications()
     }
     
-    private func setConstrain() {
+    private func setupBottomCollectionView() {
         
-//        guard let collectionViewMenu = self.collectionViewMenu else {
-//            return
-//        }
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.scrollDirection = .Horizontal
+        self.bottomCollectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: flowLayout)
+        self.bottomCollectionView.backgroundColor = UIColor.whiteColor()
+        self.bottomCollectionView.registerClass(CollectionViewForTableViewCell.self, forCellWithReuseIdentifier: "bottomCollectionViewCell")
+        self.bottomCollectionView.showsVerticalScrollIndicator = false
+        self.bottomCollectionView.showsHorizontalScrollIndicator = false
+        self.bottomCollectionView.delegate = self
+        self.bottomCollectionView.dataSource = self
+        self.bottomCollectionView.bounces = false
+        
+        self.tableView = self.collectionViewForTableViewCell.tableView
+        
+        self.tableView?.registerClass(UITableViewCell.classForCoder(), forCellReuseIdentifier: "tableViewCell")
+        
+        self.tableView?.delegate = self
+        self.tableView?.dataSource = self
+        
+        self.view.addSubview(self.bottomCollectionView)
+        
+        guard let bottomCollectionView = self.bottomCollectionView else {
+            return
+        }
+        
+        constrain(self.containerForSegmentedControl, bottomCollectionView) {
+            containerForSegmentedControl, bottomCollectionView in
+            
+            bottomCollectionView.leading == bottomCollectionView.superview!.leading
+            bottomCollectionView.trailing == bottomCollectionView.superview!.trailing
+            bottomCollectionView.top == containerForSegmentedControl.bottom + 1
+            bottomCollectionView.bottom == bottomCollectionView.superview!.bottom
+            
+        }
+        
+    }
+    
+    // Calculate lenght of textLabel
+    private func calculateLabelWidth(label: String) -> CGFloat {
+        return label.boundingRectWithSize(CGSize(width: DBL_MAX, height: DBL_MAX), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName: titleTextFont], context: nil).size.width
+    }
+    
+    // Calculate indents in CollectionViewCell
+    private func calculateIndentBetweenObjectsIntoCollectionVIewCell() -> CGFloat {
+        
+        let screenWidth = min(self.screenSize.width, self.screenSize.height)
+        
+        let indent = (screenWidth - CollectionViewCellConstrains.imageWidth.rawValue - self.calculateLabelWidth(SelectedSegment.Teachers.name) - self.calculateLabelWidth(SelectedSegment.Groups.name) - self.calculateLabelWidth(SelectedSegment.Auditoriums.name))/4.00
+        
+        return indent
+    }
+    
+    private func setDynamicConstraints(leading: CGFloat, width: CGFloat) {
+        
+        constrain(self.highlightedSegmentedControlLine, replace: self.group) {
+            line in
+            
+            line.leading == line.superview!.leading + self.calculateIndentBetweenObjectsIntoCollectionVIewCell()/2.0 + leading
+            line.width == width
+            
+        }
+        
+    }
+    
+    private func setupConstraints() {
+        
+        guard let collectionViewMenu = self.collectionViewMenu else {
+            return
+        }
         
         let views = [ self.searchBarContainer,
-//                      self.containerForSegmentedControl,
-//                      collectionViewMenu,
-//                      self.highlightedSegmentedControlLine,
-//                      self.lineUderCollectionView,
+                      self.containerForSegmentedControl,
+                      collectionViewMenu,
+                      self.highlightedSegmentedControlLine,
+                      self.lineUderCollectionView,
                       ]
         
         constrain(views) {
             views in
             
             let searchBarContainer = views[0]
-//            let containerForSegmentedControl = views[1]
-//            let collectionViewMenu = views[2]
-//            let highlightedSegmentedControlLine = views[3]
-//            let lineUderCollectionView = views[4]
+            let containerForSegmentedControl = views[1]
+            let collectionViewMenu = views[2]
+            let highlightedSegmentedControlLine = views[3]
+            let lineUderCollectionView = views[4]
             
             searchBarContainer.top == searchBarContainer.superview!.top + 30
             searchBarContainer.leading == searchBarContainer.superview!.leading + 14
             searchBarContainer.trailing == searchBarContainer.superview!.trailing - 14
             searchBarContainer.height == 44.0
             
-//            containerForSegmentedControl.top == searchBarContainer.bottom + 1
-//            containerForSegmentedControl.leading == containerForSegmentedControl.superview!.leading
-//            containerForSegmentedControl.trailing == containerForSegmentedControl.superview!.trailing
-//            containerForSegmentedControl.height == CollectionViewConstrains.CollectionViewCellHeight.rawValue + 2.0
-//            
-//            collectionViewMenu.top == containerForSegmentedControl.top + 1
-//            collectionViewMenu.leading == containerForSegmentedControl.leading
-//            collectionViewMenu.trailing == containerForSegmentedControl.trailing
-//            collectionViewMenu.height == CollectionViewConstrains.CollectionViewCellHeight.rawValue
-//            
-//            lineUderCollectionView.leading == containerForSegmentedControl.leading
-//            lineUderCollectionView.trailing == containerForSegmentedControl.trailing
-//            lineUderCollectionView.top == containerForSegmentedControl.bottom
-//            lineUderCollectionView.height == 1.0
-//            
-//            highlightedSegmentedControlLine.height == 2.0
-//            highlightedSegmentedControlLine.bottom == lineUderCollectionView.bottom
+            containerForSegmentedControl.top == searchBarContainer.bottom + 1
+            containerForSegmentedControl.leading == containerForSegmentedControl.superview!.leading
+            containerForSegmentedControl.trailing == containerForSegmentedControl.superview!.trailing
+            containerForSegmentedControl.height == CollectionViewConstrains.CollectionViewCellHeight.rawValue + 2.0
+
+            collectionViewMenu.top == containerForSegmentedControl.top + 1
+            collectionViewMenu.leading == containerForSegmentedControl.leading
+            collectionViewMenu.trailing == containerForSegmentedControl.trailing
+            collectionViewMenu.height == CollectionViewConstrains.CollectionViewCellHeight.rawValue
+
+            lineUderCollectionView.leading == containerForSegmentedControl.leading
+            lineUderCollectionView.trailing == containerForSegmentedControl.trailing
+            lineUderCollectionView.top == containerForSegmentedControl.bottom
+            lineUderCollectionView.height == 1.0
+            
+            highlightedSegmentedControlLine.height == 2.0
+            highlightedSegmentedControlLine.bottom == lineUderCollectionView.bottom
             
         }
     }
     
     /// Refresh [ListData] objects
-    @IBAction func refreshListDataObjects(sender: AnyObject) {
+    func refreshListDataObjects(sender: UIButton) {
         self.parser.sendDataRequest(.Auditorium, updateButtonPressed: true)
         self.parser.sendDataRequest(.Teacher, updateButtonPressed: true)
         self.parser.sendDataRequest(.Group, updateButtonPressed: true)
@@ -261,7 +352,7 @@ class SearchViewController: UIViewController {
     private func reloadListData(listData: [ListData], forKey key: String) {
         self.saveListDataObjects(listData, forKey: key)
         self.filterDataSourceWithQuery(self.searchBarContainer.searchBar.getTextField?.text)
-//        self.tableView.reloadData()
+        self.tableView?.reloadData()
     }
     
     /// Select only uniq data from History
@@ -289,18 +380,18 @@ class SearchViewController: UIViewController {
         var listDataArray: [ListData] = []
         switch selectedSegment {
             case .Teachers:
-                listDataArray = allTeachers
+                listDataArray = self.allTeachers
             case .Groups:
-                listDataArray = allGroups
+                listDataArray = self.allGroups
             case .Auditoriums:
-                listDataArray = allAuditoriums
+                listDataArray = self.allAuditoriums
             case .Favorites:
-                listDataArray = history
+                listDataArray = self.history
         }
         if let query = query where query.characters.count > 0 {
-            dataSource = listDataArray.filter { return $0.name.lowercaseString.containsString(query.lowercaseString) }
+            self.dataSource = listDataArray.filter { return $0.name.lowercaseString.containsString(query.lowercaseString) }
         } else {
-            dataSource = listDataArray
+            self.dataSource = listDataArray
         }
     }
     
@@ -311,20 +402,35 @@ class SearchViewController: UIViewController {
         }
     }
     
-    @IBAction private func selectionDidChange(sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
+    private func selectionDidChange(selected: SelectedSegment.RawValue) {
+        switch selected {
             case 0:
-                self.selectedSegment = .Teachers
-            case 1:
-                self.selectedSegment = .Groups
-            case 2:
-                self.selectedSegment = .Auditoriums
-            case 3:
                 self.selectedSegment = .Favorites
+            case 1:
+                self.selectedSegment = .Teachers
+            case 2:
+                self.selectedSegment = .Groups
+            case 3:
+                self.selectedSegment = .Auditoriums
             default:
                 print("Unknown selected segment in SearchViewController")
         }
     }
+    
+//    @IBAction private func selectionDidChange(sender: UISegmentedControl) {
+//        switch sender.selectedSegmentIndex {
+//            case 0:
+//                self.selectedSegment = .Teachers
+//            case 1:
+//                self.selectedSegment = .Groups
+//            case 2:
+//                self.selectedSegment = .Auditoriums
+//            case 3:
+//                self.selectedSegment = .Favorites
+//            default:
+//                print("Unknown selected segment in SearchViewController")
+//        }
+//    }
     
     // MARK: - Notifications
     
@@ -342,15 +448,15 @@ class SearchViewController: UIViewController {
             if let keyboardSize: CGSize = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue.size {
                 let contentInset = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height,  0.0);
                 
-//                self.tableView.contentInset = contentInset
-//                self.tableView.scrollIndicatorInsets = contentInset
+                self.tableView?.contentInset = contentInset
+                self.tableView?.scrollIndicatorInsets = contentInset
             }
         }
     }
     
     func keyboardWillHide(notification: NSNotification) {
-//        self.tableView.contentInset = UIEdgeInsetsZero;
-//        self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
+        self.tableView?.contentInset = UIEdgeInsetsZero;
+        self.tableView?.scrollIndicatorInsets = UIEdgeInsetsZero;
     }
 }
 
@@ -405,15 +511,172 @@ extension SearchViewController: UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print(dataSource.count)
         return dataSource.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(kCellReuseIdentifier, forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("tableViewCell", forIndexPath: indexPath)
         let listDataRecord = dataSource[indexPath.row]
         cell.textLabel?.text = listDataRecord.name
-        
+        print(listDataRecord.name)
         return cell
+    }
+}
+
+extension SearchViewController: UICollectionViewDataSource {
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 4
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
+        if collectionView == self.collectionViewMenu {
+            
+            let cell: CollectionViewMenuCell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionMenuCell", forIndexPath: indexPath) as! CollectionViewMenuCell
+            
+            if indexPath.row == 0 {
+                
+                cell.addImage()
+                cell.selected = true
+                
+                return cell
+                
+            } else {
+                
+                if let segment = SelectedSegment(rawValue: indexPath.row) {
+                    cell.addTitle(segment.name)
+                }
+                
+                return cell
+            }
+            
+        } else {
+            
+            let cell: CollectionViewForTableViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("bottomCollectionViewCell", forIndexPath: indexPath) as! CollectionViewForTableViewCell
+            
+            if self.history.isEmpty && self.selectedSegment == .Favorites {
+                
+                cell.selected = true
+                
+            } else {
+                
+                cell.selected = false
+            }
+            
+            return cell
+        }
+        
+    }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
+        // Scroll to cell in bottom collection view
+        if collectionView == self.collectionViewMenu {
+            self.selectionDidChange(indexPath.row)
+            self.bottomCollectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: UICollectionViewScrollPosition.Left, animated: true)
+        }
+        
+        // Set current selected segment
+        if let currentSelectedSegment = SelectedSegment(rawValue: indexPath.row) {
+            self.selectedSegment = currentSelectedSegment
+            UIView.animateWithDuration(0.3, animations: self.containerForSegmentedControl.layoutIfNeeded)
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        
+        if collectionView == self.collectionViewMenu {
+            
+            if indexPath.row == 0 {
+                return CGSizeMake(CollectionViewCellConstrains.imageWidth.rawValue + self.calculateIndentBetweenObjectsIntoCollectionVIewCell() - 0.01, CollectionViewConstrains.CollectionViewCellHeight.rawValue)
+            } else if indexPath.row == 1 {
+                return CGSizeMake(self.calculateLabelWidth(SelectedSegment.Teachers.name) + self.calculateIndentBetweenObjectsIntoCollectionVIewCell() - 1.0, CollectionViewConstrains.CollectionViewCellHeight.rawValue)
+            } else if indexPath.row == 2 {
+                return CGSizeMake(self.calculateLabelWidth(SelectedSegment.Groups.name) + self.calculateIndentBetweenObjectsIntoCollectionVIewCell() - 1.0, CollectionViewConstrains.CollectionViewCellHeight.rawValue)
+            } else {
+                return CGSizeMake(self.calculateLabelWidth(SelectedSegment.Auditoriums.name) + self.calculateIndentBetweenObjectsIntoCollectionVIewCell() - 1.0, CollectionViewConstrains.CollectionViewCellHeight.rawValue)
+            }
+        } else if collectionView == self.bottomCollectionView {
+            return CGSizeMake(collectionView.bounds.size.width, collectionView.bounds.size.height)
+        } else {
+            return CGSizeMake(0.0, 0.0)
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
+    }
+    
+}
+
+extension SearchViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
+        if collectionView == self.collectionViewMenu {
+            return 1.0
+        } else {
+            return 0.0
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+        if collectionView == self.collectionViewMenu {
+            return 1.0
+        } else {
+            return 0.0
+        }
+    }
+}
+
+extension SearchViewController: UICollectionViewDelegate {
+    
+    func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        let pageWidth = self.bottomCollectionView.bounds.size.width
+        
+        let currentOffset = scrollView.contentOffset.x
+        let targetOffset = targetContentOffset.memory.x
+        var newTargetOffset: CGFloat = 0.0
+        
+        if (targetOffset > currentOffset) {
+            newTargetOffset = ceil(currentOffset / pageWidth)  * pageWidth
+            
+        } else {
+            newTargetOffset = floor(currentOffset / pageWidth) * pageWidth
+        }
+        
+        if (newTargetOffset < 0) {
+            newTargetOffset = 0
+            
+        } else if (newTargetOffset > scrollView.contentSize.width) {
+            newTargetOffset = scrollView.contentSize.width
+        }
+        
+        targetContentOffset.memory.x = currentOffset
+        self.bottomCollectionView.setContentOffset(CGPointMake(newTargetOffset, 0), animated: true)
+    }
+    
+    func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+        
+        let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
+        let indexPath = NSIndexPath(forItem: Int(pageNumber), inSection: 0)
+        
+        self.collectionViewMenu.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .Left)
+        
+        if indexPath.row == 0 && self.history.isEmpty {
+            self.collectionViewForTableViewCell.selected = true
+            self.bottomCollectionView.reloadData()
+        } else {
+            self.collectionViewForTableViewCell.selected = false
+            self.bottomCollectionView.reloadData()
+        }
+        
+        if let currentSelectedSegment = SelectedSegment(rawValue: indexPath.row) {
+            self.selectedSegment = currentSelectedSegment
+            UIView.animateWithDuration(0.3, animations: self.containerForSegmentedControl.layoutIfNeeded)
+        }
     }
 }
 
@@ -421,7 +684,7 @@ extension SearchViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
-//        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive
+        self.tableView?.keyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
@@ -432,7 +695,7 @@ extension SearchViewController: UISearchBarDelegate {
             searchBar.text = ""
             searchBar.showsCancelButton = false
             searchBar.resignFirstResponder()
-//            self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.None
+            self.tableView?.keyboardDismissMode = UIScrollViewKeyboardDismissMode.None
             self.filterDataSourceWithQuery(nil)
         }
     }

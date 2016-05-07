@@ -51,8 +51,8 @@ class SearchBarContainer: UIView {
     
     var searchBar = SearchBar(frame: CGRectZero)
     private var containerForButtons = UIView(frame: CGRectZero)
-    private var refreshBarButton = UIButton(frame: CGRectZero)
-    private var cancelBarButton = UIButton(frame: CGRectZero)
+    var refreshBarButton = UIButton(frame: CGRectZero)
+    var cancelBarButton = UIButton(frame: CGRectZero)
     private var inactiveSearchButtonImage = UIImage(named: "InactiveRefreshButton")
     private var inactiveCancelButtonImage = UIImage(named: "InactiveCancelButton")
     
