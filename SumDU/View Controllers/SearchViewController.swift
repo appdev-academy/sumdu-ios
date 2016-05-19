@@ -38,15 +38,13 @@ class SearchViewController: UIViewController {
     
     // MARK: - Outlets
     
-//    @IBOutlet private weak var searchBar: UISearchBar!
 //    @IBOutlet private weak var typeSegmentedControl: UISegmentedControl!
-    @IBOutlet private var refreshButton: UIBarButtonItem!
+//    @IBOutlet private var refreshButton: UIBarButtonItem!
     
     // MARK: - UI objects
     private var collectionViewMenu: UICollectionView!
     private var bottomCollectionView: UICollectionView!
     
-    //private let searchBar = SearchBar(frame: CGRectZero)
     private let searchBarContainer = SearchBarContainer(frame: CGRectZero)
     private let containerForSegmentedControl = UIView(frame: CGRectZero)
     private let highlightedSegmentedControlLine = UIView(frame: CGRectZero)
@@ -60,9 +58,14 @@ class SearchViewController: UIViewController {
     
     // MARK: - Variables
     
-    private var tableView: UITableView?
+    private var textField: UITextField!
+    private var tableView: UITableView!
+    
     private var group = ConstraintGroup()
+    
     var delegate: SearchViewControllerDelegate?
+    
+    
     /// Parser instance
     var parser = Parser()
     /// Array of all Auditoriums
@@ -150,6 +153,7 @@ class SearchViewController: UIViewController {
         self.lineUderCollectionView.layer.zPosition = 1.0
         self.containerForSegmentedControl.addSubview(self.lineUderCollectionView)
         
+        self.searchBarContainer.buttonsDelegate = self
         
         // Load and filter initial data
         self.allTeachers = self.loadListDataObjects(UserDefaultsKey.Teachers.key)
@@ -165,12 +169,23 @@ class SearchViewController: UIViewController {
         self.parser.dataListDelegate = self
         
         // Set delegate for searchBar
-        self.searchBarContainer.searchBar.getTextField?.delegate = self
+        self.textField = self.searchBarContainer.searchBar.textField
+        self.textField.delegate = self
+        
+        self.textField.addTarget(self, action: #selector(SearchViewController.textFieldDidChange(_:)), forControlEvents: .EditingChanged)
+        
+        self.tableView = self.collectionViewForTableViewCell.tableView
+        self.tableView.registerClass(CustomTableVIewCell.self, forCellReuseIdentifier: "tableViewCell")
+        
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
         
         self.view.addSubview(self.searchBarContainer)
         self.view.addSubview(self.containerForSegmentedControl)
         
         self.selectedSegment = .Favorites
+        
+        self.searchBarContainer.isEditingMode = false
         
         self.setupBottomCollectionView()
         self.setupConstraints()
@@ -198,13 +213,6 @@ class SearchViewController: UIViewController {
         self.bottomCollectionView.delegate = self
         self.bottomCollectionView.dataSource = self
         self.bottomCollectionView.bounces = false
-        
-        self.tableView = self.collectionViewForTableViewCell.tableView
-        
-        self.tableView?.registerClass(UITableViewCell.classForCoder(), forCellReuseIdentifier: "tableViewCell")
-        
-        self.tableView?.delegate = self
-        self.tableView?.dataSource = self
         
         self.view.addSubview(self.bottomCollectionView)
         
@@ -511,15 +519,14 @@ extension SearchViewController: UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print(dataSource.count)
         return dataSource.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("tableViewCell", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("tableViewCell", forIndexPath: indexPath) as! CustomTableVIewCell
         let listDataRecord = dataSource[indexPath.row]
-        cell.textLabel?.text = listDataRecord.name
-        print(listDataRecord.name)
+        cell.label.text = listDataRecord.name
+
         return cell
     }
 }
@@ -555,6 +562,8 @@ extension SearchViewController: UICollectionViewDataSource {
         } else {
             
             let cell: CollectionViewForTableViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("bottomCollectionViewCell", forIndexPath: indexPath) as! CollectionViewForTableViewCell
+            
+            cell.tableView = self.tableView
             
             if self.history.isEmpty && self.selectedSegment == .Favorites {
                 
@@ -719,8 +728,65 @@ extension SearchViewController: UISearchBarDelegate {
 
 extension SearchViewController: UITextFieldDelegate {
     
+    func textFieldDidBeginEditing(textField: UITextField) {
+        self.searchBarContainer.isEditingMode = true
+        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        if textField.text != "" {
+            self.searchBarContainer.isEditingMode = true
+        } else {
+            self.searchBarContainer.isEditingMode = false
+        }
+        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.None
+        self.filterDataSourceWithQuery(textField.text)
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        self.filterDataSourceWithQuery(textField.text)
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldDidChange(textField: UITextField) {
+        self.filterDataSourceWithQuery(textField.text)
+        self.tableView.reloadData()
+    }
+    
+    func cancelButtonClicked() {
+        self.textField.text = ""
+        self.searchBarContainer.isEditingMode = false
+        self.filterDataSourceWithQuery(nil)
+        self.textField.resignFirstResponder()
+    }
+}
+
+extension SearchViewController: ManipulationWithButtonsDelegate {
+    func assingTargetToRefreshButton(button: UIButton) {
+        button.addTarget(self, action: #selector(SearchViewController.refreshListDataObjects(_:)), forControlEvents: .TouchUpInside)
+    }
+    
+    func unassingTargetToRefreshButton(button: UIButton) {
+        button.removeTarget(self, action: #selector(SearchViewController.refreshListDataObjects(_:)), forControlEvents: .TouchUpInside)
+    }
+    
+    func assingTargetToCancelButton(button: UIButton) {
+        button.addTarget(self, action: #selector(SearchViewController.cancelButtonClicked), forControlEvents: .TouchUpInside)
+    }
+    
+    func unassingTargetToCancelButton(button: UIButton) {
+        button.removeTarget(self, action: #selector(SearchViewController.cancelButtonClicked), forControlEvents: .TouchUpInside)
+    }
 }
 
 protocol SearchViewControllerDelegate {
     func setListDataObject(listData: ListData)
+}
+
+protocol ManipulationWithButtonsDelegate {
+    func assingTargetToRefreshButton(button: UIButton)
+    func unassingTargetToRefreshButton(button: UIButton)
+    func assingTargetToCancelButton(button: UIButton)
+    func unassingTargetToCancelButton(button: UIButton)
 }

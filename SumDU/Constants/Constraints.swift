@@ -22,7 +22,8 @@ enum CollectionViewCellConstrains: CGFloat {
 let colorForSelectedObjects = UIColor(red: 76.0/255, green: 77.0/255, blue: 81.0/255, alpha: 1.0)
 let defaultColorForObjects = UIColor(red: 168.0/255, green: 171.0/255, blue: 184.0/255, alpha: 1.0)
 let lineColor = UIColor(red: 239.0/255, green: 239.0/255, blue: 243.0/255, alpha: 1.0)
-
+let textColorForTableViewCell = UIColor(red: 101.0/255, green: 102.0/255, blue: 107.0/255, alpha: 1.0)
 // UIFonts
 
 let titleTextFont = UIFont(name: "HelveticaNeue-Medium", size: 17.0)!
+let textFontForTableViewCell = UIFont(name: "HelveticaNeue-Medium", size: 20.0)!

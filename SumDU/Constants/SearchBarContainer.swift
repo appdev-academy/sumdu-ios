@@ -17,7 +17,7 @@ class SearchBarContainer: UIView {
     
     private var group = ConstraintGroup()
     
-    private var isEditingMode = false {
+    var isEditingMode = false {
         
         didSet {
             
@@ -42,7 +42,7 @@ class SearchBarContainer: UIView {
                     self.containerForButtons.layoutIfNeeded()
                     
                 })
-                self.searchBar.resignFirstResponder()
+                //self.searchBar.resignFirstResponder()
             }
         }
     }
@@ -55,6 +55,7 @@ class SearchBarContainer: UIView {
     var cancelBarButton = UIButton(frame: CGRectZero)
     private var inactiveSearchButtonImage = UIImage(named: "InactiveRefreshButton")
     private var inactiveCancelButtonImage = UIImage(named: "InactiveCancelButton")
+    var buttonsDelegate: ManipulationWithButtonsDelegate?
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -64,7 +65,6 @@ class SearchBarContainer: UIView {
         super.init(frame: frame)
         
         self.searchBar.layer.cornerRadius = 6.0
-        //self.searchBar.textField.addTarget(self, action: #selector(TopBarContainer.textFieldEditingChanged(_:)), forControlEvents: UIControlEvents.EditingChanged)
         
         self.addSubview(self.searchBar)
         self.addSubview(self.containerForButtons)
@@ -79,6 +79,8 @@ class SearchBarContainer: UIView {
         self.refreshBarButton = UIButton(frame: CGRect(x: self.containerForButtons.layer.frame.width/2, y: self.containerForButtons.layer.frame.height/2, width: 0.0, height: 0.0))
         self.refreshBarButton.setImage(self.inactiveSearchButtonImage, forState: .Normal)
         self.containerForButtons.addSubview(self.refreshBarButton)
+        
+        self.buttonsDelegate?.assingTargetToRefreshButton(self.refreshBarButton)
         
         constrain(self.refreshBarButton, replace: self.group) {
             refreshBarButton in
@@ -96,6 +98,8 @@ class SearchBarContainer: UIView {
         self.cancelBarButton.setImage(self.inactiveCancelButtonImage, forState: .Normal)
         self.containerForButtons.addSubview(self.cancelBarButton)
         
+        self.buttonsDelegate?.assingTargetToCancelButton(self.cancelBarButton)
+        
         constrain(self.cancelBarButton, replace: self.group) {
             cancelBarButton in
             
@@ -111,6 +115,8 @@ class SearchBarContainer: UIView {
         if self.refreshBarButton.superview == self.containerForButtons {
             self.refreshBarButton.removeFromSuperview()
         }
+        
+        self.buttonsDelegate?.unassingTargetToRefreshButton(self.refreshBarButton)
     }
     
     private func removeCancelButton() {
@@ -118,6 +124,8 @@ class SearchBarContainer: UIView {
         if self.cancelBarButton.superview == self.containerForButtons {
             self.cancelBarButton.removeFromSuperview()
         }
+        
+        self.buttonsDelegate?.unassingTargetToCancelButton(self.cancelBarButton)
     }
     
     private func setupConstraints() {

@@ -14,7 +14,7 @@ class SearchBar: UIView {
     
     // MARK: - Variables
     
-    private var textField = SearchTextField(frame: CGRectZero)
+    var textField = SearchTextField(frame: CGRectZero)
     private var imageView = UIImageView(frame: CGRectZero)
     private var magnifyingGlassImage = UIImage(named: "MagnifyingGlass")
     

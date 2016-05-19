@@ -32,9 +32,9 @@ class CollectionViewForTableViewCell: UICollectionViewCell {
     // MARK: - UI Objects
     
     var tableView = UITableView(frame: CGRectZero)
-    private var historyImagePicture = UIImage(named: "historyImage")
-    
+    private let historyImagePicture = UIImage(named: "historyImage")
     private let historyImage = UIImageView()
+    private let tableViewCell = CustomTableVIewCell(frame: CGRectZero)
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -62,17 +62,24 @@ class CollectionViewForTableViewCell: UICollectionViewCell {
     
     private func addTableView() {
         
-        self.tableView.registerClass(UITableViewCell.classForCoder(), forCellReuseIdentifier: "tableViewCell")
+        self.tableView.registerClass(CustomTableVIewCell.self, forCellReuseIdentifier: "tableViewCell")
+        
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         self.addSubview(self.tableView)
-        
-        constrain(self.tableView, replace: self.group) {
-            tableView in
+        self.tableView.addSubview(self.tableViewCell)
+        constrain(self.tableView, self.tableViewCell, replace: self.group) {
+            tableView, tableViewCell in
             
             tableView.leading == tableView.superview!.leading
             tableView.trailing == tableView.superview!.trailing
             tableView.top == tableView.superview!.top
             tableView.bottom == tableView.superview!.bottom
+            
+            tableViewCell.leading == tableView.leading + 5
+            tableViewCell.trailing == tableView.trailing - 5
+            tableViewCell.top == tableView.top
+            tableViewCell.height == 64.0
         }
     }
     
