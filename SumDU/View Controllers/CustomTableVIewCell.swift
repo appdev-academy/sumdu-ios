@@ -44,8 +44,7 @@ class CustomTableVIewCell: UITableViewCell {
             label, separatorLine in
             
             label.height == 24.0
-            label.leading == label.superview!.leading + 10
-            //label.trailing == label.superview!.trailing - 10
+            label.leading == label.superview!.leading + 14
             label.centerY == label.superview!.centerY
             
             separatorLine.height == 1.0

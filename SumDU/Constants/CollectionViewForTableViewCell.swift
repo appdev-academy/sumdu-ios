@@ -79,7 +79,7 @@ class CollectionViewForTableViewCell: UICollectionViewCell {
             tableViewCell.leading == tableView.leading + 5
             tableViewCell.trailing == tableView.trailing - 5
             tableViewCell.top == tableView.top
-            tableViewCell.height == 64.0
+            tableViewCell.height == 65.0
         }
     }
     

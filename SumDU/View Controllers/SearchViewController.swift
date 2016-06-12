@@ -23,13 +23,13 @@ class SearchViewController: UIViewController {
             
             switch self {
             case .Teachers:
-                return NSLocalizedString("Teachers", comment: "")
+                return NSLocalizedString("Teacher", comment: "")
                 
             case .Groups:
-                return NSLocalizedString("Groups", comment: "")
+                return NSLocalizedString("Group", comment: "")
                 
             case .Auditoriums:
-                return NSLocalizedString("Auditoriums", comment: "")
+                return NSLocalizedString("Auditorium", comment: "")
                 
             default: return ""
             }
@@ -37,9 +37,6 @@ class SearchViewController: UIViewController {
     }
     
     // MARK: - Outlets
-    
-//    @IBOutlet private weak var typeSegmentedControl: UISegmentedControl!
-//    @IBOutlet private var refreshButton: UIBarButtonItem!
     
     // MARK: - UI objects
     private var collectionViewMenu: UICollectionView!
@@ -53,18 +50,17 @@ class SearchViewController: UIViewController {
     
     // MARK: - Constants
     
-//    private let kCellReuseIdentifier = "kCellReuseIdentifier"
     private let screenSize = UIScreen.mainScreen().bounds.size
     
     // MARK: - Variables
     
     private var textField: UITextField!
     private var tableView: UITableView!
+    private var searchingMode = false
     
     private var group = ConstraintGroup()
     
     var delegate: SearchViewControllerDelegate?
-    
     
     /// Parser instance
     var parser = Parser()
@@ -229,6 +225,24 @@ class SearchViewController: UIViewController {
             bottomCollectionView.bottom == bottomCollectionView.superview!.bottom
             
         }
+        
+    }
+    
+    // Show matching pattern
+    private func highlightSearchResults(searchString: String, resultString: String) -> NSMutableAttributedString {
+        
+        let attributedString: NSMutableAttributedString = NSMutableAttributedString(string: resultString)
+        let pattern = searchString
+        let range: NSRange = NSMakeRange(0, resultString.characters.count)
+        
+        let regex = try? NSRegularExpression(pattern: pattern, options: NSRegularExpressionOptions())
+        
+        regex?.enumerateMatchesInString(resultString, options: NSMatchingOptions(), range: range) { (textCheckingResult, matchingFlags, stop) -> Void in
+            let subRange = textCheckingResult?.range
+            attributedString.addAttribute(NSForegroundColorAttributeName, value: textColorForTableViewCell, range: subRange!)
+        }
+        
+        return attributedString
         
     }
     
@@ -397,7 +411,7 @@ class SearchViewController: UIViewController {
                 listDataArray = self.history
         }
         if let query = query where query.characters.count > 0 {
-            self.dataSource = listDataArray.filter { return $0.name.lowercaseString.containsString(query.lowercaseString) }
+            self.dataSource = listDataArray.filter { return $0.name.containsString(query) }
         } else {
             self.dataSource = listDataArray
         }
@@ -525,8 +539,16 @@ extension SearchViewController: UITableViewDataSource {
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("tableViewCell", forIndexPath: indexPath) as! CustomTableVIewCell
         let listDataRecord = dataSource[indexPath.row]
+        //print(dataSource)
         cell.label.text = listDataRecord.name
-
+        
+        if self.searchingMode == true {
+            cell.label.textColor = defaultColorForObjects
+            cell.label.attributedText = highlightSearchResults(self.textField.text!, resultString: listDataRecord.name)
+        } else {
+            cell.label.textColor = textColorForTableViewCell
+        }
+        
         return cell
     }
 }
@@ -664,7 +686,7 @@ extension SearchViewController: UICollectionViewDelegate {
         }
         
         targetContentOffset.memory.x = currentOffset
-        self.bottomCollectionView.setContentOffset(CGPointMake(newTargetOffset, 0), animated: true)
+        //self.bottomCollectionView.setContentOffset(CGPointMake(newTargetOffset, 0), animated: true)
     }
     
     func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
@@ -730,6 +752,7 @@ extension SearchViewController: UITextFieldDelegate {
     
     func textFieldDidBeginEditing(textField: UITextField) {
         self.searchBarContainer.isEditingMode = true
+        self.searchingMode = true
         self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive
     }
     
@@ -739,6 +762,7 @@ extension SearchViewController: UITextFieldDelegate {
         } else {
             self.searchBarContainer.isEditingMode = false
         }
+        self.searchingMode = false
         self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.None
         self.filterDataSourceWithQuery(textField.text)
     }
@@ -750,6 +774,8 @@ extension SearchViewController: UITextFieldDelegate {
     }
     
     func textFieldDidChange(textField: UITextField) {
+        self.searchingMode = true
+        textField.textColor = textColorForTableViewCell
         self.filterDataSourceWithQuery(textField.text)
         self.tableView.reloadData()
     }
@@ -757,6 +783,7 @@ extension SearchViewController: UITextFieldDelegate {
     func cancelButtonClicked() {
         self.textField.text = ""
         self.searchBarContainer.isEditingMode = false
+        self.searchingMode = false
         self.filterDataSourceWithQuery(nil)
         self.textField.resignFirstResponder()
     }
