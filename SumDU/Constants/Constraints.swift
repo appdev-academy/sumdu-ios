@@ -26,4 +26,3 @@ let textColorForTableViewCell = UIColor(red: 101.0/255, green: 102.0/255, blue: 
 // UIFonts
 
 let titleTextFont = UIFont(name: "HelveticaNeue-Medium", size: 17.0)!
-let textFontForTableViewCell = UIFont(name: "HelveticaNeue-Medium", size: 20.0)!

@@ -1,5 +1,5 @@
 //
-//  CustomTableVIewCell.swift
+//  CustomTableViewCell.swift
 //  SumDU
 //
 //  Created by Oleksandr Kysil on 5/7/16.
@@ -9,15 +9,19 @@
 import UIKit
 import Cartography
 
-class CustomTableVIewCell: UITableViewCell {
+class CustomTableViewCell: UITableViewCell {
+    
+    // MARK: - Constants
+    
+    static let reuseIdentifier = "\(CustomTableViewCell.self)"
+    static let cellHeight: CGFloat = 65.0
 
     // MARK: - UIObjects
     
-    var label: UILabel = UILabel(frame: CGRectZero)
+    private let label = UILabel()
+    private let separatorLine = UIView()
     
-    private let separatorLine = UIView(frame: CGRectZero)
-    
-    private var group = ConstraintGroup()
+    // MARK: - Initialization
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -25,33 +29,57 @@ class CustomTableVIewCell: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = UIColor.whiteColor()
         
-        self.label.textColor = textColorForTableViewCell
-        self.label.font = textFontForTableViewCell
-        
-        self.separatorLine.backgroundColor = lineColor
-        
-        self.addSubview(self.label)
-        self.addSubview(self.separatorLine)
-        
-        self.setupConstraints()
-    }
-    
-    private func setupConstraints() {
-        
-        constrain(self.label,self.separatorLine, replace: self.group) {
-            label, separatorLine in
-            
-            label.height == 24.0
-            label.leading == label.superview!.leading + 14
-            label.centerY == label.superview!.centerY
-            
+        // Separator
+        separatorLine.backgroundColor = lineColor
+        contentView.addSubview(separatorLine)
+        constrain(separatorLine, contentView) { separatorLine, superview in
+            separatorLine.leading == superview.leading
+            separatorLine.trailing == superview.trailing
+            separatorLine.bottom == superview.bottom
             separatorLine.height == 1.0
-            separatorLine.leading == separatorLine.superview!.leading
-            separatorLine.trailing == separatorLine.superview!.trailing
-            separatorLine.bottom == separatorLine.superview!.bottom
+        }
+        // Text label
+        label.textColor = textColorForTableViewCell
+        label.font = UIFont(name: "HelveticaNeue-Medium", size: 20.0)
+        contentView.addSubview(label)
+        constrain(label, separatorLine, contentView) {
+            label, separatorLine, superview in
+            
+            label.top == superview.top
+            label.leading == superview.leading + 14.0
+            label.trailing == superview.trailing - 14.0
+            label.bottom == separatorLine.top
         }
     }
     
+    // Show matching pattern
+    private func highlightSearchResults(searchString: String, resultString: String) -> NSMutableAttributedString {
+        
+        let attributedString: NSMutableAttributedString = NSMutableAttributedString(string: resultString)
+        let pattern = searchString
+        let range: NSRange = NSMakeRange(0, resultString.characters.count)
+        
+        let regex = try? NSRegularExpression(pattern: pattern, options: NSRegularExpressionOptions())
+        
+        regex?.enumerateMatchesInString(resultString, options: NSMatchingOptions(), range: range) { (textCheckingResult, matchingFlags, stop) -> Void in
+            let subRange = textCheckingResult?.range
+            attributedString.addAttribute(NSForegroundColorAttributeName, value: textColorForTableViewCell, range: subRange!)
+        }
+        
+        return attributedString
+        
+    }
+    
+    func update(withText text: String, search: Bool, searchingText: String?) {
+        label.text = text
+        if search {
+            label.textColor = defaultColorForObjects
+            if let searchingText = searchingText {
+                label.attributedText = highlightSearchResults(searchingText, resultString: text)
+            }
+        } else {
+            label.textColor = textColorForTableViewCell
+        }
+    }
 }

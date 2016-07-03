@@ -30,11 +30,11 @@
 		E41CECE01CDE09BF0051CC93 /* CollectionViewForTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E41CECDF1CDE09BF0051CC93 /* CollectionViewForTableViewCell.swift */; };
 		E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */; };
 		E4583E951C25495F0031F164 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4583E941C25495F0031F164 /* Keys.swift */; };
+		E45B9D2C1CDE7B3200B4467B /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45B9D2B1CDE7B3200B4467B /* CustomTableViewCell.swift */; };
 		E4956DA31CDE05190061DDCC /* CollectionViewMenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4956DA21CDE05190061DDCC /* CollectionViewMenuCell.swift */; };
 		E49802F41CDA65850034B724 /* Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F31CDA65850034B724 /* Constraints.swift */; };
 		E49802F61CDA66760034B724 /* SearchTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F51CDA66760034B724 /* SearchTextField.swift */; };
-		E49802F81CDA67520034B724 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F71CDA67520034B724 /* SearchBar.swift */; };
-		E49802FA1CDA67FF0034B724 /* SearchBarContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F91CDA67FF0034B724 /* SearchBarContainer.swift */; };
+		E49802FA1CDA67FF0034B724 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F91CDA67FF0034B724 /* SearchBarView.swift */; };
 		E4B3E0FA1C68F7C2005B8103 /* SectionCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B3E0F91C68F7C2005B8103 /* SectionCoder.swift */; };
 /* End PBXBuildFile section */
 
@@ -91,11 +91,11 @@
 		E41CECDF1CDE09BF0051CC93 /* CollectionViewForTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CollectionViewForTableViewCell.swift; path = SumDU/Constants/CollectionViewForTableViewCell.swift; sourceTree = SOURCE_ROOT; };
 		E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDataCoder.swift; sourceTree = "<group>"; };
 		E4583E941C25495F0031F164 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
+		E45B9D2B1CDE7B3200B4467B /* CustomTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		E4956DA21CDE05190061DDCC /* CollectionViewMenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CollectionViewMenuCell.swift; path = SumDU/Constants/CollectionViewMenuCell.swift; sourceTree = SOURCE_ROOT; };
 		E49802F31CDA65850034B724 /* Constraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constraints.swift; sourceTree = "<group>"; };
 		E49802F51CDA66760034B724 /* SearchTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchTextField.swift; path = SumDU/Constants/SearchTextField.swift; sourceTree = SOURCE_ROOT; };
-		E49802F71CDA67520034B724 /* SearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBar.swift; path = SumDU/Constants/SearchBar.swift; sourceTree = SOURCE_ROOT; };
-		E49802F91CDA67FF0034B724 /* SearchBarContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBarContainer.swift; path = SumDU/Constants/SearchBarContainer.swift; sourceTree = SOURCE_ROOT; };
+		E49802F91CDA67FF0034B724 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchBarView.swift; path = SumDU/Constants/SearchBarView.swift; sourceTree = SOURCE_ROOT; };
 		E4A85CAD1C53A4B20075AAD1 /* Bridging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridging.h; sourceTree = "<group>"; };
 		E4B3E0F91C68F7C2005B8103 /* SectionCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionCoder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -153,6 +153,7 @@
 				7D3460F51C1A045700774F8E /* SearchViewController.swift */,
 				E1DA623A1C26A71400584099 /* ScheduleViewController.swift */,
 				E17F12281C2F1C09001AB284 /* ScheduleCell.swift */,
+				E45B9D2B1CDE7B3200B4467B /* CustomTableViewCell.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -175,8 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				E49802F51CDA66760034B724 /* SearchTextField.swift */,
-				E49802F71CDA67520034B724 /* SearchBar.swift */,
-				E49802F91CDA67FF0034B724 /* SearchBarContainer.swift */,
+				E49802F91CDA67FF0034B724 /* SearchBarView.swift */,
 				E4956DA21CDE05190061DDCC /* CollectionViewMenuCell.swift */,
 				E41CECDF1CDE09BF0051CC93 /* CollectionViewForTableViewCell.swift */,
 			);
@@ -463,7 +463,6 @@
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
 				E49802F41CDA65850034B724 /* Constraints.swift in Sources */,
-				E49802F81CDA67520034B724 /* SearchBar.swift in Sources */,
 				E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */,
 				B4EEB8251C5A153800879965 /* Alert.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
@@ -472,12 +471,13 @@
 				E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */,
 				E41CECE01CDE09BF0051CC93 /* CollectionViewForTableViewCell.swift in Sources */,
 				E49802F61CDA66760034B724 /* SearchTextField.swift in Sources */,
-				E49802FA1CDA67FF0034B724 /* SearchBarContainer.swift in Sources */,
+				E49802FA1CDA67FF0034B724 /* SearchBarView.swift in Sources */,
 				E40668B31C3EF6400011EF25 /* NSDate.swift in Sources */,
 				E4583E951C25495F0031F164 /* Keys.swift in Sources */,
 				E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */,
 				7D07F81D1C099C56007DF3FD /* AppDelegate.swift in Sources */,
 				E4B3E0FA1C68F7C2005B8103 /* SectionCoder.swift in Sources */,
+				E45B9D2C1CDE7B3200B4467B /* CustomTableViewCell.swift in Sources */,
 				E4956DA31CDE05190061DDCC /* CollectionViewMenuCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
