@@ -24,10 +24,10 @@ class SearchBarView: UIView {
     
     private var isEditingMode = false {
         didSet {
-            delegate?.searchBarView(searchBarView: self, searchMode: isEditingMode)
-            cancelBarButton.removeFromSuperview()
-            refreshBarButton.removeFromSuperview()
-            isEditingMode ? addCancelButton() : addRefreshButton()
+            self.delegate?.searchBarView(searchBarView: self, searchMode: self.isEditingMode)
+            self.cancelBarButton.removeFromSuperview()
+            self.refreshBarButton.removeFromSuperview()
+            self.isEditingMode ? self.addCancelButton() : self.addRefreshButton()
             UIView.animateWithDuration(0.3, animations: {
                 self.containerForButtons.layoutIfNeeded()
             })
@@ -56,8 +56,8 @@ class SearchBarView: UIView {
         super.init(frame: frame)
         
         // Right container
-        addSubview(containerForButtons)
-        constrain(containerForButtons, self) { containerForButtons, superview in
+        self.addSubview(self.containerForButtons)
+        constrain(self.containerForButtons, self) { containerForButtons, superview in
             
             containerForButtons.width == 24.0
             containerForButtons.height == 24.0
@@ -66,10 +66,10 @@ class SearchBarView: UIView {
         }
 
         // Left container
-        searchContainer.backgroundColor = UIColor(red: 242.0/255, green: 242.0/255, blue: 245.0/255, alpha: 1.0)
-        searchContainer.layer.cornerRadius = 6.0
-        addSubview(searchContainer)
-        constrain(searchContainer, containerForButtons, self) {
+        self.searchContainer.backgroundColor = UIColor(red: 242.0/255, green: 242.0/255, blue: 245.0/255, alpha: 1.0)
+        self.searchContainer.layer.cornerRadius = 6.0
+        self.addSubview(self.searchContainer)
+        constrain(self.searchContainer, self.containerForButtons, self) {
             searchContainer, containerForButtons, superview in
             
             searchContainer.top == superview.top
@@ -79,11 +79,11 @@ class SearchBarView: UIView {
         }
 
         // Magnifying glass
-        imageView.image = UIImage(named: "MagnifyingGlass")
-        imageView.contentMode = .ScaleAspectFit
-        imageView.layer.zPosition = 2.0
-        searchContainer.addSubview(imageView)
-        constrain(imageView, searchContainer) { imageView, superview in
+        self.imageView.image = UIImage(named: "MagnifyingGlass")
+        self.imageView.contentMode = .ScaleAspectFit
+        self.imageView.layer.zPosition = 2.0
+        self.searchContainer.addSubview(self.imageView)
+        constrain(self.imageView, self.searchContainer) { imageView, superview in
             
             imageView.width == 24.0
             imageView.height == 24.0
@@ -92,9 +92,9 @@ class SearchBarView: UIView {
         }
 
         // Search text field
-        textField.delegate = self
-        searchContainer.addSubview(textField)
-        constrain(imageView, textField, searchContainer) { imageView, textField, superview in
+        self.textField.delegate = self
+        self.searchContainer.addSubview(self.textField)
+        constrain(self.imageView, self.textField, self.searchContainer) { imageView, textField, superview in
             
             textField.leading == imageView.trailing + 10.0
             textField.trailing == superview.trailing - 1.0
@@ -103,50 +103,50 @@ class SearchBarView: UIView {
         }
         
         // Default
-        addRefreshButton()
+        self.addRefreshButton()
     }
     
     private func addRefreshButton() {
-        refreshBarButton.addTarget(self, action: #selector(refreshButtonPressed), forControlEvents: .TouchUpInside)
-        refreshBarButton.setImage(UIImage(named: "InactiveRefreshButton"), forState: .Normal)
-        containerForButtons.addSubview(refreshBarButton)
-        constrain(refreshBarButton, containerForButtons) { refreshBarButton, superview in
+        self.refreshBarButton.addTarget(self, action: #selector(refreshButtonPressed), forControlEvents: .TouchUpInside)
+        self.refreshBarButton.setImage(UIImage(named: "InactiveRefreshButton"), forState: .Normal)
+        self.containerForButtons.addSubview(self.refreshBarButton)
+        constrain(self.refreshBarButton, self.containerForButtons) { refreshBarButton, superview in
             refreshBarButton.edges == superview.edges
         }
     }
     
     private func addCancelButton() {
-        cancelBarButton.addTarget(self, action: #selector(cancelButtonPressed), forControlEvents: .TouchUpInside)
-        cancelBarButton.setImage(UIImage(named: "InactiveCancelButton"), forState: .Normal)
-        containerForButtons.addSubview(cancelBarButton)
-        constrain(cancelBarButton, containerForButtons) { cancelBarButton, superview in
+        self.cancelBarButton.addTarget(self, action: #selector(cancelButtonPressed), forControlEvents: .TouchUpInside)
+        self.cancelBarButton.setImage(UIImage(named: "InactiveCancelButton"), forState: .Normal)
+        self.containerForButtons.addSubview(self.cancelBarButton)
+        constrain(self.cancelBarButton, self.containerForButtons) { cancelBarButton, superview in
             cancelBarButton.edges == superview.edges
         }
     }
     
     func cancelButtonPressed() {
-        isEditingMode = false
-        textField.text = ""
-        delegate?.searchBarView(searchBarView: self, searchWithText: nil)
-        textField.resignFirstResponder()
+        self.isEditingMode = false
+        self.textField.text = ""
+        self.delegate?.searchBarView(searchBarView: self, searchWithText: nil)
+        self.textField.resignFirstResponder()
     }
     
     func refreshButtonPressed() {
-        delegate?.refreshContent(searchBarView: self)
+        self.delegate?.refreshContent(searchBarView: self)
     }
 }
 
 extension SearchBarView: UITextFieldDelegate {
     
     func textFieldDidBeginEditing(textField: UITextField) {
-        isEditingMode = true
+        self.isEditingMode = true
     }
     
     func textFieldDidEndEditing(textField: UITextField) {
         if textField.text?.characters.count > 0 {
-            isEditingMode = true
+            self.isEditingMode = true
         } else {
-            isEditingMode = false
+            self.isEditingMode = false
         }
     }
     
@@ -158,7 +158,7 @@ extension SearchBarView: UITextFieldDelegate {
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
         var newText: NSString = textField.text ?? ""
         newText = newText.stringByReplacingCharactersInRange(range, withString: string)
-        delegate?.searchBarView(searchBarView: self, searchWithText: newText as String)
+        self.delegate?.searchBarView(searchBarView: self, searchWithText: newText as String)
         return true
     }
 }

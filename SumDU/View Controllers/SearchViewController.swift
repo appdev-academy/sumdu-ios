@@ -673,23 +673,23 @@ protocol SearchViewControllerDelegate {
 extension SearchViewController: SearchBarViewDelegate {
     
     func refreshContent(searchBarView view: SearchBarView) {
-        refreshListDataObjects()
-        tableView.reloadData()
+        self.refreshListDataObjects()
+        self.tableView.reloadData()
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
-        searchText = text
-        filterDataSourceWithQuery(text)
-        tableView.reloadData()
+        self.searchText = text
+        self.filterDataSourceWithQuery(text)
+        self.tableView.reloadData()
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
         self.searchMode = searchMode
-        tableView.reloadData()
+        self.tableView.reloadData()
         if searchMode {
-            tableView.keyboardDismissMode = .Interactive
+            self.tableView.keyboardDismissMode = .Interactive
         } else {
-            tableView.keyboardDismissMode = .None
+            self.tableView.keyboardDismissMode = .None
         }
     }
 }
