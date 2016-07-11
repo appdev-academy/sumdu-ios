@@ -12,6 +12,8 @@ import SwiftyJSON
 
 class NewSearchViewController: UIViewController {
     
+    // MARK: - Model
+    
     enum State: Int {
         case Favorites
         case Teachers
@@ -35,13 +37,18 @@ class NewSearchViewController: UIViewController {
         var history: [ListData]
         var currentState: State
         
-        func currentData() -> [ListData] {
+        func currentData(query: String? = nil) -> [ListData] {
+            var data: [ListData] = []
             switch currentState {
-            case .Auditoriums: return auditoriums
-            case .Favorites: return history
-            case .Groups: return groups
-            case .Teachers: return teachers
+            case .Auditoriums: data = auditoriums
+            case .Favorites: data = history
+            case .Groups: data = groups
+            case .Teachers: data = teachers
             }
+            if let query = query where query.characters.count > 0 {
+                data = data.filter { return $0.name.containsString(query) }
+            }
+            return data
         }
         
         /// Load data from storage
@@ -69,9 +76,10 @@ class NewSearchViewController: UIViewController {
     
     // MARK: - Variables
     
-    var parser = Parser()
-    
-    var model = DataModel(auditoriums: [], groups: [], teachers: [], history: [], currentState: .Favorites)
+    private var parser = Parser()
+    private var model = DataModel(auditoriums: [], groups: [], teachers: [], history: [], currentState: .Favorites)
+    private var searchMode = false
+    private var searchText: String?
     
     // MARK: - Constants
     
@@ -97,6 +105,11 @@ class NewSearchViewController: UIViewController {
 
         // UI
         initialSetup()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
         updateMenuScrollIndicator()
         preselectMenuItem()
     }
@@ -236,6 +249,11 @@ class NewSearchViewController: UIViewController {
         let indexPath = NSIndexPath(forItem: model.currentState.rawValue, inSection: 0)
         menuCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .None)
     }
+    
+    private func reloadCurrentContent() {
+        let indexPath = NSIndexPath(forItem: model.currentState.rawValue, inSection: 0)
+        contentCollectionView.reloadItemsAtIndexPaths([indexPath])
+    }
 }
 
 // MARK: - SearchBarViewDelegate
@@ -244,15 +262,16 @@ extension NewSearchViewController: SearchBarViewDelegate {
     
     func refreshContent(searchBarView view: SearchBarView) {
         model.updateFromServer(withParser: parser)
-        // TODO: Implement logic
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
-        // TODO: Implement logic
+        searchText = text
+        reloadCurrentContent()
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
-        // TODO: Implement logic
+        self.searchMode = searchMode
+        reloadCurrentContent()
     }
 }
 
@@ -271,7 +290,7 @@ extension NewSearchViewController: UICollectionViewDelegate {
                 UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
                 
                 // Scroll to item in bottom collection view with content
-                contentCollectionView.reloadItemsAtIndexPaths([indexPath])
+                reloadCurrentContent()
                 contentCollectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: .CenteredHorizontally, animated: true)
             }
         }
@@ -299,7 +318,7 @@ extension NewSearchViewController: UICollectionViewDataSource {
         } else {
             // Content
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier(TypeCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! TypeCollectionViewCell
-            cell.update(with: model.currentData())
+            cell.update(with: model.currentData(searchText), search: searchMode, searchText: searchText)
             return cell
         }
     }
@@ -401,9 +420,6 @@ extension NewSearchViewController: ParserDataListDelegate {
         model.saveToStorage()
         
         // Update UI
-        if needToUpdateUI {
-            let indexPath = NSIndexPath(forItem: model.currentState.rawValue, inSection: 0)
-            contentCollectionView.reloadItemsAtIndexPaths([indexPath])
-        }
+        if needToUpdateUI { reloadCurrentContent() }
     }
 }

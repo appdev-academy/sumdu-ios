@@ -18,6 +18,8 @@ class TypeCollectionViewCell: UICollectionViewCell {
     // MARK: - Variables
     
     private var data: [ListData] = []
+    private var search = false
+    private var searchText: String?
     
     // MARK: - UI Objects
     
@@ -53,7 +55,9 @@ class TypeCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Interface
     
-    func update(with data: [ListData]) {
+    func update(with data: [ListData], search: Bool, searchText: String?) {
+        self.search = search
+        self.searchText = searchText
         self.data = data
         tableView.reloadData()
     }
@@ -69,7 +73,7 @@ extension TypeCollectionViewCell: UITableViewDataSource {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(SearchTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
-        cell.update(with: data[indexPath.row], search: false, searchingText: nil)
+        cell.update(with: data[indexPath.row], search: search, searchingText: searchText)
         return cell
     }
 }
