@@ -1,5 +1,5 @@
 //
-//  CustomTableViewCell.swift
+//  SearchTableViewCell.swift
 //  SumDU
 //
 //  Created by Oleksandr Kysil on 5/7/16.
@@ -9,11 +9,11 @@
 import UIKit
 import Cartography
 
-class CustomTableViewCell: UITableViewCell {
+class SearchTableViewCell: UITableViewCell {
     
     // MARK: - Constants
     
-    static let reuseIdentifier = "\(CustomTableViewCell.self)"
+    static let reuseIdentifier = "\(SearchTableViewCell.self)"
     static let cellHeight: CGFloat = 65.0
 
     // MARK: - UIObjects

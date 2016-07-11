@@ -43,11 +43,9 @@ class SearchViewController: UIViewController {
     private var bottomCollectionView: UICollectionView!
     
     private let searchBarView = SearchBarView()
-    private let containerForSegmentedControl = UIView(frame: CGRectZero)
-    private let highlightedSegmentedControlLine = UIView(frame: CGRectZero)
-    private let lineUderCollectionView = UIView(frame: CGRectZero)
-    private let collectionViewForTableViewCell = CollectionViewForTableViewCell(frame: CGRectZero)
-    
+    private let containerForSegmentedControl = UIView()
+    private let highlightedSegmentedControlLine = UIView()
+    private let lineUderCollectionView = UIView()
     private var tableView = UITableView()
     
     // MARK: - Constants
@@ -128,7 +126,7 @@ class SearchViewController: UIViewController {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .Horizontal
         self.collectionViewMenu = UICollectionView(frame: self.view.bounds, collectionViewLayout: flowLayout)
-        self.collectionViewMenu.registerClass(CollectionViewMenuCell.self, forCellWithReuseIdentifier: "collectionMenuCell")
+        self.collectionViewMenu.registerClass(MenuCollectionViewCell.self, forCellWithReuseIdentifier: MenuCollectionViewCell.reuseIdentifier)
         self.collectionViewMenu.delegate = self
         self.collectionViewMenu.dataSource = self
         self.collectionViewMenu.showsVerticalScrollIndicator = false
@@ -159,8 +157,8 @@ class SearchViewController: UIViewController {
         // Set DataListDelegate for Parser
         self.parser.dataListDelegate = self
         
-        self.tableView = self.collectionViewForTableViewCell.tableView
-        self.tableView.registerClass(CustomTableViewCell.self, forCellReuseIdentifier: CustomTableViewCell.reuseIdentifier)
+//        self.tableView = self.collectionViewForTableViewCell.tableView
+//        self.tableView.registerClass(CustomTableViewCell.self, forCellReuseIdentifier: CustomTableViewCell.reuseIdentifier)
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -191,7 +189,7 @@ class SearchViewController: UIViewController {
         flowLayout.scrollDirection = .Horizontal
         self.bottomCollectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: flowLayout)
         self.bottomCollectionView.backgroundColor = UIColor.whiteColor()
-        self.bottomCollectionView.registerClass(CollectionViewForTableViewCell.self, forCellWithReuseIdentifier: "bottomCollectionViewCell")
+        self.bottomCollectionView.registerClass(TypeCollectionViewCell.self, forCellWithReuseIdentifier: TypeCollectionViewCell.reuseIdentifier)
         self.bottomCollectionView.showsVerticalScrollIndicator = false
         self.bottomCollectionView.showsHorizontalScrollIndicator = false
         self.bottomCollectionView.delegate = self
@@ -482,7 +480,7 @@ extension SearchViewController: UITableViewDelegate {
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return CustomTableViewCell.cellHeight
+        return SearchTableViewCell.cellHeight
     }
 }
 
@@ -499,7 +497,7 @@ extension SearchViewController: UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(CustomTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! CustomTableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(SearchTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
         let listDataRecord = dataSource[indexPath.row]
         cell.update(withText: listDataRecord.name, search: searchMode, searchingText: searchText)
         return cell
@@ -515,30 +513,22 @@ extension SearchViewController: UICollectionViewDataSource {
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         if collectionView == self.collectionViewMenu {
-            
-            let cell: CollectionViewMenuCell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionMenuCell", forIndexPath: indexPath) as! CollectionViewMenuCell
-            
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MenuCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! MenuCollectionViewCell
             if indexPath.row == 0 {
-                
                 cell.addImage()
                 cell.selected = true
-                
                 return cell
-                
             } else {
-                
                 if let segment = SelectedSegment(rawValue: indexPath.row) {
                     cell.addTitle(segment.name)
                 }
-                
                 return cell
             }
-            
         } else {
             
-            let cell: CollectionViewForTableViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("bottomCollectionViewCell", forIndexPath: indexPath) as! CollectionViewForTableViewCell
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(TypeCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! TypeCollectionViewCell
             
-            cell.tableView = self.tableView
+//            cell.tableView = self.tableView
             
             if self.history.isEmpty && self.selectedSegment == .Favorites {
                 
@@ -650,10 +640,10 @@ extension SearchViewController: UICollectionViewDelegate {
         self.collectionViewMenu.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .Left)
         
         if indexPath.row == 0 && self.history.isEmpty {
-            self.collectionViewForTableViewCell.selected = true
+//            self.collectionViewForTableViewCell.selected = true
             self.bottomCollectionView.reloadData()
         } else {
-            self.collectionViewForTableViewCell.selected = false
+//            self.collectionViewForTableViewCell.selected = false
             self.bottomCollectionView.reloadData()
         }
         
