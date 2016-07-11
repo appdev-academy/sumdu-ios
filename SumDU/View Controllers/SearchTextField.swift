@@ -20,7 +20,6 @@ class SearchTextField: UITextField {
     
         textAlignment = .Left
         textColor = colorForSelectedObjects
-        backgroundColor = UIColor(red: 242.0/255, green: 242.0/255, blue: 245.0/255, alpha: 1.0)
         font = titleTextFont
         layer.cornerRadius = 6.0
         layer.zPosition = 1.0

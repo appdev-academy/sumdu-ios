@@ -14,24 +14,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
         
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            if let window = self.window {
-                window.backgroundColor = UIColor.whiteColor()
-                window.rootViewController = ViewController()
-                window.makeKeyAndVisible()
-            }
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad, let window = self.window {
+            window.backgroundColor = UIColor.whiteColor()
+            window.rootViewController = ViewController()
+            window.makeKeyAndVisible()
         }
         
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            if let window = self.window {
-                window.backgroundColor = UIColor.whiteColor()
-                window.rootViewController = SearchViewController()
-                window.makeKeyAndVisible()
-            }
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone, let window = self.window  {
+            window.backgroundColor = UIColor.whiteColor()
+            window.rootViewController = NewSearchViewController()
+            window.makeKeyAndVisible()
         }
         
         return true

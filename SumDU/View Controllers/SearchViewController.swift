@@ -515,13 +515,13 @@ extension SearchViewController: UICollectionViewDataSource {
         if collectionView == self.collectionViewMenu {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MenuCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! MenuCollectionViewCell
             if indexPath.row == 0 {
-                cell.addImage()
+//                cell.addImage()
                 cell.selected = true
                 return cell
             } else {
-                if let segment = SelectedSegment(rawValue: indexPath.row) {
-                    cell.addTitle(segment.name)
-                }
+//                if let segment = SelectedSegment(rawValue: indexPath.row) {
+////                    cell.addTitle(segment.name)
+//                }
                 return cell
             }
         } else {

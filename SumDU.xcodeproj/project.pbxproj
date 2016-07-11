@@ -26,6 +26,7 @@
 		DE2953BC1D338B8C00304901 /* MenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2953B81D338B8C00304901 /* MenuCollectionViewCell.swift */; };
 		DE2953BD1D338B8C00304901 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2953B91D338B8C00304901 /* SearchBarView.swift */; };
 		DE2953BE1D338B8C00304901 /* SearchTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2953BA1D338B8C00304901 /* SearchTextField.swift */; };
+		DE5533E41D3393EA0016AC67 /* NewSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5533E31D3393EA0016AC67 /* NewSearchViewController.swift */; };
 		E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17F12281C2F1C09001AB284 /* ScheduleCell.swift */; };
 		E19526A31C3E5C3B008AD541 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19526A21C3E5C3B008AD541 /* Section.swift */; };
 		E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD3B491C5CB88D0028B9A0 /* ScheduleCoder.swift */; };
@@ -87,6 +88,7 @@
 		DE2953B81D338B8C00304901 /* MenuCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCollectionViewCell.swift; sourceTree = "<group>"; };
 		DE2953B91D338B8C00304901 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		DE2953BA1D338B8C00304901 /* SearchTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTextField.swift; sourceTree = "<group>"; };
+		DE5533E31D3393EA0016AC67 /* NewSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewSearchViewController.swift; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		E19526A21C3E5C3B008AD541 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		E1CD3B491C5CB88D0028B9A0 /* ScheduleCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCoder.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 				DE2953BA1D338B8C00304901 /* SearchTextField.swift */,
 				7D3460F51C1A045700774F8E /* SearchViewController.swift */,
 				DE2953B71D338B8C00304901 /* TypeCollectionViewCell.swift */,
+				DE5533E31D3393EA0016AC67 /* NewSearchViewController.swift */,
 			);
 			name = Search;
 			sourceTree = "<group>";
@@ -475,6 +478,7 @@
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
 				E49802F41CDA65850034B724 /* Constraints.swift in Sources */,
 				E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */,
+				DE5533E41D3393EA0016AC67 /* NewSearchViewController.swift in Sources */,
 				DE2953BB1D338B8C00304901 /* TypeCollectionViewCell.swift in Sources */,
 				B4EEB8251C5A153800879965 /* Alert.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,

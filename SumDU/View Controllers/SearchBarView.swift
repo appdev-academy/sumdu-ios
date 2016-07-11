@@ -18,6 +18,10 @@ protocol SearchBarViewDelegate {
 
 class SearchBarView: UIView {
     
+    // MARK: - Constants
+    
+    static let viewHeight: CGFloat = 44.0
+    
     // MARK: - Variables
     
     var delegate: SearchBarViewDelegate?
@@ -141,6 +145,8 @@ class SearchBarView: UIView {
         delegate?.refreshContent(searchBarView: self)
     }
 }
+
+// MARK: - UITextFieldDelegate
 
 extension SearchBarView: UITextFieldDelegate {
     

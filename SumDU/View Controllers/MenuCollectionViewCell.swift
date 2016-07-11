@@ -15,13 +15,27 @@ class MenuCollectionViewCell: UICollectionViewCell {
     // MARK: - Constants
     
     static let reuseIdentifier = "\(MenuCollectionViewCell.self)"
+    static let cellHeight: CGFloat = 62.0
+    static let historyImageSize = CGSize(width: 24.0, height: 24.0)
     
     // MARK: - Variables
     
+    private var isHistory: Bool = false {
+        didSet {
+            if isHistory {
+                textLabel.hidden = true
+                historyImageView.hidden = false
+            } else {
+                textLabel.hidden = false
+                historyImageView.hidden = true
+            }
+        }
+    }
+    
     override var selected: Bool {
         didSet {
-            if historyImage.superview == contentView {
-                historyImage.image = selected ? activeHistoryImage : inactiveHistoryImage
+            if isHistory {
+                historyImageView.image = selected ? activeHistoryImage : inactiveHistoryImage
             } else {
                 textLabel.textColor = selected ? colorForSelectedObjects : defaultColorForObjects
             }
@@ -33,7 +47,7 @@ class MenuCollectionViewCell: UICollectionViewCell {
     private let activeHistoryImage = UIImage(named:"activeHistory")
     private let inactiveHistoryImage = UIImage(named:"inactiveHistory")
     private let textLabel = UILabel()
-    private let historyImage = UIImageView()
+    private let historyImageView = UIImageView()
     
     // MARK: - Initialization
     
@@ -43,44 +57,39 @@ class MenuCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        // Background
         backgroundColor = UIColor.whiteColor()
+        
+        // Title
+        textLabel.font = titleTextFont
+        textLabel.textColor = defaultColorForObjects
+        contentView.addSubview(textLabel)
+        constrain(textLabel, contentView) { textLabel, superview in
+            textLabel.edges == superview.edges
+        }
+        
+        // Image
+        historyImageView.contentMode = .ScaleAspectFill
+        historyImageView.clipsToBounds = true
+        historyImageView.hidden = true
+        contentView.addSubview(historyImageView)
+        constrain(historyImageView, contentView) { historyImageView, superview in
+            
+            historyImageView.center == superview.center
+            historyImageView.height == MenuCollectionViewCell.historyImageSize.height
+            historyImageView.width == MenuCollectionViewCell.historyImageSize.width
+        }
     }
     
     // MARK: - Interface
     
-    func addImage() {
-        
-        // TODO: Fix it
-        
-        contentView.addSubview(historyImage)
-        
-        historyImage.image = inactiveHistoryImage
-        
-        constrain(historyImage) {
-            historyImage in
-            
-            historyImage.centerX == historyImage.superview!.centerX
-            historyImage.centerY == historyImage.superview!.centerY
-            
-        }
+    func update(with title: String) {
+        isHistory = false
+        textLabel.text = title
     }
     
-    func addTitle(titleText: String) {
-        
-        // TODO: Fix it
-        
-        textLabel.font = titleTextFont
-        textLabel.textColor = defaultColorForObjects
-        contentView.addSubview(textLabel)
-        
-        textLabel.text = titleText
-        
-        constrain(textLabel) {
-            textLabel in
-            
-            textLabel.centerX == textLabel.superview!.centerX
-            textLabel.centerY == textLabel.superview!.centerY
-        }
+    func updateWithImage() {
+        isHistory = true
+        historyImageView.image = inactiveHistoryImage
     }
 }
