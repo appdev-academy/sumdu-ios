@@ -97,7 +97,8 @@ class NewSearchViewController: UIViewController {
 
         // UI
         initialSetup()
-        updateMenu()
+        updateMenuScrollIndicator()
+        preselectMenuItem()
     }
     
     // MARK: - Helpers
@@ -162,6 +163,7 @@ class NewSearchViewController: UIViewController {
         let contentFlowLayout = UICollectionViewFlowLayout()
         contentFlowLayout.scrollDirection = .Horizontal
         contentCollectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: contentFlowLayout)
+        contentCollectionView.scrollEnabled = false
         contentCollectionView.backgroundColor = UIColor.whiteColor()
         contentCollectionView.registerClass(TypeCollectionViewCell.self, forCellWithReuseIdentifier: TypeCollectionViewCell.reuseIdentifier)
         contentCollectionView.showsVerticalScrollIndicator = false
@@ -180,8 +182,10 @@ class NewSearchViewController: UIViewController {
         }
     }
     
-    private func labelWidth(label: String) -> CGFloat {
-        return label.boundingRectWithSize(CGSize(width: DBL_MAX, height: DBL_MAX), options: .UsesLineFragmentOrigin, attributes: [NSFontAttributeName: titleTextFont], context: nil).size.width
+    private func labelWidth(text: String) -> CGFloat {
+        let size = CGSize(width: CGFloat.max, height: MenuCollectionViewCell.cellHeight)
+        let attributes = [NSFontAttributeName: titleTextFont]
+        return text.boundingRectWithSize(size, options: .UsesLineFragmentOrigin, attributes: attributes, context: nil).size.width
     }
     
     private func interItemSpacing() -> CGFloat {
@@ -194,16 +198,8 @@ class NewSearchViewController: UIViewController {
         return indent/4.0
     }
     
-    private func scroll(to newLeading: CGFloat, newWidth: CGFloat) {
-        constrain(scrollingIndicatorView, view, replace: scrollConstraintGroup) { scrollingIndicatorView, superview in
-            
-            scrollingIndicatorView.leading == superview.leading + newLeading
-            scrollingIndicatorView.width == newWidth
-        }
-        UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
-    }
-    
-    private func updateMenu() {
+    /// Update scroll indicator in menu
+    private func updateMenuScrollIndicator() {
         let spacing = interItemSpacing()
         var leading: CGFloat = 0.0
         var width: CGFloat = labelWidth(model.currentState.name)
@@ -229,9 +225,16 @@ class NewSearchViewController: UIViewController {
             leading += labelWidth(State.Teachers.name)
             leading += labelWidth(State.Groups.name)
         }
-        scroll(to: leading, newWidth: width)
+        constrain(scrollingIndicatorView, view, replace: scrollConstraintGroup) { scrollingIndicatorView, superview in
+            scrollingIndicatorView.leading == superview.leading + leading
+            scrollingIndicatorView.width == width
+        }
+    }
+    
+    /// Select item in menu collection view
+    private func preselectMenuItem() {
         let indexPath = NSIndexPath(forItem: model.currentState.rawValue, inSection: 0)
-        menuCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .CenteredHorizontally)
+        menuCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .None)
     }
 }
 
@@ -258,14 +261,18 @@ extension NewSearchViewController: SearchBarViewDelegate {
 extension NewSearchViewController: UICollectionViewDelegate {
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        // Scroll to item in bottom collection view
+        // Menu
         if collectionView == menuCollectionView {
-            contentCollectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: UICollectionViewScrollPosition.Left, animated: true)
-            
-            // Update current
             if let current = State(rawValue: indexPath.row) {
                 model.currentState = current
-                updateMenu()
+                
+                // Update menu
+                updateMenuScrollIndicator()
+                UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
+                
+                // Scroll to item in bottom collection view with content
+                contentCollectionView.reloadItemsAtIndexPaths([indexPath])
+                contentCollectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: .CenteredHorizontally, animated: true)
             }
         }
     }
@@ -333,12 +340,10 @@ extension NewSearchViewController: UICollectionViewDelegateFlowLayout {
 extension NewSearchViewController: UIScrollViewDelegate {
     
     func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        
         let pageWidth = contentCollectionView.bounds.size.width
         let currentOffset = scrollView.contentOffset.x
         let targetOffset = targetContentOffset.memory.x
         var newTargetOffset: CGFloat = 0.0
-        
         if (targetOffset > currentOffset) {
             newTargetOffset = ceil(currentOffset/pageWidth)*pageWidth
         } else {
@@ -356,10 +361,12 @@ extension NewSearchViewController: UIScrollViewDelegate {
     func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
         let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
         let indexPath = NSIndexPath(forItem: Int(pageNumber), inSection: 0)
-        
         if let state = State(rawValue: indexPath.row) {
             model.currentState = state
-            updateMenu()
+            // Update menu
+            updateMenuScrollIndicator()
+            UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
+            preselectMenuItem()
         }
     }
 }
