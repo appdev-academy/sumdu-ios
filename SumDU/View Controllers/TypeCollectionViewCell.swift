@@ -17,17 +17,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Variables
     
-    override var selected: Bool {
-        didSet {
-            if selected {
-                tableView.hidden = true
-                historyImage.hidden = false
-            } else {
-                tableView.hidden = false
-                historyImage.hidden = true
-            }
-        }
-    }
+    private var data: [ListData] = []
     
     // MARK: - UI Objects
     
@@ -44,6 +34,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         // History image
+        historyImage.hidden = true
         contentView.addSubview(historyImage)
         historyImage.image = UIImage(named: "historyImage")
         constrain(historyImage, contentView) { historyImage, superview in
@@ -52,9 +43,42 @@ class TypeCollectionViewCell: UICollectionViewCell {
         // Table
         tableView.registerClass(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
         tableView.separatorStyle = .None
+        tableView.delegate = self
+        tableView.dataSource = self
         contentView.addSubview(tableView)
         constrain(tableView, contentView) { tableView, superview in
             tableView.edges == superview.edges
         }
+    }
+    
+    // MARK: - Interface
+    
+    func update(with data: [ListData]) {
+        self.data = data
+        tableView.reloadData()
+    }
+}
+
+// MARK: - UITableViewDataSource
+
+extension TypeCollectionViewCell: UITableViewDataSource {
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return data.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier(SearchTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
+        cell.update(with: data[indexPath.row], search: false, searchingText: nil)
+        return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+
+extension TypeCollectionViewCell: UITableViewDelegate {
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        // TODO: Implement logic
     }
 }

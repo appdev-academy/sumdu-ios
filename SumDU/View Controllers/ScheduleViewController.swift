@@ -155,7 +155,7 @@ class ScheduleViewController: UIViewController {
     
     /// Refresh shcedule table
     func refresh() {
-        self.parser.sendScheduleRequest(listData, updateButtonPressed: true, isInHistory: false)
+        self.parser.sendScheduleRequest(listData)
         self.tableView.reloadData()
         self.refreshControl.endRefreshing()
     }
@@ -165,9 +165,9 @@ class ScheduleViewController: UIViewController {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         let allKeys = userDefaults.dictionaryRepresentation().keys
         if let listData = self.listData where allKeys.contains(UserDefaultsKey.scheduleKey(listData)) {
-            self.parser.sendScheduleRequest(listData, updateButtonPressed: false, isInHistory: true)
+            self.parser.sendScheduleRequest(listData)
         } else {
-            self.parser.sendScheduleRequest(listData, updateButtonPressed: false, isInHistory: false)
+            self.parser.sendScheduleRequest(listData)
         }
     }
     
@@ -178,7 +178,7 @@ class ScheduleViewController: UIViewController {
     
     /// Reload schedule, send new request
     @IBAction func refreshSchedule(sender: AnyObject) {
-        self.parser.sendScheduleRequest(listData, updateButtonPressed: true, isInHistory: false)
+        self.parser.sendScheduleRequest(listData)
     }
     
     /// Share schedule

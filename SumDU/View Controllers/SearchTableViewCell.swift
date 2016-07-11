@@ -53,7 +53,9 @@ class SearchTableViewCell: UITableViewCell {
         }
     }
     
-    // Show matching pattern
+    // MARK: - Helpers
+    
+    /// Show matching pattern
     private func highlightSearchResults(searchString: String, resultString: String) -> NSMutableAttributedString {
         
         let attributedString: NSMutableAttributedString = NSMutableAttributedString(string: resultString)
@@ -66,17 +68,17 @@ class SearchTableViewCell: UITableViewCell {
             let subRange = textCheckingResult?.range
             attributedString.addAttribute(NSForegroundColorAttributeName, value: textColorForTableViewCell, range: subRange!)
         }
-        
         return attributedString
-        
     }
     
-    func update(withText text: String, search: Bool, searchingText: String?) {
-        label.text = text
+    // MARK: - Interface
+    
+    func update(with object: ListData, search: Bool, searchingText: String?) {
+        label.text = object.name
         if search {
             label.textColor = defaultColorForObjects
             if let searchingText = searchingText {
-                label.attributedText = highlightSearchResults(searchingText, resultString: text)
+                label.attributedText = highlightSearchResults(searchingText, resultString: object.name)
             }
         } else {
             label.textColor = textColorForTableViewCell

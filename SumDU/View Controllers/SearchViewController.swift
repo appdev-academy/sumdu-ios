@@ -291,9 +291,9 @@ class SearchViewController: UIViewController {
     
     /// Refresh [ListData] objects
     private func refreshListDataObjects() {
-        parser.sendDataRequest(.Auditorium, updateButtonPressed: true)
-        parser.sendDataRequest(.Teacher, updateButtonPressed: true)
-        parser.sendDataRequest(.Group, updateButtonPressed: true)
+        parser.sendDataRequest(.Auditorium)
+        parser.sendDataRequest(.Teacher)
+        parser.sendDataRequest(.Group)
     }
     
     /// Check if lists of Teachers, Groups and Auditoriums was updated more than 3 days ago
@@ -301,9 +301,9 @@ class SearchViewController: UIViewController {
         let defaults = NSUserDefaults.standardUserDefaults()
         let lastUpdatedAtDate = defaults.objectForKey(UserDefaultsKey.LastUpdatedAtDate.key) as? NSDate
         if (lastUpdatedAtDate == nil) || (lastUpdatedAtDate != nil && lastUpdatedAtDate!.compare(NSDate().dateBySubtractingDays(3)) == .OrderedAscending) {
-            self.parser.sendDataRequest(.Auditorium, updateButtonPressed: false)
-            self.parser.sendDataRequest(.Teacher, updateButtonPressed: false)
-            self.parser.sendDataRequest(.Group, updateButtonPressed: false)
+            self.parser.sendDataRequest(.Auditorium)
+            self.parser.sendDataRequest(.Teacher)
+            self.parser.sendDataRequest(.Group)
         }
     }
     
@@ -499,7 +499,7 @@ extension SearchViewController: UITableViewDataSource {
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(SearchTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
         let listDataRecord = dataSource[indexPath.row]
-        cell.update(withText: listDataRecord.name, search: searchMode, searchingText: searchText)
+        cell.update(with: listDataRecord, search: searchMode, searchingText: searchText)
         return cell
     }
 }
@@ -516,12 +516,16 @@ extension SearchViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MenuCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! MenuCollectionViewCell
             if indexPath.row == 0 {
 //                cell.addImage()
-                cell.selected = true
+//                cell.selected = true
+                cell.updateWithImage()
                 return cell
             } else {
 //                if let segment = SelectedSegment(rawValue: indexPath.row) {
 ////                    cell.addTitle(segment.name)
 //                }
+                if let segment = SelectedSegment(rawValue: indexPath.row) {
+                    cell.update(with: segment.name)
+                }
                 return cell
             }
         } else {

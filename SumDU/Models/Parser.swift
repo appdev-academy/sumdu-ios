@@ -236,12 +236,7 @@ class Parser {
      
      - parameter requestData: what parameters need for schedule request
      */
-    func sendScheduleRequest(requestData: ListData?, updateButtonPressed: Bool, isInHistory: Bool) {
-        
-        // Show alert if request starts not from segue
-        if !isInHistory {
-            Alert.showWithStatus()
-        }
+    func sendScheduleRequest(requestData: ListData?) {
         
         // Get data for request
         let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
@@ -250,25 +245,14 @@ class Parser {
         Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
             response in
             
-            if response.result.isSuccess {
-                if let resultValue = response.result.value {
-                    
-                    if updateButtonPressed == true {
-                        Alert.showSuccessStatus()
-                    } else {
-                        Alert.dismiss()
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue(), {
-                        let response = JSON(resultValue)
-                        self.scheduleDelegate?.getSchedule(response)
-                    })
-                }
+            if response.result.isSuccess, let resultValue = response.result.value {
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    let response = JSON(resultValue)
+                    self.scheduleDelegate?.getSchedule(response)
+                })
             } else {
                 // Show alert if request starts not from segue
-                if !isInHistory {
-                    Alert.showNetworkingError()
-                }
             }
         }
     }
@@ -278,35 +262,22 @@ class Parser {
      
      - parameter withParameter: type of related request
      */
-    func sendDataRequest(relatedDataParameter: ListDataType, updateButtonPressed: Bool) {
+    func sendDataRequest(relatedDataParameter: ListDataType) {
         
-        // Start of showing progress and block user interface
-        Alert.showWithStatus()
-        
-        Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
-            response in
+        Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON { response in
             
-            if response.result.isSuccess {
-                if let resultValue = response.result.value {
-                    
-                    let defaults = NSUserDefaults.standardUserDefaults()
-                    defaults.setObject(NSDate(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
-                    defaults.synchronize()
-                    
-                    if updateButtonPressed {
-                        Alert.showSuccessStatus()
-                    } else {
-                        Alert.dismiss()
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue(), {
-                        let response = JSON(resultValue)
-                        self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
-                    })
-                }
+            if response.result.isSuccess, let resultValue = response.result.value {
+                
+                let defaults = NSUserDefaults.standardUserDefaults()
+                defaults.setObject(NSDate(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
+                defaults.synchronize()
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    let response = JSON(resultValue)
+                    self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
+                })
             } else {
                 // Show error
-                Alert.showNetworkingError()
             }
         }
     }
