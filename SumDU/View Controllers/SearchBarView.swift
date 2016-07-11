@@ -73,8 +73,8 @@ class SearchBarView: UIView {
         addSubview(containerForButtons)
         constrain(containerForButtons, self) { containerForButtons, superview in
             
-            containerForButtons.width == 24.0
-            containerForButtons.height == 24.0
+            containerForButtons.width == 44.0
+            containerForButtons.height == 44.0
             containerForButtons.trailing == superview.trailing
             containerForButtons.centerY == superview.centerY
         }
@@ -88,7 +88,7 @@ class SearchBarView: UIView {
             
             searchContainer.top == superview.top
             searchContainer.leading == superview.leading
-            searchContainer.trailing == containerForButtons.leading - 10
+            searchContainer.trailing == containerForButtons.leading
             searchContainer.bottom == superview.bottom
         }
 

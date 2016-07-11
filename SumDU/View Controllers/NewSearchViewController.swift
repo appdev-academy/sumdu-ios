@@ -125,7 +125,7 @@ class NewSearchViewController: UIViewController {
             
             searchBarView.top == superview.top + 30.0
             searchBarView.leading == superview.leading + 14.0
-            searchBarView.trailing == superview.trailing - 14.0
+            searchBarView.trailing == superview.trailing
             searchBarView.height == SearchBarView.viewHeight
         }
         
