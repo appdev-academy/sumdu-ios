@@ -20,6 +20,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
     private var data: [ListData] = []
     private var search = false
     private var searchText: String?
+    private var viewController: UIViewController?
     
     // MARK: - UI Objects
     
@@ -55,7 +56,8 @@ class TypeCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Interface
     
-    func update(with data: [ListData], search: Bool, searchText: String?) {
+    func update(with data: [ListData], search: Bool, searchText: String?, viewController: UIViewController) {
+        self.viewController = viewController
         self.search = search
         self.searchText = searchText
         self.data = data
@@ -83,6 +85,8 @@ extension TypeCollectionViewCell: UITableViewDataSource {
 extension TypeCollectionViewCell: UITableViewDelegate {
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        // TODO: Implement logic
+        let dataItem = data[indexPath.row]
+        let scheduleViewController = ScheduleViewController(data: dataItem)
+        viewController?.navigationController?.pushViewController(scheduleViewController, animated: true)
     }
 }

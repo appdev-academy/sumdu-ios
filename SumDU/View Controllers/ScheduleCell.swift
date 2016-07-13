@@ -6,26 +6,40 @@
 //  Copyright © 2015 AppDecAcademy. All rights reserved.
 //
 
+import Cartography
 import UIKit
 
 class ScheduleCell: UITableViewCell {
-
-    // MARK: - Outlets
     
-    @IBOutlet weak var pairName: UILabel!
-    @IBOutlet weak var pairTime: UILabel!
-    @IBOutlet weak var teacherName: UILabel!
-    @IBOutlet weak var groupName: UILabel!
+    // MARK: - Constants
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    static let reuseIdentifier = "\(ScheduleCell.self)"
+    static let cellHeight: CGFloat = 44.0
+    
+    // MARK: - Initialization
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        self.initialSetup()
     }
-
-    override func setSelected(selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        self.initialSetup()
     }
-
+    
+    // MARK: - Helpers
+    
+    private func initialSetup() {
+        
+    }
+    
+    // MARK: - Interface
+    
+    //// Update cell data
+    func updateWithData() {
+        
+    }
 }

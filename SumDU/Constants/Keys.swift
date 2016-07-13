@@ -28,12 +28,9 @@ enum UserDefaultsKey: String {
     
     static func scheduleKey(listData: ListData) -> String {
         switch listData.type {
-            case .Auditorium:
-                return userDefaultsPrefix + "-auditorium-\(listData.id)"
-            case .Group:
-                return userDefaultsPrefix + "-group-\(listData.id)"
-            case .Teacher:
-                return userDefaultsPrefix + "-teacher-\(listData.id)"
+        case .Auditorium: return userDefaultsPrefix + "-auditorium-\(listData.id)"
+        case .Group: return userDefaultsPrefix + "-group-\(listData.id)"
+        case .Teacher: return userDefaultsPrefix + "-teacher-\(listData.id)"
         }
     }
 }

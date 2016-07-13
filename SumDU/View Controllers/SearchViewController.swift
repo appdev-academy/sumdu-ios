@@ -216,7 +216,7 @@ class SearchViewController: UIViewController {
     
     // Calculate lenght of textLabel
     private func calculateLabelWidth(label: String) -> CGFloat {
-        return label.boundingRectWithSize(CGSize(width: DBL_MAX, height: DBL_MAX), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName: titleTextFont], context: nil).size.width
+        return label.boundingRectWithSize(CGSize(width: DBL_MAX, height: DBL_MAX), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName: FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)], context: nil).size.width
     }
     
     // Calculate indents in CollectionViewCell
@@ -383,13 +383,6 @@ class SearchViewController: UIViewController {
             self.dataSource = listDataArray.filter { return $0.name.containsString(query) }
         } else {
             self.dataSource = listDataArray
-        }
-    }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Setting up destination view controller data source here
-        if let scheduleViewController = segue.destinationViewController as? ScheduleViewController where segue.identifier == "ShowSchedule" {
-            scheduleViewController.listData = selectedListDataObject
         }
     }
     

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		7D07F81D1C099C56007DF3FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D07F8171C099C56007DF3FD /* AppDelegate.swift */; };
 		7D07F81E1C099C56007DF3FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D07F8191C099C56007DF3FD /* Assets.xcassets */; };
-		7D07F8201C099C56007DF3FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D07F81C1C099C56007DF3FD /* ViewController.swift */; };
 		7D181E411C006D96000C04B5 /* SumDUTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D181E401C006D96000C04B5 /* SumDUTests.swift */; };
 		7D181E4C1C006D96000C04B5 /* SumDUUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D181E4B1C006D96000C04B5 /* SumDUUITests.swift */; };
 		7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D2B5D881C19FAEB00C758B8 /* ListData.swift */; };
@@ -27,6 +26,9 @@
 		DE2953BC1D338B8C00304901 /* MenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2953B81D338B8C00304901 /* MenuCollectionViewCell.swift */; };
 		DE2953BD1D338B8C00304901 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2953B91D338B8C00304901 /* SearchBarView.swift */; };
 		DE2953BE1D338B8C00304901 /* SearchTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2953BA1D338B8C00304901 /* SearchTextField.swift */; };
+		DE4CF07C1D367EB8000F9199 /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF07B1D367EB8000F9199 /* BackButton.swift */; };
+		DE4CF07E1D3684C1000F9199 /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF07D1D3684C0000F9199 /* FontManager.swift */; };
+		DE4CF0801D36855F000F9199 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF07F1D36855F000F9199 /* Colors.swift */; };
 		DE5533E41D3393EA0016AC67 /* NewSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5533E31D3393EA0016AC67 /* NewSearchViewController.swift */; };
 		E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17F12281C2F1C09001AB284 /* ScheduleCell.swift */; };
 		E19526A31C3E5C3B008AD541 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19526A21C3E5C3B008AD541 /* Section.swift */; };
@@ -63,7 +65,6 @@
 		7D07F8171C099C56007DF3FD /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7D07F8191C099C56007DF3FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7D07F81A1C099C56007DF3FD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7D07F81C1C099C56007DF3FD /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		7D181E281C006D96000C04B5 /* SumDU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SumDU.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D181E3C1C006D96000C04B5 /* SumDUTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SumDUTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D181E401C006D96000C04B5 /* SumDUTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SumDUTests.swift; sourceTree = "<group>"; };
@@ -90,6 +91,9 @@
 		DE2953B81D338B8C00304901 /* MenuCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCollectionViewCell.swift; sourceTree = "<group>"; };
 		DE2953B91D338B8C00304901 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		DE2953BA1D338B8C00304901 /* SearchTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTextField.swift; sourceTree = "<group>"; };
+		DE4CF07B1D367EB8000F9199 /* BackButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
+		DE4CF07D1D3684C0000F9199 /* FontManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
+		DE4CF07F1D36855F000F9199 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		DE5533E31D3393EA0016AC67 /* NewSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewSearchViewController.swift; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		E19526A21C3E5C3B008AD541 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
@@ -166,7 +170,6 @@
 			children = (
 				DE2953B61D338B3100304901 /* Schedule */,
 				DE2953B51D338ADE00304901 /* Search */,
-				7D07F81C1C099C56007DF3FD /* ViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -210,6 +213,7 @@
 		7D181E2A1C006D96000C04B5 /* SumDU */ = {
 			isa = PBXGroup;
 			children = (
+				DE4CF0791D367E9F000F9199 /* Components */,
 				E4583E931C25494A0031F164 /* Constants */,
 				B4EEB8231C5A153800879965 /* Helpers */,
 				7D07F8161C099C56007DF3FD /* App Delegate */,
@@ -244,6 +248,7 @@
 			isa = PBXGroup;
 			children = (
 				B4EEB8241C5A153800879965 /* Alert.swift */,
+				DE4CF07D1D3684C0000F9199 /* FontManager.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -280,12 +285,29 @@
 			name = Schedule;
 			sourceTree = "<group>";
 		};
+		DE4CF0791D367E9F000F9199 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				DE4CF07A1D367EAB000F9199 /* Buttons */,
+			);
+			name = Components;
+			sourceTree = "<group>";
+		};
+		DE4CF07A1D367EAB000F9199 /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				DE4CF07B1D367EB8000F9199 /* BackButton.swift */,
+			);
+			name = Buttons;
+			sourceTree = "<group>";
+		};
 		E4583E931C25494A0031F164 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
 				E4583E941C25495F0031F164 /* Keys.swift */,
 				E40668B21C3EF6400011EF25 /* NSDate.swift */,
 				E49802F31CDA65850034B724 /* Constraints.swift */,
+				DE4CF07F1D36855F000F9199 /* Colors.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -476,8 +498,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				DE2953BD1D338B8C00304901 /* SearchBarView.swift in Sources */,
-				7D07F8201C099C56007DF3FD /* ViewController.swift in Sources */,
+				DE4CF0801D36855F000F9199 /* Colors.swift in Sources */,
 				7D3460F61C1A045700774F8E /* SearchViewController.swift in Sources */,
+				DE4CF07C1D367EB8000F9199 /* BackButton.swift in Sources */,
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
 				E49802F41CDA65850034B724 /* Constraints.swift in Sources */,
@@ -491,6 +514,7 @@
 				E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */,
 				E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */,
 				E40668B31C3EF6400011EF25 /* NSDate.swift in Sources */,
+				DE4CF07E1D3684C1000F9199 /* FontManager.swift in Sources */,
 				DE2953BC1D338B8C00304901 /* MenuCollectionViewCell.swift in Sources */,
 				E4583E951C25495F0031F164 /* Keys.swift in Sources */,
 				E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */,

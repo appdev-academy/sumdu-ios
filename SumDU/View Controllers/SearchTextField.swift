@@ -20,13 +20,15 @@ class SearchTextField: UITextField {
     
         textAlignment = .Left
         textColor = colorForSelectedObjects
-        font = titleTextFont
+        font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
         layer.cornerRadius = 6.0
         layer.zPosition = 1.0
         leftViewMode = .Always
         sizeToFit()
         
         // Configure placeholder
-        attributedPlaceholder = NSAttributedString(string: "Search", attributes: [NSForegroundColorAttributeName: defaultColorForObjects, NSFontAttributeName: titleTextFont])
+        let attributes = [NSForegroundColorAttributeName: defaultColorForObjects, NSFontAttributeName: FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)]
+        let placeholderText = NSLocalizedString("Search", comment: "")
+        attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: attributes)
     }
 }

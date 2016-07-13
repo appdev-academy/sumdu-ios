@@ -40,7 +40,7 @@ class SearchTableViewCell: UITableViewCell {
             separatorLine.height == 1.0
         }
         // Text label
-        label.textColor = textColorForTableViewCell
+        label.textColor = Color.textColorNormal
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 20.0)
         contentView.addSubview(label)
         constrain(label, separatorLine, contentView) {
@@ -66,7 +66,7 @@ class SearchTableViewCell: UITableViewCell {
         
         regex?.enumerateMatchesInString(resultString, options: NSMatchingOptions(), range: range) { (textCheckingResult, matchingFlags, stop) -> Void in
             let subRange = textCheckingResult?.range
-            attributedString.addAttribute(NSForegroundColorAttributeName, value: textColorForTableViewCell, range: subRange!)
+            attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textColorNormal, range: subRange!)
         }
         return attributedString
     }
@@ -81,7 +81,7 @@ class SearchTableViewCell: UITableViewCell {
                 label.attributedText = highlightSearchResults(searchingText, resultString: object.name)
             }
         } else {
-            label.textColor = textColorForTableViewCell
+            label.textColor = Color.textColorNormal
         }
     }
 }

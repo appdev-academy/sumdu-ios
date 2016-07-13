@@ -61,7 +61,7 @@ class MenuCollectionViewCell: UICollectionViewCell {
         backgroundColor = UIColor.whiteColor()
         
         // Title
-        textLabel.font = titleTextFont
+        textLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
         textLabel.textColor = defaultColorForObjects
         contentView.addSubview(textLabel)
         constrain(textLabel, contentView) { textLabel, superview in

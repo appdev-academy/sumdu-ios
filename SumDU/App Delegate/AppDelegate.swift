@@ -19,13 +19,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad, let window = self.window {
             window.backgroundColor = UIColor.whiteColor()
-            window.rootViewController = ViewController()
             window.makeKeyAndVisible()
         }
         
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone, let window = self.window  {
-            window.backgroundColor = UIColor.whiteColor()
-            window.rootViewController = NewSearchViewController()
+            let newSearchViewController = NewSearchViewController()
+            let navigationController = UINavigationController(rootViewController: newSearchViewController)
+            navigationController.navigationBarHidden = true
+            window.rootViewController = navigationController
             window.makeKeyAndVisible()
         }
         

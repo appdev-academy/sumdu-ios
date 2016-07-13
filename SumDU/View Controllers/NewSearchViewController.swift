@@ -118,6 +118,8 @@ class NewSearchViewController: UIViewController {
     
     private func initialSetup() {
         
+        view.backgroundColor = UIColor.whiteColor()
+        
         // Search bar
         searchBarView.delegate = self
         view.addSubview(searchBarView)
@@ -183,7 +185,6 @@ class NewSearchViewController: UIViewController {
         contentCollectionView.showsHorizontalScrollIndicator = false
         contentCollectionView.delegate = self
         contentCollectionView.dataSource = self
-        contentCollectionView.backgroundColor = UIColor.grayColor()
         view.addSubview(contentCollectionView)
         constrain(scrollLineView, contentCollectionView, view) {
             scrollLineView, contentCollectionView, superview in
@@ -197,7 +198,7 @@ class NewSearchViewController: UIViewController {
     
     private func labelWidth(text: String) -> CGFloat {
         let size = CGSize(width: CGFloat.max, height: MenuCollectionViewCell.cellHeight)
-        let attributes = [NSFontAttributeName: titleTextFont]
+        let attributes = [NSFontAttributeName: FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)]
         return text.boundingRectWithSize(size, options: .UsesLineFragmentOrigin, attributes: attributes, context: nil).size.width
     }
     
@@ -318,7 +319,7 @@ extension NewSearchViewController: UICollectionViewDataSource {
         } else {
             // Content
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier(TypeCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! TypeCollectionViewCell
-            cell.update(with: model.currentData(searchText), search: searchMode, searchText: searchText)
+            cell.update(with: model.currentData(searchText), search: searchMode, searchText: searchText, viewController: self)
             return cell
         }
     }

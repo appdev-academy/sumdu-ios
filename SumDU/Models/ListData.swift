@@ -102,6 +102,33 @@ extension ListData {
         let sortedRecords = result.sort {$0.name.localizedCaseInsensitiveCompare($1.name) == NSComparisonResult.OrderedAscending}
         return sortedRecords
     }
+    
+    /// Function which stores ListData entity
+    static func saveObject(listDataObject: ListData?, forKey: String) {
+        var listDataCoders: [ListDataCoder] = []
+        if let lisData = listDataObject {
+            listDataCoders.append(lisData.listDataCoder)
+            let userDefaults = NSUserDefaults.standardUserDefaults()
+            let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
+            userDefaults.setObject(data, forKey: forKey)
+            userDefaults.synchronize()
+        }
+    }
+    
+    /// Function which loads ListData entity
+    static func loadObject(forKey: String) -> ListData? {
+        var listDataRecord: ListData?
+        
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        if let listDataCoder = userDefaults.dataForKey(forKey) {
+            
+            if let listData = NSKeyedUnarchiver.unarchiveObjectWithData(listDataCoder) as? ListDataCoder {
+                listDataRecord = listData.listData!
+                return listDataRecord
+            }
+        }
+        return listDataRecord
+    }
 }
 
 extension ListData: Equatable {}
