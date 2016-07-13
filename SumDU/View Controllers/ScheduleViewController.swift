@@ -67,6 +67,10 @@ class ScheduleViewController: UIViewController {
         
         view.backgroundColor = UIColor.whiteColor()
         
+        let topMargin: CGFloat = 32.0
+        let leadingMargin: CGFloat = 14.0
+        let trailingMargin: CGFloat = 14.0
+        
         // Parser
         parser.scheduleDelegate = self
         
@@ -74,8 +78,8 @@ class ScheduleViewController: UIViewController {
         backButton.addTarget(self, action: #selector(backButtonPressed), forControlEvents: .TouchUpInside)
         view.addSubview(backButton)
         constrain(backButton, view) { backButton, superview in
-            backButton.top == superview.top + 32.0
-            backButton.leading == superview.leading + 14.0
+            backButton.top == superview.top + topMargin
+            backButton.leading == superview.leading + leadingMargin
             backButton.height == BackButton.buttonSize.height
             backButton.width == BackButton.buttonSize.width
         }
@@ -83,8 +87,8 @@ class ScheduleViewController: UIViewController {
         refreshButton.addTarget(self, action: #selector(refresh), forControlEvents: .TouchUpInside)
         view.addSubview(refreshButton)
         constrain(refreshButton, view) { refreshButton, superview in
-            refreshButton.top == superview.top + 32.0
-            refreshButton.trailing == superview.trailing - 14.0
+            refreshButton.top == superview.top + topMargin
+            refreshButton.trailing == superview.trailing - trailingMargin
             refreshButton.height == RefreshButton.buttonSize.height
             refreshButton.width == RefreshButton.buttonSize.width
         }
@@ -92,7 +96,7 @@ class ScheduleViewController: UIViewController {
         shareButton.addTarget(self, action: #selector(share), forControlEvents: .TouchUpInside)
         view.addSubview(shareButton)
         constrain(shareButton, refreshButton, view) { shareButton, refreshButton, superview in
-            shareButton.top == superview.top + 32.0
+            shareButton.top == superview.top + topMargin
             shareButton.trailing == refreshButton.leading - 20.0
             shareButton.height == ShareButton.buttonSize.height
             shareButton.width == ShareButton.buttonSize.width
@@ -104,9 +108,9 @@ class ScheduleViewController: UIViewController {
         view.addSubview(titleLabel)
         constrain(titleLabel, backButton, view) { titleLabel, backButton, superview in
             titleLabel.top == backButton.bottom
-            titleLabel.leading == superview.leading
-            titleLabel.trailing == superview.trailing
-            titleLabel.height >= 62.0
+            titleLabel.leading == superview.leading + leadingMargin
+            titleLabel.trailing == superview.trailing - trailingMargin
+            titleLabel.height >= 96.0
         }
         // Schedule table
         scheduleTableView.registerClass(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)

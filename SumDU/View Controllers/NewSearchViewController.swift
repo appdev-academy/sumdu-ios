@@ -161,16 +161,16 @@ class NewSearchViewController: UIViewController {
             scrollLineView.top == menuCollectionView.bottom
             scrollLineView.leading == superview.leading
             scrollLineView.trailing == superview.trailing
-            scrollLineView.height == 2.0
+            scrollLineView.height == 1.0
         }
         
         // Scrolling indocator
         scrollingIndicatorView.backgroundColor = colorForSelectedObjects
         view.addSubview(scrollingIndicatorView)
-        constrain(scrollingIndicatorView, menuCollectionView, view) {
-            scrollingIndicatorView, menuCollectionView, superview in
+        constrain(scrollingIndicatorView, scrollLineView, view) {
+            scrollingIndicatorView, scrollLineView, superview in
             
-            scrollingIndicatorView.top == menuCollectionView.bottom
+            scrollingIndicatorView.bottom == scrollLineView.bottom
             scrollingIndicatorView.height == 2.0
         }
         
@@ -225,16 +225,16 @@ class NewSearchViewController: UIViewController {
             width = historyImageWidth
             
         case .Teachers:
-            leading = spacing
+            leading = spacing + spacing/2
             leading += historyImageWidth
             
         case .Groups:
-            leading = spacing*2
+            leading = spacing*2 + spacing/2
             leading += historyImageWidth
             leading += labelWidth(State.Teachers.name)
             
         case .Auditoriums:
-            leading = spacing*3
+            leading = spacing*3 + spacing/2
             leading += historyImageWidth
             leading += labelWidth(State.Teachers.name)
             leading += labelWidth(State.Groups.name)

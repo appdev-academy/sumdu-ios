@@ -63,6 +63,7 @@ class MenuCollectionViewCell: UICollectionViewCell {
         // Title
         textLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
         textLabel.textColor = defaultColorForObjects
+        textLabel.textAlignment = .Center
         contentView.addSubview(textLabel)
         constrain(textLabel, contentView) { textLabel, superview in
             textLabel.edges == superview.edges

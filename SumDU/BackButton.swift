@@ -12,7 +12,7 @@ class BackButton: UIButton {
     
     // MARK: - Constants
     
-    static let buttonSize = CGSize(width: 44.0, height: 44.0)
+    static let buttonSize = CGSize(width: 24.0, height: 24.0)
     
     // MARK: - Lifecycle
     
@@ -26,6 +26,7 @@ class BackButton: UIButton {
         setImage(UIImage(named: "back_normal"), forState: .Normal)
         setImage(UIImage(named: "back_pressed"), forState: .Selected)
         contentMode = .ScaleAspectFill
+        imageEdgeInsets = UIEdgeInsetsMake(0.0, -10.0, 0.0, 0.0)
         clipsToBounds = true
     }
 }

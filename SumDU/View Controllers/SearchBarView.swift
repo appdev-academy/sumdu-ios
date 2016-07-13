@@ -57,7 +57,7 @@ class SearchBarView: UIView {
     
     // Right
     private let containerForButtons = UIView()
-    private let refreshButton = UIButton()
+    private let refreshButton = RefreshButton()
     private let cancelButton = UIButton()
     
     // MARK: - Initialization
@@ -73,7 +73,7 @@ class SearchBarView: UIView {
         addSubview(containerForButtons)
         constrain(containerForButtons, self) { containerForButtons, superview in
             
-            containerForButtons.width == 44.0
+            containerForButtons.width == 52.0
             containerForButtons.height == 44.0
             containerForButtons.trailing == superview.trailing
             containerForButtons.centerY == superview.centerY
@@ -111,14 +111,13 @@ class SearchBarView: UIView {
         constrain(imageView, textField, searchContainer) { imageView, textField, superview in
             
             textField.leading == imageView.trailing + 10.0
-            textField.trailing == superview.trailing - 1.0
+            textField.trailing == superview.trailing
             textField.height == 44.0
             textField.centerY == superview.centerY
         }
         
         // Refresh
         refreshButton.addTarget(self, action: #selector(refreshButtonPressed), forControlEvents: .TouchUpInside)
-        refreshButton.setImage(UIImage(named: "InactiveRefreshButton"), forState: .Normal)
         containerForButtons.addSubview(refreshButton)
         constrain(refreshButton, containerForButtons) { refreshBarButton, superview in
             refreshBarButton.edges == superview.edges

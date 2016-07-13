@@ -69,6 +69,10 @@ class TypeCollectionViewCell: UICollectionViewCell {
 
 extension TypeCollectionViewCell: UITableViewDataSource {
     
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return SearchTableViewCell.cellHeight
+    }
+    
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
     }
