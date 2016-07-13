@@ -26,6 +26,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
     
     private let tableView = UITableView()
     private let historyImage = UIImageView()
+    private let emptyHistoryLabel = UILabel()
     
     // MARK: - Initialization
     
@@ -38,11 +39,26 @@ class TypeCollectionViewCell: UICollectionViewCell {
         
         // History image
         historyImage.hidden = true
+        historyImage.contentMode = .ScaleAspectFill
+        historyImage.clipsToBounds = true
         contentView.addSubview(historyImage)
-        historyImage.image = UIImage(named: "historyImage")
+        historyImage.image = UIImage(named: "empty_history")
         constrain(historyImage, contentView) { historyImage, superview in
-            historyImage.edges == superview.edges
+            historyImage.top == superview.top + 66.0
+            historyImage.centerX == superview.centerX
         }
+        // History label
+        emptyHistoryLabel.hidden = true
+        emptyHistoryLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20)
+        emptyHistoryLabel.textColor = Color.textColorNormal
+        emptyHistoryLabel.textAlignment = .Center
+        contentView.addSubview(emptyHistoryLabel)
+        constrain(historyImage, emptyHistoryLabel, contentView) { historyImage, emptyHistoryLabel, superview in
+            emptyHistoryLabel.top == historyImage.bottom + 55.0
+            emptyHistoryLabel.leading == superview.leading + 14.0
+            emptyHistoryLabel.trailing == superview.trailing - 14.0
+        }
+        emptyHistoryLabel.text = NSLocalizedString("History is empty", comment: "")
         // Table
         tableView.registerClass(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
         tableView.separatorStyle = .None
@@ -57,11 +73,20 @@ class TypeCollectionViewCell: UICollectionViewCell {
     // MARK: - Interface
     
     func update(with data: [ListData], search: Bool, searchText: String?, viewController: UIViewController) {
+        emptyHistoryLabel.hidden = true
+        historyImage.hidden = true
+        tableView.hidden = false
         self.viewController = viewController
         self.search = search
         self.searchText = searchText
         self.data = data
         tableView.reloadData()
+    }
+    
+    func updateWithImage() {
+        emptyHistoryLabel.hidden = false
+        historyImage.hidden = false
+        tableView.hidden = true
     }
 }
 

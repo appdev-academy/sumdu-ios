@@ -319,7 +319,12 @@ extension NewSearchViewController: UICollectionViewDataSource {
         } else {
             // Content
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier(TypeCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! TypeCollectionViewCell
-            cell.update(with: model.currentData(searchText), search: searchMode, searchText: searchText, viewController: self)
+            let data = model.currentData(searchText)
+            if indexPath.row == 0 && data.count == 0 {
+                cell.updateWithImage()
+            } else {
+                cell.update(with: model.currentData(searchText), search: searchMode, searchText: searchText, viewController: self)
+            }
             return cell
         }
     }
