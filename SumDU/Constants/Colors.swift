@@ -10,4 +10,5 @@ import UIKit
 
 struct Color {
     static let textColorNormal = UIColor(red: 101.0/255.0, green: 102.0/255.0, blue: 107.0/255.0, alpha: 1.0)
+    static let textColorBlack = UIColor(red: 76.0/255.0, green: 77.0/255.0, blue: 81.0/255.0, alpha: 1.0)
 }

@@ -32,13 +32,17 @@ class ScheduleViewController: UIViewController {
     
     // MARK: - UI objects
     
+    // Navigation bar
+    private let backButton = BackButton()
+    private let shareButton = ShareButton()
+    private let refreshButton = RefreshButton()
+    
+    // Content
+    private let titleLabel = UILabel()
     private let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
     private let informationLabel = UILabel()
-    private let backButton = BackButton()
     private let refreshControl = UIRefreshControl()
     private let scheduleTableView = UITableView()
-    private let shareSchedule = UIButton()
-    private let refreshButton = UIButton()
     
     // MARK: - Initialization
     
@@ -75,14 +79,42 @@ class ScheduleViewController: UIViewController {
             backButton.height == BackButton.buttonSize.height
             backButton.width == BackButton.buttonSize.width
         }
-        
+        // Refresh
+        refreshButton.addTarget(self, action: #selector(refresh), forControlEvents: .TouchUpInside)
+        view.addSubview(refreshButton)
+        constrain(refreshButton, view) { refreshButton, superview in
+            refreshButton.top == superview.top + 32.0
+            refreshButton.trailing == superview.trailing - 14.0
+            refreshButton.height == RefreshButton.buttonSize.height
+            refreshButton.width == RefreshButton.buttonSize.width
+        }
+        // Share
+        shareButton.addTarget(self, action: #selector(share), forControlEvents: .TouchUpInside)
+        view.addSubview(shareButton)
+        constrain(shareButton, refreshButton, view) { shareButton, refreshButton, superview in
+            shareButton.top == superview.top + 32.0
+            shareButton.trailing == refreshButton.leading - 20.0
+            shareButton.height == ShareButton.buttonSize.height
+            shareButton.width == ShareButton.buttonSize.width
+        }
+        // Title
+        titleLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 26.0)
+        titleLabel.textColor = Color.textColorBlack
+        titleLabel.numberOfLines = 0
+        view.addSubview(titleLabel)
+        constrain(titleLabel, backButton, view) { titleLabel, backButton, superview in
+            titleLabel.top == backButton.bottom
+            titleLabel.leading == superview.leading
+            titleLabel.trailing == superview.trailing
+            titleLabel.height >= 62.0
+        }
         // Schedule table
         scheduleTableView.registerClass(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)
         scheduleTableView.delegate = self
         scheduleTableView.dataSource = self
         view.addSubview(scheduleTableView)
-        constrain(scheduleTableView, backButton, view) { scheduleTableView, backButton, superview in
-            scheduleTableView.top == backButton.bottom + 8.0
+        constrain(scheduleTableView, titleLabel, view) { scheduleTableView, titleLabel, superview in
+            scheduleTableView.top == titleLabel.bottom
             scheduleTableView.leading == superview.leading
             scheduleTableView.trailing == superview.trailing
             scheduleTableView.bottom == superview.bottom
@@ -118,6 +150,15 @@ class ScheduleViewController: UIViewController {
         
         // Send request
         parser.sendScheduleRequest(listData)
+        updateData()
+    }
+    
+    // MARK: - Helpers
+    
+    private func updateData() {
+        if let data = listData {
+            titleLabel.text = data.name
+        }
     }
     
     // MARK: - Actions

@@ -29,6 +29,8 @@
 		DE4CF07C1D367EB8000F9199 /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF07B1D367EB8000F9199 /* BackButton.swift */; };
 		DE4CF07E1D3684C1000F9199 /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF07D1D3684C0000F9199 /* FontManager.swift */; };
 		DE4CF0801D36855F000F9199 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF07F1D36855F000F9199 /* Colors.swift */; };
+		DE4CF0821D368E9A000F9199 /* ShareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF0811D368E9A000F9199 /* ShareButton.swift */; };
+		DE4CF0841D368EC0000F9199 /* RefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF0831D368EC0000F9199 /* RefreshButton.swift */; };
 		DE5533E41D3393EA0016AC67 /* NewSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5533E31D3393EA0016AC67 /* NewSearchViewController.swift */; };
 		E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17F12281C2F1C09001AB284 /* ScheduleCell.swift */; };
 		E19526A31C3E5C3B008AD541 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19526A21C3E5C3B008AD541 /* Section.swift */; };
@@ -94,6 +96,8 @@
 		DE4CF07B1D367EB8000F9199 /* BackButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
 		DE4CF07D1D3684C0000F9199 /* FontManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontManager.swift; sourceTree = "<group>"; };
 		DE4CF07F1D36855F000F9199 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		DE4CF0811D368E9A000F9199 /* ShareButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareButton.swift; sourceTree = "<group>"; };
+		DE4CF0831D368EC0000F9199 /* RefreshButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshButton.swift; sourceTree = "<group>"; };
 		DE5533E31D3393EA0016AC67 /* NewSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewSearchViewController.swift; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		E19526A21C3E5C3B008AD541 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
@@ -297,6 +301,8 @@
 			isa = PBXGroup;
 			children = (
 				DE4CF07B1D367EB8000F9199 /* BackButton.swift */,
+				DE4CF0811D368E9A000F9199 /* ShareButton.swift */,
+				DE4CF0831D368EC0000F9199 /* RefreshButton.swift */,
 			);
 			name = Buttons;
 			sourceTree = "<group>";
@@ -501,6 +507,7 @@
 				DE4CF0801D36855F000F9199 /* Colors.swift in Sources */,
 				7D3460F61C1A045700774F8E /* SearchViewController.swift in Sources */,
 				DE4CF07C1D367EB8000F9199 /* BackButton.swift in Sources */,
+				DE4CF0821D368E9A000F9199 /* ShareButton.swift in Sources */,
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
 				E49802F41CDA65850034B724 /* Constraints.swift in Sources */,
@@ -519,6 +526,7 @@
 				E4583E951C25495F0031F164 /* Keys.swift in Sources */,
 				E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */,
 				7D07F81D1C099C56007DF3FD /* AppDelegate.swift in Sources */,
+				DE4CF0841D368EC0000F9199 /* RefreshButton.swift in Sources */,
 				E4B3E0FA1C68F7C2005B8103 /* SectionCoder.swift in Sources */,
 				E45B9D2C1CDE7B3200B4467B /* SearchTableViewCell.swift in Sources */,
 			);
