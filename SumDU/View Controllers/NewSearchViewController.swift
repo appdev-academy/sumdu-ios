@@ -255,6 +255,18 @@ class NewSearchViewController: UIViewController {
         let indexPath = NSIndexPath(forItem: model.currentState.rawValue, inSection: 0)
         contentCollectionView.reloadItemsAtIndexPaths([indexPath])
     }
+    
+    // MARK: - Actions
+    
+    func addToHistory(item: ListData) {
+        while model.history.count > 50 {
+            model.history.removeFirst()
+        }
+        if !model.history.contains(item) {
+            model.history.append(item)
+        }
+        ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
+    }
 }
 
 // MARK: - SearchBarViewDelegate
@@ -320,7 +332,7 @@ extension NewSearchViewController: UICollectionViewDataSource {
             // Content
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier(TypeCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! TypeCollectionViewCell
             let data = model.currentData(searchText)
-            if indexPath.row == 0 && data.count == 0 {
+            if indexPath.row == 0 && data.count == 0 && !searchMode {
                 cell.updateWithImage()
             } else {
                 cell.update(with: model.currentData(searchText), search: searchMode, searchText: searchText, viewController: self)

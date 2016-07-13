@@ -20,13 +20,14 @@ class TypeCollectionViewCell: UICollectionViewCell {
     private var data: [ListData] = []
     private var search = false
     private var searchText: String?
-    private var viewController: UIViewController?
+    private var viewController: NewSearchViewController?
     
     // MARK: - UI Objects
     
     private let tableView = UITableView()
     private let historyImage = UIImageView()
     private let emptyHistoryLabel = UILabel()
+    private let notFoudLabel = UILabel()
     
     // MARK: - Initialization
     
@@ -68,25 +69,58 @@ class TypeCollectionViewCell: UICollectionViewCell {
         constrain(tableView, contentView) { tableView, superview in
             tableView.edges == superview.edges
         }
+        // Not found
+        notFoudLabel.hidden = true
+        notFoudLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20)
+        notFoudLabel.textColor = Color.textColorNormal
+        notFoudLabel.textAlignment = .Center
+        contentView.addSubview(notFoudLabel)
+        constrain(notFoudLabel, contentView) { notFoudLabel, superview in
+            notFoudLabel.center == superview.center
+        }
+        notFoudLabel.text = NSLocalizedString("No data found", comment: "")
+    }
+    
+    // MARK: - Helpers
+    
+    private func showEmptyHistory() {
+        notFoudLabel.hidden = true
+        emptyHistoryLabel.hidden = false
+        historyImage.hidden = false
+        tableView.hidden = true
+    }
+    
+    private func showEmptySearch() {
+        notFoudLabel.hidden = false
+        emptyHistoryLabel.hidden = true
+        historyImage.hidden = true
+        tableView.hidden = true
+    }
+    
+    private func showContent() {
+        notFoudLabel.hidden = true
+        emptyHistoryLabel.hidden = true
+        historyImage.hidden = true
+        tableView.hidden = false
     }
     
     // MARK: - Interface
     
-    func update(with data: [ListData], search: Bool, searchText: String?, viewController: UIViewController) {
-        emptyHistoryLabel.hidden = true
-        historyImage.hidden = true
-        tableView.hidden = false
-        self.viewController = viewController
-        self.search = search
-        self.searchText = searchText
-        self.data = data
-        tableView.reloadData()
+    func update(with data: [ListData], search: Bool, searchText: String?, viewController: NewSearchViewController) {
+        if data.count == 0 && search {
+            showEmptySearch()
+        } else {
+            showContent()
+            self.viewController = viewController
+            self.search = search
+            self.searchText = searchText
+            self.data = data
+            tableView.reloadData()
+        }
     }
     
     func updateWithImage() {
-        emptyHistoryLabel.hidden = false
-        historyImage.hidden = false
-        tableView.hidden = true
+        showEmptyHistory()
     }
 }
 
@@ -117,5 +151,8 @@ extension TypeCollectionViewCell: UITableViewDelegate {
         let dataItem = data[indexPath.row]
         let scheduleViewController = ScheduleViewController(data: dataItem)
         viewController?.navigationController?.pushViewController(scheduleViewController, animated: true)
+        
+        // Remember selected item
+        viewController?.addToHistory(dataItem)
     }
 }
