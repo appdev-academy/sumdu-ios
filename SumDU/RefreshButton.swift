@@ -12,7 +12,7 @@ class RefreshButton: UIButton {
     
     // MARK: - Constants
     
-    static let buttonSize = CGSize(width: 24.0, height: 24.0)
+    static let buttonSize = CGSize(width: 44.0, height: 44.0)
     
     // MARK: - Lifecycle
     

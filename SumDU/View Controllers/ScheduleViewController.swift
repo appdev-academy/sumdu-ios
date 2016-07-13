@@ -67,9 +67,9 @@ class ScheduleViewController: UIViewController {
         
         view.backgroundColor = UIColor.whiteColor()
         
-        let topMargin: CGFloat = 32.0
+        let topMargin: CGFloat = 24.0
         let leadingMargin: CGFloat = 14.0
-        let trailingMargin: CGFloat = 14.0
+        let trailingMargin: CGFloat = 6.0
         
         // Parser
         parser.scheduleDelegate = self
@@ -97,7 +97,7 @@ class ScheduleViewController: UIViewController {
         view.addSubview(shareButton)
         constrain(shareButton, refreshButton, view) { shareButton, refreshButton, superview in
             shareButton.top == superview.top + topMargin
-            shareButton.trailing == refreshButton.leading - 20.0
+            shareButton.trailing == refreshButton.leading - 2.0
             shareButton.height == ShareButton.buttonSize.height
             shareButton.width == ShareButton.buttonSize.width
         }
@@ -183,9 +183,11 @@ class ScheduleViewController: UIViewController {
     
     /// Share schedule
     func share() {
-        parser.generateCalendarURL(listData)
-        if let url = calendarURL {
-            UIApplication.sharedApplication().openURL(url)
+        if recordsBySection.count > 0 {
+            parser.generateCalendarURL(listData)
+            if let url = calendarURL {
+                UIApplication.sharedApplication().openURL(url)
+            }
         }
     }
 }

@@ -76,7 +76,9 @@ class TypeCollectionViewCell: UICollectionViewCell {
         notFoudLabel.textAlignment = .Center
         contentView.addSubview(notFoudLabel)
         constrain(notFoudLabel, contentView) { notFoudLabel, superview in
-            notFoudLabel.center == superview.center
+            notFoudLabel.top == superview.top + 66.0
+            notFoudLabel.leading == superview.leading + 14.0
+            notFoudLabel.trailing == superview.trailing - 14.0
         }
         notFoudLabel.text = NSLocalizedString("No data found", comment: "")
     }
