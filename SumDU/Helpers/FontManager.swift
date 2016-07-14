@@ -11,10 +11,12 @@ import UIKit
 /// Enumeration of all app fonts
 enum FontName {
     case HelveticaNeueMedium
+    case HelveticaNeueRegular
     
     var name: String {
         switch self {
         case .HelveticaNeueMedium: return "HelveticaNeue-Medium"
+        case .HelveticaNeueRegular: return "HelveticaNeue-Regular"
         }
     }
 }

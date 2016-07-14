@@ -240,10 +240,10 @@ class Parser {
             
             if response.result.isSuccess, let resultValue = response.result.value {
                 
-                dispatch_async(dispatch_get_main_queue(), {
+//                dispatch_async(dispatch_get_main_queue(), {
                     let response = JSON(resultValue)
                     self.scheduleDelegate?.getSchedule(response)
-                })
+//                })
             } else {
                 
             }

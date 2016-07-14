@@ -105,17 +105,21 @@ class ScheduleViewController: UIViewController {
         titleLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 26.0)
         titleLabel.textColor = Color.textColorBlack
         titleLabel.numberOfLines = 0
+        var titleHeight: CGFloat = 62.0
+        if listData?.type == .Teacher { titleHeight = 96.0 }
         view.addSubview(titleLabel)
         constrain(titleLabel, backButton, view) { titleLabel, backButton, superview in
             titleLabel.top == backButton.bottom
             titleLabel.leading == superview.leading + leadingMargin
             titleLabel.trailing == superview.trailing - trailingMargin
-            titleLabel.height >= 96.0
+            titleLabel.height >= titleHeight
         }
         // Schedule table
+        scheduleTableView.registerClass(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
         scheduleTableView.registerClass(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)
         scheduleTableView.delegate = self
         scheduleTableView.dataSource = self
+        scheduleTableView.separatorStyle = .None
         view.addSubview(scheduleTableView)
         constrain(scheduleTableView, titleLabel, view) { scheduleTableView, titleLabel, superview in
             scheduleTableView.top == titleLabel.bottom
@@ -153,6 +157,8 @@ class ScheduleViewController: UIViewController {
         }
         
         // Send request
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        activityIndicatorView.startAnimating()
         parser.sendScheduleRequest(listData)
         updateData()
     }
@@ -200,16 +206,19 @@ extension ScheduleViewController: UITableViewDelegate { }
 
 extension ScheduleViewController: UITableViewDataSource {
     
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        
-        // Create a date formatter
+    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return ScheduleSectionHeaderView.viewHeight
+    }
+    
+    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = tableView.dequeueReusableHeaderFooterViewWithIdentifier(ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
+        // Set data
         let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "dd MMMM, EEEE"
-        
-        // Generate section header
-        let sectionHeader = dateFormatter.stringFromDate(recordsBySection[section].date)
-        
-        return sectionHeader
+        dateFormatter.dateFormat = "dd MMMM"
+        headerView.dateLabel.text = dateFormatter.stringFromDate(recordsBySection[section].date)
+        dateFormatter.dateFormat = "EEEE"
+        headerView.dayLabel.text = dateFormatter.stringFromDate(recordsBySection[section].date)
+        return headerView
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -220,11 +229,14 @@ extension ScheduleViewController: UITableViewDataSource {
         return recordsBySection[section].records.count
     }
     
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return ScheduleCell.cellHeight
+    }
+    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        
         let cell = tableView.dequeueReusableCellWithIdentifier(ScheduleCell.reuseIdentifier, forIndexPath: indexPath) as! ScheduleCell
         let scheduleRecord = recordsBySection[indexPath.section].records[indexPath.row]
-        cell.textLabel?.text = scheduleRecord.pairName
+        cell.update(with: scheduleRecord)
         return cell
     }
 }
@@ -234,11 +246,7 @@ extension ScheduleViewController: UITableViewDataSource {
 extension ScheduleViewController: ParserScheduleDelegate {
     
     func getSchedule(response: JSON) {
-        
-        if !refreshControl.refreshing {
-            /// Show request animation
-            activityIndicatorView.startAnimating()
-        }
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
         if let jsonArray = response.array where jsonArray.count > 0 {
             // All schedule records
@@ -302,6 +310,7 @@ extension ScheduleViewController: ParserScheduleDelegate {
         } else {
             activityIndicatorView.stopAnimating()
         }
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
     }
     
     /// Get calendar URL
