@@ -17,7 +17,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Variables
     
-    private var data: [ListData] = []
+    private var recordsBySection: [DataSection] = []
     private var search = false
     private var searchText: String?
     private var viewController: NewSearchViewController?
@@ -61,6 +61,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
         }
         emptyHistoryLabel.text = NSLocalizedString("History is empty", comment: "")
         // Table
+        tableView.registerClass(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
         tableView.registerClass(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
         tableView.separatorStyle = .None
         tableView.delegate = self
@@ -108,7 +109,11 @@ class TypeCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Interface
     
-    func update(with data: [ListData], search: Bool, searchText: String?, viewController: NewSearchViewController) {
+    func updateWithImage() {
+        showEmptyHistory()
+    }
+    
+    func update(with data: [DataSection], search: Bool, searchText: String?, viewController: NewSearchViewController) {
         if data.count == 0 && search {
             showEmptySearch()
         } else {
@@ -116,13 +121,9 @@ class TypeCollectionViewCell: UICollectionViewCell {
             self.viewController = viewController
             self.search = search
             self.searchText = searchText
-            self.data = data
+            self.recordsBySection = data
             tableView.reloadData()
         }
-    }
-    
-    func updateWithImage() {
-        showEmptyHistory()
     }
 }
 
@@ -130,17 +131,31 @@ class TypeCollectionViewCell: UICollectionViewCell {
 
 extension TypeCollectionViewCell: UITableViewDataSource {
     
+    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return ScheduleSectionHeaderView.viewHeight
+    }
+    
+    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = tableView.dequeueReusableHeaderFooterViewWithIdentifier(ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
+        headerView.dateLabel.text = String(recordsBySection[section].letter)
+        return headerView
+    }
+    
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return SearchTableViewCell.cellHeight
     }
     
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return recordsBySection.count
+    }
+    
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
+        return recordsBySection[section].records.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(SearchTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
-        cell.update(with: data[indexPath.row], search: search, searchingText: searchText)
+        cell.update(with: recordsBySection[indexPath.section].records[indexPath.row], search: search, searchingText: searchText)
         return cell
     }
 }
@@ -150,7 +165,7 @@ extension TypeCollectionViewCell: UITableViewDataSource {
 extension TypeCollectionViewCell: UITableViewDelegate {
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let dataItem = data[indexPath.row]
+        let dataItem = recordsBySection[indexPath.section].records[indexPath.row]
         let scheduleViewController = ScheduleViewController(data: dataItem)
         viewController?.navigationController?.pushViewController(scheduleViewController, animated: true)
         

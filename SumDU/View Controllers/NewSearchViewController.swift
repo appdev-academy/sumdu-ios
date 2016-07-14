@@ -10,6 +10,11 @@ import Cartography
 import UIKit
 import SwiftyJSON
 
+struct DataSection {
+    var letter: Character
+    var records: [ListData]
+}
+
 class NewSearchViewController: UIViewController {
     
     // MARK: - Model
@@ -49,6 +54,29 @@ class NewSearchViewController: UIViewController {
                 data = data.filter { return $0.name.containsString(query) }
             }
             return data
+        }
+        
+        func currentDataBySections(query: String? = nil) -> [DataSection] {
+            var recordsBySection: [DataSection] = []
+            let allData = self.currentData(query)
+            // Get all unique first letters
+            var uniqueCharacters = Set<Character>()
+            for item in allData {
+                if let first = item.name.characters.first {
+                   uniqueCharacters.insert(first)
+                }
+            }
+            // Iterate lettres
+            for letter in uniqueCharacters.sort() {
+                var sectionRecords: [ListData] = []
+                for item in allData {
+                    if letter == item.name.characters.first {
+                        sectionRecords.append(item)
+                    }
+                }
+                recordsBySection.append(DataSection(letter: letter, records: sectionRecords))
+            }
+            return recordsBySection
         }
         
         /// Load data from storage
@@ -335,7 +363,7 @@ extension NewSearchViewController: UICollectionViewDataSource {
             if indexPath.row == 0 && data.count == 0 && !searchMode {
                 cell.updateWithImage()
             } else {
-                cell.update(with: model.currentData(searchText), search: searchMode, searchText: searchText, viewController: self)
+                cell.update(with: model.currentDataBySections(searchText), search: searchMode, searchText: searchText, viewController: self)
             }
             return cell
         }
