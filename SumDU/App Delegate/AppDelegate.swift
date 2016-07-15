@@ -18,10 +18,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad, let window = self.window {
-            window.backgroundColor = UIColor.whiteColor()
+            let search = SearchViewController()
+            let schedule = ScheduleViewController()
+            let split = UISplitViewController()
+            split.viewControllers = [search, schedule]
+            split.preferredDisplayMode = .AllVisible
+            window.rootViewController = split
             window.makeKeyAndVisible()
         }
-        
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone, let window = self.window  {
             let newSearchViewController = SearchViewController()
             let navigationController = UINavigationController(rootViewController: newSearchViewController)

@@ -36,15 +36,30 @@ class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TODO: Update insets for table (not for collection view)
-//        registerForNotifications()
-        
         // Data
         parser.dataListDelegate = self
         model.updateFromStorage()
 
         // UI
         initialSetup()
+        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            if let firstItem = model.history.first {
+                let schedule = ScheduleViewController(data: firstItem)
+                splitViewController?.viewControllers[1] = schedule
+            }
+        }
+    }
+    
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        
+        // Menu
+        menuCollectionView.collectionViewLayout.invalidateLayout()
+        
+        // Content
+        contentCollectionView.collectionViewLayout.invalidateLayout()
+//        contentCollectionView.reloadData()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -62,34 +77,6 @@ class SearchViewController: UIViewController {
         
         updateMenuScrollIndicator()
         preselectMenuItem()
-    }
-    
-    deinit {
-//        deregisterFromNotifications()
-    }
-    
-    // MARK: - Notifications
-    
-    private func registerForNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
-    }
-    
-    private func deregisterFromNotifications() {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-    }
-    
-    func keyboardWillShow(notification: NSNotification) {
-        if let userInfo = notification.userInfo, keyboardSize: CGSize = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue.size {
-            let keyboardInset = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height,  0.0);
-            contentCollectionView.contentInset = keyboardInset
-            contentCollectionView.scrollIndicatorInsets = keyboardInset
-        }
-    }
-
-    func keyboardWillHide(notification: NSNotification) {
-        contentCollectionView.contentInset = UIEdgeInsetsZero
-        contentCollectionView.scrollIndicatorInsets = UIEdgeInsetsZero
     }
     
     // MARK: - Helpers
@@ -182,7 +169,7 @@ class SearchViewController: UIViewController {
     
     /// Calculate spacing between items in menu
     private func interItemSpacing() -> CGFloat {
-        let screenWidth = min(screenSize.width, screenSize.height)
+        let screenWidth = view.bounds.width
         var spacing = screenWidth
         spacing -= MenuCollectionViewCell.historyImageSize.width
         spacing -= labelWidth(State.Teachers.name)
@@ -342,10 +329,11 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
             case .Auditoriums, .Groups, .Teachers:
                 return CGSize(width: labelWidth(type.name) + spacing, height: cellHeight)
             }
-        } else {
+        } else if collectionView == contentCollectionView {
             // Content
             return CGSizeMake(collectionView.bounds.size.width, collectionView.bounds.size.height)
         }
+        return CGSizeMake(0.0, 0.0)
     }
 }
 

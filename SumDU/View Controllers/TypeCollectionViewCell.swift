@@ -130,8 +130,11 @@ extension TypeCollectionViewCell: TypeTableViewControllerDelegate {
     func typeTableViewController(typeTableViewController: TypeTableViewController, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let dataItem = recordsBySection[indexPath.section].records[indexPath.row]
         let scheduleViewController = ScheduleViewController(data: dataItem)
-        viewController?.navigationController?.pushViewController(scheduleViewController, animated: true)
-        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            viewController?.splitViewController?.viewControllers[1] = scheduleViewController
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            viewController?.navigationController?.pushViewController(scheduleViewController, animated: true)
+        }
         // Remember selected item
         viewController?.addToHistory(dataItem)
     }

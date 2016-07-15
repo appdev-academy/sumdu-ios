@@ -41,7 +41,6 @@
 		E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */; };
 		E4583E951C25495F0031F164 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4583E941C25495F0031F164 /* Keys.swift */; };
 		E45B9D2C1CDE7B3200B4467B /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45B9D2B1CDE7B3200B4467B /* SearchTableViewCell.swift */; };
-		E49802F41CDA65850034B724 /* Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F31CDA65850034B724 /* Constraints.swift */; };
 		E4B3E0FA1C68F7C2005B8103 /* SectionCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B3E0F91C68F7C2005B8103 /* SectionCoder.swift */; };
 /* End PBXBuildFile section */
 
@@ -109,7 +108,6 @@
 		E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDataCoder.swift; sourceTree = "<group>"; };
 		E4583E941C25495F0031F164 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
 		E45B9D2B1CDE7B3200B4467B /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
-		E49802F31CDA65850034B724 /* Constraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constraints.swift; sourceTree = "<group>"; };
 		E4B3E0F91C68F7C2005B8103 /* SectionCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionCoder.swift; sourceTree = "<group>"; };
 		FB032204C3608C736FD14CED /* Pods-SumDU App-SumDU.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SumDU App-SumDU.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SumDU App-SumDU/Pods-SumDU App-SumDU.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -321,7 +319,6 @@
 			children = (
 				E4583E941C25495F0031F164 /* Keys.swift */,
 				E40668B21C3EF6400011EF25 /* NSDate.swift */,
-				E49802F31CDA65850034B724 /* Constraints.swift */,
 				DE4CF07F1D36855F000F9199 /* Colors.swift */,
 			);
 			path = Constants;
@@ -519,7 +516,6 @@
 				DE65F6371D3786470040A00D /* ScheduleSectionHeaderView.swift in Sources */,
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
-				E49802F41CDA65850034B724 /* Constraints.swift in Sources */,
 				E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */,
 				DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */,
 				DE2953BB1D338B8C00304901 /* TypeCollectionViewCell.swift in Sources */,
