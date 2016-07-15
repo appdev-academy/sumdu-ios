@@ -28,6 +28,8 @@ enum ScheduleResponseParameters: String {
 
 class Schedule {
     
+    // MARK: - Variables
+    
     /// Name of pair
     var pairName: String
     
@@ -61,6 +63,8 @@ class Schedule {
             return ScheduleCoder(schedule: self)
         }
     }
+    
+    // MARK: - Initialization
     
     /**
      Initializer for schedule class

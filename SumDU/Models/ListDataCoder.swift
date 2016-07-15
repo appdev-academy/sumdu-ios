@@ -18,6 +18,8 @@ class ListDataCoder: NSObject, NSCoding {
     /// ListData instance
     var listData: ListData?
     
+    // MARK: - Initialization
+    
     /// Initializer for LisaDataCoder class
     init(listData: ListData) {
         self.listData = listData
@@ -29,9 +31,11 @@ class ListDataCoder: NSObject, NSCoding {
             let name = aDecoder.decodeObjectForKey("name") as? String,
             let type = aDecoder.decodeObjectForKey("type") as? String,
             let listDataType = ListDataType(rawValue: type) {
-                self.listData = ListData(id: id, name: name, type: listDataType)
+            self.listData = ListData(id: id, name: name, type: listDataType)
         }
     }
+    
+    // MARK: - Interface
     
     /// Serialize ListData enities: Auditorium, Group or Teacher
     func encodeWithCoder(coder: NSCoder) {

@@ -241,7 +241,7 @@ class Parser {
                 let response = JSON(resultValue)
                 self.scheduleDelegate?.getSchedule(response)
             } else {
-                 // Show error
+                // Show error
             }
         }
     }

@@ -114,16 +114,16 @@ class ScheduleCell: UITableViewCell {
     // MARK: - Interface
     
     //// Update cell data
-    func update(with item: Schedule) {
+    func update(with schedule: Schedule) {
         // Name
-        var name = item.pairName
-        if item.pairType.characters.count > 0 { name += "(" + item.pairType + ")" }
+        var name = schedule.pairName
+        if schedule.pairType.characters.count > 0 { name += "(" + schedule.pairType + ")" }
         nameLabel.text = name
         // Time
-        timeLabel.text = item.pairTime
+        timeLabel.text = schedule.pairTime
         // Auditorium
-        auditoriumLabel.text = item.auditoriumName
+        auditoriumLabel.text = schedule.auditoriumName
         // Teacher
-        teacherLabel.text = item.teacherName
+        teacherLabel.text = schedule.teacherName
     }
 }

@@ -15,23 +15,26 @@ class SectionCoder: NSObject, NSCoding {
     /// Section instance
     var section: Section?
     
+    // MARK: - Initialization
+    
     init(section: Section) {
         super.init()
         self.section = section
     }
     
     required init?(coder aDecoder: NSCoder) {
-        if let date = aDecoder.decodeObjectForKey("title") as? NSDate,
-            let scheduleCoders = aDecoder.decodeObjectForKey("records") as? [ScheduleCoder] {
-                var scheduleArray: [Schedule] = []
-                for scheduleCoder in scheduleCoders {
-                    if let currentSchedule = scheduleCoder.schedule {
-                        scheduleArray.append(currentSchedule)
-                    }
+        if let date = aDecoder.decodeObjectForKey("title") as? NSDate, scheduleCoders = aDecoder.decodeObjectForKey("records") as? [ScheduleCoder] {
+            var scheduleArray: [Schedule] = []
+            for scheduleCoder in scheduleCoders {
+                if let currentSchedule = scheduleCoder.schedule {
+                    scheduleArray.append(currentSchedule)
                 }
-                section = Section(date: date, records: scheduleArray)
+            }
+            section = Section(date: date, records: scheduleArray)
         }
     }
+    
+    // MARK: - Interface
     
     func encodeWithCoder(aCoder: NSCoder) {
         

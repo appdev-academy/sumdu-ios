@@ -29,6 +29,7 @@
 		DE4CF0801D36855F000F9199 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF07F1D36855F000F9199 /* Colors.swift */; };
 		DE4CF0821D368E9A000F9199 /* ShareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF0811D368E9A000F9199 /* ShareButton.swift */; };
 		DE4CF0841D368EC0000F9199 /* RefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF0831D368EC0000F9199 /* RefreshButton.swift */; };
+		DE4E1DEE1D38E79A00FF2EC0 /* SearchViewController + Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */; };
 		DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5533E31D3393EA0016AC67 /* SearchViewController.swift */; };
 		DE65F6371D3786470040A00D /* ScheduleSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */; };
 		E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17F12281C2F1C09001AB284 /* ScheduleCell.swift */; };
@@ -95,6 +96,7 @@
 		DE4CF07F1D36855F000F9199 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		DE4CF0811D368E9A000F9199 /* ShareButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareButton.swift; sourceTree = "<group>"; };
 		DE4CF0831D368EC0000F9199 /* RefreshButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshButton.swift; sourceTree = "<group>"; };
+		DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SearchViewController + Model.swift"; sourceTree = "<group>"; };
 		DE5533E31D3393EA0016AC67 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleSectionHeaderView.swift; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
@@ -264,12 +266,12 @@
 		DE2953B51D338ADE00304901 /* Search */ = {
 			isa = PBXGroup;
 			children = (
+				DE4E1DEC1D38E6D300FF2EC0 /* Search Bar */,
 				DE2953B81D338B8C00304901 /* MenuCollectionViewCell.swift */,
-				DE2953B91D338B8C00304901 /* SearchBarView.swift */,
 				E45B9D2B1CDE7B3200B4467B /* SearchTableViewCell.swift */,
-				DE2953BA1D338B8C00304901 /* SearchTextField.swift */,
 				DE2953B71D338B8C00304901 /* TypeCollectionViewCell.swift */,
 				DE5533E31D3393EA0016AC67 /* SearchViewController.swift */,
+				DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */,
 			);
 			name = Search;
 			sourceTree = "<group>";
@@ -300,6 +302,15 @@
 				DE4CF0831D368EC0000F9199 /* RefreshButton.swift */,
 			);
 			name = Buttons;
+			sourceTree = "<group>";
+		};
+		DE4E1DEC1D38E6D300FF2EC0 /* Search Bar */ = {
+			isa = PBXGroup;
+			children = (
+				DE2953B91D338B8C00304901 /* SearchBarView.swift */,
+				DE2953BA1D338B8C00304901 /* SearchTextField.swift */,
+			);
+			name = "Search Bar";
 			sourceTree = "<group>";
 		};
 		E4583E931C25494A0031F164 /* Constants */ = {
@@ -510,6 +521,7 @@
 				DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */,
 				DE2953BB1D338B8C00304901 /* TypeCollectionViewCell.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
+				DE4E1DEE1D38E79A00FF2EC0 /* SearchViewController + Model.swift in Sources */,
 				E19526A31C3E5C3B008AD541 /* Section.swift in Sources */,
 				DE2953BE1D338B8C00304901 /* SearchTextField.swift in Sources */,
 				E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */,

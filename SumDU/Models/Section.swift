@@ -10,6 +10,8 @@ import Foundation
 
 class Section {
     
+    // MARK: - Variables
+    
     /// title of section
     var date: NSDate
     
@@ -22,10 +24,14 @@ class Section {
         }
     }
     
+    // MARK: - Initialization
+    
     init(date: NSDate, records: [Schedule]) {
         self.date = date
         self.records = records
     }
+    
+    // MARK: - Interface
     
     /// Save schedule information to userDefaults
     static func saveData(listDataCoder: [Section], forKey: String) {
