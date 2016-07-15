@@ -2,8 +2,8 @@
 //  ScheduleCell.swift
 //  SumDU
 //
-//  Created by Yura on 26.12.15.
-//  Copyright © 2015 AppDecAcademy. All rights reserved.
+//  Created by Yura Voevodin on 26.12.15.
+//  Copyright © 2015 App Dev Academy. All rights reserved.
 //
 
 import Cartography
@@ -46,7 +46,7 @@ class ScheduleCell: UITableViewCell {
         selectionStyle = .None
         // Name
         nameLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20.0)
-        nameLabel.textColor = Color.textColorBlack
+        nameLabel.textColor = Color.textBlack
         nameLabel.textAlignment = .Left
         nameLabel.adjustsFontSizeToFitWidth = true
         nameLabel.minimumScaleFactor = 0.7
@@ -60,7 +60,7 @@ class ScheduleCell: UITableViewCell {
         }
         // Time
         timeLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
-        timeLabel.textColor = Color.textColorNormal
+        timeLabel.textColor = Color.textNormal
         timeLabel.textAlignment = .Left
         contentView.addSubview(timeLabel)
         constrain(timeLabel, nameLabel, contentView) { timeLabel, nameLabel, superview in
@@ -81,7 +81,7 @@ class ScheduleCell: UITableViewCell {
         }
         // Auditorium
         auditoriumLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
-        auditoriumLabel.textColor = Color.textColorNormal
+        auditoriumLabel.textColor = Color.textNormal
         auditoriumLabel.textAlignment = .Left
         contentView.addSubview(auditoriumLabel)
         constrain(auditoriumLabel, dotImageView, nameLabel, contentView) { auditoriumLabel, dotImageView, nameLabel, superview in
@@ -100,7 +100,7 @@ class ScheduleCell: UITableViewCell {
         }
         // Teacher
         teacherLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 15.0)
-        teacherLabel.textColor = Color.textColorLight
+        teacherLabel.textColor = Color.textLight
         teacherLabel.textAlignment = .Left
         contentView.addSubview(teacherLabel)
         constrain(teacherLabel, timeLabel, separatorView, contentView) { teacherLabel, timeLabel, separatorView, superview in

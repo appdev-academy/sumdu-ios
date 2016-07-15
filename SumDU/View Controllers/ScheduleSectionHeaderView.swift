@@ -37,7 +37,7 @@ class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
         
         // Date
         dateLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
-        dateLabel.textColor = Color.textColorNormal
+        dateLabel.textColor = Color.textNormal
         dateLabel.textAlignment = .Left
         addSubview(dateLabel)
         constrain(dateLabel, self) { dateLabel, superview in
@@ -48,7 +48,7 @@ class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
         }
         // Day
         dayLabel.font = FontManager.getFont(name: FontName.HelveticaNeueRegular, size: 15.0)
-        dayLabel.textColor = Color.textColorLight
+        dayLabel.textColor = Color.textLight
         dayLabel.textAlignment = .Right
         addSubview(dayLabel)
         constrain(dayLabel, self) { dayLabel, superview in

@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Oleksandr Kysil on 5/7/16.
-//  Copyright © 2016 AppDecAcademy. All rights reserved.
+//  Copyright © 2016 App Dev Academy. All rights reserved.
 //
 
 import Cartography
@@ -20,7 +20,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
     private var recordsBySection: [DataSection] = []
     private var search = false
     private var searchText: String?
-    private var viewController: NewSearchViewController?
+    private var viewController: SearchViewController?
     
     // MARK: - UI Objects
     
@@ -51,7 +51,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
         // History label
         emptyHistoryLabel.hidden = true
         emptyHistoryLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20)
-        emptyHistoryLabel.textColor = Color.textColorNormal
+        emptyHistoryLabel.textColor = Color.textNormal
         emptyHistoryLabel.textAlignment = .Center
         contentView.addSubview(emptyHistoryLabel)
         constrain(historyImage, emptyHistoryLabel, contentView) { historyImage, emptyHistoryLabel, superview in
@@ -73,7 +73,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
         // Not found
         notFoudLabel.hidden = true
         notFoudLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20)
-        notFoudLabel.textColor = Color.textColorNormal
+        notFoudLabel.textColor = Color.textNormal
         notFoudLabel.textAlignment = .Center
         contentView.addSubview(notFoudLabel)
         constrain(notFoudLabel, contentView) { notFoudLabel, superview in
@@ -113,7 +113,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
         showEmptyHistory()
     }
     
-    func update(with data: [DataSection], search: Bool, searchText: String?, viewController: NewSearchViewController) {
+    func update(with data: [DataSection], search: Bool, searchText: String?, viewController: SearchViewController) {
         if data.count == 0 && search {
             showEmptySearch()
         } else {

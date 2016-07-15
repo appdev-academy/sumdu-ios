@@ -2,8 +2,8 @@
 //  ScheduleViewController.swift
 //  SumDU
 //
-//  Created by Yura on 20.12.15.
-//  Copyright © 2015 AppDecAcademy. All rights reserved.
+//  Created by Yura Voevodin on 20.12.15.
+//  Copyright © 2015 App Dev Academy. All rights reserved.
 //
 
 import Cartography
@@ -103,7 +103,7 @@ class ScheduleViewController: UIViewController {
         }
         // Title
         titleLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 26.0)
-        titleLabel.textColor = Color.textColorBlack
+        titleLabel.textColor = Color.textBlack
         titleLabel.numberOfLines = 0
         var titleHeight: CGFloat = 62.0
         if listData?.type == .Teacher { titleHeight = 96.0 }
@@ -137,7 +137,7 @@ class ScheduleViewController: UIViewController {
         
         // Information
         informationLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20.0)
-        informationLabel.textColor = Color.textColorNormal
+        informationLabel.textColor = Color.textNormal
         informationLabel.textAlignment = .Center
         informationLabel.adjustsFontSizeToFitWidth = true
         informationLabel.minimumScaleFactor = 0.7

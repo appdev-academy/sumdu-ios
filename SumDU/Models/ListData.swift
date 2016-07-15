@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Maksym Skliarov on 12/10/15.
-//  Copyright © 2015 AppDecAcademy. All rights reserved.
+//  Copyright © 2015 App Dev Academy. All rights reserved.
 //
 
 import Foundation
@@ -86,6 +86,8 @@ extension ListData {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
         userDefaults.setObject(data, forKey: forKey)
+        
+        // TODO: Don't use synchronize?
         userDefaults.synchronize()
     }
     

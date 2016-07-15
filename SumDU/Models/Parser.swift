@@ -2,14 +2,13 @@
 //  AppParser.swift
 //  SumDU
 //
-//  Created by Yura on 28.11.15.
+//  Created by Yura Voevodin on 28.11.15.
 //  Copyright © 2015 AppDevAcademy. All rights reserved.
 //
 
 import Foundation
 import Alamofire
 import SwiftyJSON
-import SVProgressHUD
 
 /// Request parameter for schedule
 enum ScheduleRequestParameter: String {
@@ -239,13 +238,10 @@ class Parser {
         Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON { response in
             
             if response.result.isSuccess, let resultValue = response.result.value {
-                
-//                dispatch_async(dispatch_get_main_queue(), {
-                    let response = JSON(resultValue)
-                    self.scheduleDelegate?.getSchedule(response)
-//                })
+                let response = JSON(resultValue)
+                self.scheduleDelegate?.getSchedule(response)
             } else {
-                
+                 // Show error
             }
         }
     }

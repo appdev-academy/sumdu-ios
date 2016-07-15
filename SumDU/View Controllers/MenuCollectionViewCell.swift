@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Oleksandr Kysil on 5/7/16.
-//  Copyright © 2016 AppDecAcademy. All rights reserved.
+//  Copyright © 2016 App Dev Academy. All rights reserved.
 //
 
 import Foundation
@@ -37,7 +37,7 @@ class MenuCollectionViewCell: UICollectionViewCell {
             if isHistory {
                 historyImageView.image = selected ? activeHistoryImage : inactiveHistoryImage
             } else {
-                textLabel.textColor = selected ? colorForSelectedObjects : defaultColorForObjects
+                textLabel.textColor = selected ? Color.textBlack : Color.textLight
             }
         }
     }
@@ -62,7 +62,7 @@ class MenuCollectionViewCell: UICollectionViewCell {
         
         // Title
         textLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
-        textLabel.textColor = defaultColorForObjects
+        textLabel.textColor = Color.textLight
         textLabel.textAlignment = .Center
         contentView.addSubview(textLabel)
         constrain(textLabel, contentView) { textLabel, superview in

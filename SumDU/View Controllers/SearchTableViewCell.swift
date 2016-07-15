@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Oleksandr Kysil on 5/7/16.
-//  Copyright © 2016 AppDecAcademy. All rights reserved.
+//  Copyright © 2016 App Dev Academy. All rights reserved.
 //
 
 import UIKit
@@ -31,7 +31,7 @@ class SearchTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         // Separator
-        separatorLine.backgroundColor = lineColor
+        separatorLine.backgroundColor = Color.separator
         contentView.addSubview(separatorLine)
         constrain(separatorLine, contentView) { separatorLine, superview in
             separatorLine.leading == superview.leading
@@ -40,7 +40,7 @@ class SearchTableViewCell: UITableViewCell {
             separatorLine.height == 1.0
         }
         // Text label
-        label.textColor = Color.textColorNormal
+        label.textColor = Color.textNormal
         label.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20.0)
         contentView.addSubview(label)
         constrain(label, separatorLine, contentView) {
@@ -66,7 +66,7 @@ class SearchTableViewCell: UITableViewCell {
         
         regex?.enumerateMatchesInString(resultString, options: NSMatchingOptions(), range: range) { (textCheckingResult, matchingFlags, stop) -> Void in
             let subRange = textCheckingResult?.range
-            attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textColorNormal, range: subRange!)
+            attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textNormal, range: subRange!)
         }
         return attributedString
     }
@@ -76,12 +76,12 @@ class SearchTableViewCell: UITableViewCell {
     func update(with object: ListData, search: Bool, searchingText: String?) {
         label.text = object.name
         if search {
-            label.textColor = defaultColorForObjects
+            label.textColor = Color.textLight
             if let searchingText = searchingText {
                 label.attributedText = highlightSearchResults(searchingText, resultString: object.name)
             }
         } else {
-            label.textColor = Color.textColorNormal
+            label.textColor = Color.textNormal
         }
     }
 }

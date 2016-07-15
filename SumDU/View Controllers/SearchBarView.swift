@@ -3,12 +3,11 @@
 //  SumDU
 //
 //  Created by Oleksandr Kysil on 5/4/16.
-//  Copyright © 2016 AppDecAcademy. All rights reserved.
+//  Copyright © 2016 App Dev Academy. All rights reserved.
 //
 
-import Foundation
-import UIKit
 import Cartography
+import UIKit
 
 protocol SearchBarViewDelegate {
     func refreshContent(searchBarView view: SearchBarView)
@@ -78,7 +77,6 @@ class SearchBarView: UIView {
             containerForButtons.trailing == superview.trailing
             containerForButtons.centerY == superview.centerY
         }
-
         // Left container
         searchContainer.backgroundColor = UIColor(red: 242.0/255, green: 242.0/255, blue: 245.0/255, alpha: 1.0)
         searchContainer.layer.cornerRadius = 6.0
@@ -91,7 +89,6 @@ class SearchBarView: UIView {
             searchContainer.trailing == containerForButtons.leading
             searchContainer.bottom == superview.bottom
         }
-
         // Magnifying glass
         imageView.image = UIImage(named: "MagnifyingGlass")
         imageView.contentMode = .ScaleAspectFit
@@ -104,7 +101,6 @@ class SearchBarView: UIView {
             imageView.leading == superview.leading + 10.0
             imageView.centerY == superview.centerY
         }
-
         // Search text field
         textField.delegate = self
         searchContainer.addSubview(textField)
@@ -115,14 +111,12 @@ class SearchBarView: UIView {
             textField.height == 44.0
             textField.centerY == superview.centerY
         }
-        
         // Refresh
         refreshButton.addTarget(self, action: #selector(refreshButtonPressed), forControlEvents: .TouchUpInside)
         containerForButtons.addSubview(refreshButton)
         constrain(refreshButton, containerForButtons) { refreshBarButton, superview in
             refreshBarButton.edges == superview.edges
         }
-        
         // Cancel
         cancelButton.hidden = true
         cancelButton.addTarget(self, action: #selector(cancelButtonPressed), forControlEvents: .TouchUpInside)

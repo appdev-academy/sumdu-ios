@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Oleksandr Kysil on 12/11/15.
-//  Copyright © 2015 AppDecAcademy. All rights reserved.
+//  Copyright © 2015 App Dev Academy. All rights reserved.
 //
 
 import Foundation

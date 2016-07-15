@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone, let window = self.window  {
-            let newSearchViewController = NewSearchViewController()
+            let newSearchViewController = SearchViewController()
             let navigationController = UINavigationController(rootViewController: newSearchViewController)
             navigationController.navigationBarHidden = true
             window.rootViewController = navigationController

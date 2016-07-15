@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Oleksandr Kysil on 5/4/16.
-//  Copyright © 2016 AppDecAcademy. All rights reserved.
+//  Copyright © 2016 App Dev Academy. All rights reserved.
 //
 
 import Foundation
@@ -19,7 +19,7 @@ class SearchTextField: UITextField {
         super.init(frame: frame)
     
         textAlignment = .Left
-        textColor = colorForSelectedObjects
+        textColor = Color.textBlack
         font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
         layer.cornerRadius = 6.0
         layer.zPosition = 1.0
@@ -27,7 +27,7 @@ class SearchTextField: UITextField {
         sizeToFit()
         
         // Configure placeholder
-        let attributes = [NSForegroundColorAttributeName: defaultColorForObjects, NSFontAttributeName: FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)]
+        let attributes = [NSForegroundColorAttributeName: Color.textLight, NSFontAttributeName: FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)]
         let placeholderText = NSLocalizedString("Search", comment: "")
         attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: attributes)
     }
