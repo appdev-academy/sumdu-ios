@@ -156,7 +156,7 @@ class SearchViewController: UIViewController {
         let contentFlowLayout = UICollectionViewFlowLayout()
         contentFlowLayout.scrollDirection = .Horizontal
         contentCollectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: contentFlowLayout)
-        contentCollectionView.scrollEnabled = false
+//        contentCollectionView.scrollEnabled = false
         contentCollectionView.backgroundColor = UIColor.whiteColor()
         contentCollectionView.registerClass(TypeCollectionViewCell.self, forCellWithReuseIdentifier: TypeCollectionViewCell.reuseIdentifier)
         contentCollectionView.showsVerticalScrollIndicator = false
@@ -308,11 +308,11 @@ extension SearchViewController: UICollectionViewDataSource {
         } else {
             // Content
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier(TypeCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! TypeCollectionViewCell
-            let data = model.currentData(searchText)
+            let data = model.currentDataBySections(searchText)
             if indexPath.row == 0 && data.count == 0 && !searchMode {
                 cell.updateWithImage()
             } else {
-                cell.update(with: model.currentDataBySections(searchText), search: searchMode, searchText: searchText, viewController: self)
+                cell.update(with: data, search: searchMode, searchText: searchText, viewController: self)
             }
             return cell
         }
@@ -354,6 +354,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
 extension SearchViewController: UIScrollViewDelegate {
     
     func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
         let pageWidth = contentCollectionView.bounds.size.width
         let currentOffset = scrollView.contentOffset.x
         let targetOffset = targetContentOffset.memory.x
@@ -373,15 +374,16 @@ extension SearchViewController: UIScrollViewDelegate {
     }
     
     func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+        // Update state
         let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
         let indexPath = NSIndexPath(forItem: Int(pageNumber), inSection: 0)
-        if let state = State(rawValue: indexPath.row) {
-            model.currentState = state
-            // Update menu
-            updateMenuScrollIndicator()
-            UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
-            preselectMenuItem()
-        }
+        if let state = State(rawValue: indexPath.row) { model.currentState = state }
+        // Update menu
+        updateMenuScrollIndicator()
+        UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
+        preselectMenuItem()
+        // Update UI
+        reloadCurrentContent()
     }
 }
 

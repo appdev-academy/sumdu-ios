@@ -16,7 +16,7 @@ enum State: Int {
     
     var name: String {
         switch self {
-        case .Favorites: return ""
+        case .Favorites: return "Favorites"
         case .Teachers: return NSLocalizedString("Teacher", comment: "")
         case .Groups: return NSLocalizedString("Group", comment: "")
         case .Auditoriums: return NSLocalizedString("Auditorium", comment: "")
