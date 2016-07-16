@@ -27,6 +27,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
     let typeTableViewController = TypeTableViewController()
     private let historyImage = UIImageView()
     private let emptyHistoryLabel = UILabel()
+    private let emptyHistoryDescriptionLabel = UILabel()
     private let notFoudLabel = UILabel()
     
     // MARK: - Initialization
@@ -60,6 +61,20 @@ class TypeCollectionViewCell: UICollectionViewCell {
             emptyHistoryLabel.leading == superview.leading + 14.0
             emptyHistoryLabel.trailing == superview.trailing - 14.0
         }
+        // History description
+        emptyHistoryDescriptionLabel.text = NSLocalizedString("Swipe the screen left and right to navigate between the main sections and the search schedule", comment: "")
+        emptyHistoryDescriptionLabel.hidden = true
+        emptyHistoryDescriptionLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 15.0)
+        emptyHistoryDescriptionLabel.textColor = Color.textLight
+        emptyHistoryDescriptionLabel.textAlignment = .Center
+        emptyHistoryDescriptionLabel.numberOfLines = 0
+        contentView.addSubview(emptyHistoryDescriptionLabel)
+        constrain(emptyHistoryDescriptionLabel, emptyHistoryLabel, contentView) { emptyHistoryDescriptionLabel, emptyHistoryLabel, superview in
+            emptyHistoryDescriptionLabel.top == emptyHistoryLabel.bottom + 8.0
+            emptyHistoryDescriptionLabel.leading == superview.leading + 33.0
+            emptyHistoryDescriptionLabel.trailing == superview.trailing - 33.0
+            emptyHistoryDescriptionLabel.bottom == superview.bottom - 14.0
+        }
         // Table
         typeTableViewController.delegate = self
         contentView.addSubview(typeTableViewController.tableView)
@@ -85,6 +100,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
     private func showEmptyHistory() {
         notFoudLabel.hidden = true
         emptyHistoryLabel.hidden = false
+        emptyHistoryDescriptionLabel.hidden = false
         historyImage.hidden = false
         typeTableViewController.tableView.hidden = true
     }
@@ -92,6 +108,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
     private func showEmptySearch() {
         notFoudLabel.hidden = false
         emptyHistoryLabel.hidden = true
+        emptyHistoryDescriptionLabel.hidden = true
         historyImage.hidden = true
         typeTableViewController.tableView.hidden = true
     }
@@ -99,6 +116,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
     private func showContent() {
         notFoudLabel.hidden = true
         emptyHistoryLabel.hidden = true
+        emptyHistoryDescriptionLabel.hidden = true
         historyImage.hidden = true
         typeTableViewController.tableView.hidden = false
     }
