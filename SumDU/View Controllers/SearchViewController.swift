@@ -18,6 +18,9 @@ class SearchViewController: UIViewController {
     
     // MARK: - Variables
     
+    private var previousScrollPoint: CGFloat = 0.0
+    private var needUpdateContent = true
+    private var updateOnScroll = true
     private var parser = Parser()
     private var model = DataModel(auditoriums: [], groups: [], teachers: [], history: [], currentState: .Favorites)
     private var searchMode = false
@@ -261,6 +264,7 @@ extension SearchViewController: UICollectionViewDelegate {
         if collectionView == menuCollectionView {
             if let current = State(rawValue: indexPath.row) {
                 model.currentState = current
+                updateOnScroll = false
                 
                 // Update menu
                 updateMenuScrollIndicator()
@@ -359,6 +363,9 @@ extension SearchViewController: UIScrollViewDelegate {
         }
         targetContentOffset.memory.x = currentOffset
         contentCollectionView.setContentOffset(CGPointMake(newTargetOffset, 0), animated: true)
+        
+        previousScrollPoint = newTargetOffset
+        updateOnScroll = true
     }
     
     func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
@@ -370,8 +377,27 @@ extension SearchViewController: UIScrollViewDelegate {
         updateMenuScrollIndicator()
         UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
         preselectMenuItem()
-        // Update UI
-        reloadCurrentContent()
+        needUpdateContent = true
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        
+        if !updateOnScroll { return }
+        
+        let currentOffset = scrollView.contentOffset.x
+        let frameWidth = scrollView.frame.size.width
+        
+        if currentOffset > previousScrollPoint {
+            let newStateIndex = ceil(currentOffset/frameWidth)
+            if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
+        } else {
+            let newStateIndex = floor(currentOffset/frameWidth)
+            if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
+        }
+        if needUpdateContent {
+            reloadCurrentContent()
+            needUpdateContent = false
+        }
     }
 }
 
