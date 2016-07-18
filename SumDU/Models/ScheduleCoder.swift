@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Юра on 30.01.16.
-//  Copyright © 2016 AppDecAcademy. All rights reserved.
+//  Copyright © 2016 App Dev Academy. All rights reserved.
 //
 
 import Foundation
@@ -16,6 +16,8 @@ class ScheduleCoder: NSObject, NSCoding {
     
     /// Schedule instance
     var schedule: Schedule?
+    
+    // MARK: - Initialization
     
     /// Initializer for ScheduleCoder class
     init(schedule: Schedule) {
@@ -32,9 +34,11 @@ class ScheduleCoder: NSObject, NSCoding {
             let pairDate = aDecoder.decodeObjectForKey("pairDate") as? NSDate,
             let pairOrderName = aDecoder.decodeObjectForKey("pairOrderName") as? String,
             let dayOfWeek = aDecoder.decodeObjectForKey("dayOfWeek") as? String{
-                self.schedule = Schedule(pairName: pairName, pairTime: pairTime, pairType: pairType, auditoriumName: auditoriumName, teacherName: teacherName, groupName: groupName, pairDate: pairDate, pairOrderName: pairOrderName, dayOfWeek: dayOfWeek)
+            self.schedule = Schedule(pairName: pairName, pairTime: pairTime, pairType: pairType, auditoriumName: auditoriumName, teacherName: teacherName, groupName: groupName, pairDate: pairDate, pairOrderName: pairOrderName, dayOfWeek: dayOfWeek)
         }
     }
+    
+    // MARK: - Interface
     
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(schedule?.pairName, forKey: "pairName")
@@ -48,5 +52,3 @@ class ScheduleCoder: NSObject, NSCoding {
         aCoder.encodeObject(schedule?.dayOfWeek, forKey: "dayOfWeek")
     }
 }
-
-

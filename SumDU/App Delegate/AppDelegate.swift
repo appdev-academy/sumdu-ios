@@ -14,12 +14,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
         
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            let storyboard = UIStoryboard(name: "MainStoryboard", bundle: NSBundle.mainBundle())
-            let rootViewController = storyboard.instantiateViewControllerWithIdentifier("MainPadController")
-            window?.rootViewController = rootViewController
+        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad, let window = self.window {
+            let search = SearchViewController()
+            let schedule = ScheduleViewController()
+            let split = UISplitViewController()
+            split.viewControllers = [search, schedule]
+            split.preferredDisplayMode = .AllVisible
+            window.rootViewController = split
+            window.makeKeyAndVisible()
+        }
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone, let window = self.window  {
+            let newSearchViewController = SearchViewController()
+            let navigationController = UINavigationController(rootViewController: newSearchViewController)
+            navigationController.navigationBarHidden = true
+            window.rootViewController = navigationController
+            window.makeKeyAndVisible()
         }
         
         return true

@@ -2,194 +2,205 @@
 //  ScheduleViewController.swift
 //  SumDU
 //
-//  Created by Yura on 20.12.15.
-//  Copyright © 2015 AppDecAcademy. All rights reserved.
+//  Created by Yura Voevodin on 20.12.15.
+//  Copyright © 2015 App Dev Academy. All rights reserved.
 //
 
+import Cartography
 import UIKit
 import SwiftyJSON
 
 class ScheduleViewController: UIViewController {
     
-    // MARK: - Outlets
-    
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var scheduleNavigation: UINavigationItem!
-    
-    @IBOutlet weak var shareSchedule: UIBarButtonItem!
-    @IBOutlet weak var refreshButton: UIBarButtonItem!
-    
-    // MARK: - Constants
-    
-    private let kCellReuseIdentifier = "kCellReuseIdentifierSchedule"
-    
     // MARK: - Variables
     
     /// Data from SearchController
-    var listData: ListData? {
-        didSet {
-            self.saveListDataObject(self.listData, forKey: UserDefaultsKey.ScheduleListData.key)
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                if listData == self.listData {
-                    self.scheduleNavigation.title = listData?.name
-                    self.refreshButton.enabled = true
-                    self.shareSchedule.enabled = true
-                    self.loadSchedule()
-                    if listData != nil {
-                        self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData!))
-                    }
-                }
-            }
-        }
-    }
+    private var listData: ListData?
     
     /// Object of Parser class
     private var parser = Parser()
     
-    /// Schedule records separetad by sections
+    /// Schedule records separated by sections
     private var recordsBySection: [Section] = [] {
         didSet {
-            self.saveSectionData(self.recordsBySection, forKey: UserDefaultsKey.scheduleKey(listData!))
-            tableView.reloadData()
+            scheduleTableView.reloadData()
         }
     }
     
-    /// Control refresh
-    private var refreshControl = UIRefreshControl()
-    
-    /// URL for add shedule ivents to calendar
+    /// URL for add schedule events to calendar
     private var calendarURL: NSURL?
     
-    // MARK: - Functions
+    // MARK: - UI objects
+    
+    // Navigation bar
+    private let backButton = BackButton()
+    private let shareButton = ShareButton()
+    private let refreshButton = RefreshButton()
+    
+    // Content
+    private let titleLabel = UILabel()
+    private let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
+    private let informationLabel = UILabel()
+    private let refreshControl = UIRefreshControl()
+    private let scheduleTableView = UITableView()
+    
+    // MARK: - Initialization
+    
+    init(data: ListData) {
+        super.init(nibName: nil, bundle: nil)
+        
+        listData = data
+    }
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Remove separators for empty cells
-        tableView.tableFooterView = UIView(frame: CGRectZero)
+        view.backgroundColor = UIColor.whiteColor()
         
-        // Delegate relations here
+        let topMargin: CGFloat = 24.0
+        let leadingMargin: CGFloat = 14.0
+        let trailingMargin: CGFloat = 6.0
+        
+        // Parser
         parser.scheduleDelegate = self
-        tableView.delegate = self
-        tableView.dataSource = self
         
-        let attributes = [
-            NSFontAttributeName: UIFont.boldSystemFontOfSize(16.0)
-        ]
-        self.navigationController?.navigationBar.titleTextAttributes = attributes
+        // Back
+        backButton.addTarget(self, action: #selector(backButtonPressed), forControlEvents: .TouchUpInside)
+        view.addSubview(backButton)
+        constrain(backButton, view) { backButton, superview in
+            backButton.top == superview.top + topMargin
+            backButton.leading == superview.leading + leadingMargin
+            backButton.height == BackButton.buttonSize.height
+            backButton.width == BackButton.buttonSize.width
+        }
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            backButton.setImage(nil, forState: UIControlState.Normal)
+            backButton.setImage(nil, forState: UIControlState.Highlighted)
+        }
+        // Refresh
+        refreshButton.addTarget(self, action: #selector(refresh), forControlEvents: .TouchUpInside)
+        view.addSubview(refreshButton)
+        constrain(refreshButton, view) { refreshButton, superview in
+            refreshButton.top == superview.top + topMargin
+            refreshButton.trailing == superview.trailing - trailingMargin
+            refreshButton.height == RefreshButton.buttonSize.height
+            refreshButton.width == RefreshButton.buttonSize.width
+        }
+        // Share
+        shareButton.addTarget(self, action: #selector(share), forControlEvents: .TouchUpInside)
+        view.addSubview(shareButton)
+        constrain(shareButton, refreshButton, view) { shareButton, refreshButton, superview in
+            shareButton.top == superview.top + topMargin
+            shareButton.trailing == refreshButton.leading - 2.0
+            shareButton.height == ShareButton.buttonSize.height
+            shareButton.width == ShareButton.buttonSize.width
+        }
+        // Title
+        titleLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 26.0)
+        titleLabel.textColor = Color.textBlack
+        titleLabel.numberOfLines = 0
+        var titleHeight: CGFloat = 62.0
+        if listData?.type == .Teacher { titleHeight = 96.0 }
+        view.addSubview(titleLabel)
+        constrain(titleLabel, backButton, view) { titleLabel, backButton, superview in
+            titleLabel.top == backButton.bottom
+            titleLabel.leading == superview.leading + leadingMargin
+            titleLabel.trailing == superview.trailing - trailingMargin
+            titleLabel.height >= titleHeight
+        }
+        // Schedule table
+        scheduleTableView.registerClass(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
+        scheduleTableView.registerClass(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)
+        scheduleTableView.delegate = self
+        scheduleTableView.dataSource = self
+        scheduleTableView.separatorStyle = .None
+        view.addSubview(scheduleTableView)
+        constrain(scheduleTableView, titleLabel, view) { scheduleTableView, titleLabel, superview in
+            scheduleTableView.top == titleLabel.bottom
+            scheduleTableView.leading == superview.leading
+            scheduleTableView.trailing == superview.trailing
+            scheduleTableView.bottom == superview.bottom
+        }
+        // Remove separators for empty cells
+        scheduleTableView.tableFooterView = UIView()
         
         // Set up the refresh control
-        self.refreshControl.attributedTitle = NSAttributedString(string: NSLocalizedString("Pull to refresh", comment: ""))
-        self.refreshControl.addTarget(self, action: #selector(ScheduleViewController.refresh), forControlEvents: UIControlEvents.ValueChanged)
-        self.tableView?.addSubview(refreshControl)
+        refreshControl.attributedTitle = NSAttributedString(string: NSLocalizedString("Pull to refresh", comment: ""))
+        refreshControl.addTarget(self, action: #selector(refresh), forControlEvents: .ValueChanged)
+        scheduleTableView.addSubview(refreshControl)
         
+        // Information
+        informationLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20.0)
+        informationLabel.textColor = Color.textNormal
+        informationLabel.textAlignment = .Center
+        informationLabel.adjustsFontSizeToFitWidth = true
+        informationLabel.minimumScaleFactor = 0.7
+        view.addSubview(informationLabel)
+        constrain(informationLabel, view) { informationLabel, superview in
+            informationLabel.leading == superview.leading + 20.0
+            informationLabel.trailing == superview.trailing - 20.0
+            informationLabel.centerY == superview.centerY
+        }
+        informationLabel.text = NSLocalizedString("Sorry. There are no results for your request.", comment: "")
+        informationLabel.hidden = true
+        
+        // Indicator
+        view.addSubview(activityIndicatorView)
+        constrain(activityIndicatorView, view) { activityIndicatorView, superview in
+            activityIndicatorView.center == superview.center
+        }
+        
+        // Send request
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        activityIndicatorView.startAnimating()
+        parser.sendScheduleRequest(listData)
+        updateData()
+    }
+    
+    // MARK: - Helpers
+    
+    private func updateData() {
+        if let data = listData {
+            titleLabel.text = data.name
+        }
+    }
+    
+    // MARK: - Actions
+    
+    func backButtonPressed() {
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            // Set title to navigation bar
-            scheduleNavigation.title = listData?.name
-            
-            // Load schedule for selected row
-            self.loadSchedule()
-            if let listData = self.loadListDataObject(UserDefaultsKey.ScheduleListData.key) {
-                self.recordsBySection = self.loadSectionDataObjects(UserDefaultsKey.scheduleKey(listData))
-            }
+            navigationController?.popViewControllerAnimated(true)
         }
     }
     
-    /// Save schedule information to userDefaults
-    private func saveSectionData(listDataCoder: [Section], forKey: String) {
-        var sectionCoder: [SectionCoder] = []
-        for sectionCoderRecord in listDataCoder {
-            sectionCoder.append(sectionCoderRecord.sectionCoder)
-        }
-        
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        let data = NSKeyedArchiver.archivedDataWithRootObject(sectionCoder)
-        userDefaults.setObject(data, forKey: forKey)
-        userDefaults.synchronize()
-    }
-    
-    /// Load schedule information from userDefaults
-    func loadSectionDataObjects(forKey: String) -> [Section] {
-        var section: [Section] = []
-        
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let listScheduleCoder = userDefaults.dataForKey(forKey) {
-            
-            if let listScheduleDataArray = NSKeyedUnarchiver.unarchiveObjectWithData(listScheduleCoder) as? [SectionCoder] {
-                for scheduleDataStruct in listScheduleDataArray {
-                    if let sectionData = scheduleDataStruct.section {
-                        section.append(sectionData)
-                    }
-                }
-            }
-        }
-        return section
-    }
-    
-    /// Function which stores ListData entity
-    func saveListDataObject(listDataObject: ListData?, forKey: String) {
-        var listDataCoders: [ListDataCoder] = []
-        if let lisData = listDataObject {
-            listDataCoders.append(lisData.listDataCoder)
-            let userDefaults = NSUserDefaults.standardUserDefaults()
-            let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
-            userDefaults.setObject(data, forKey: forKey)
-            userDefaults.synchronize()
-        }
-    }
-    
-    /// Function which loads ListData entity
-    func loadListDataObject(forKey: String) -> ListData? {
-        var listDataRecord: ListData?
-        
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let listDataCoder = userDefaults.dataForKey(forKey) {
-            
-            if let listData = NSKeyedUnarchiver.unarchiveObjectWithData(listDataCoder) as? ListDataCoder {
-                listDataRecord = listData.listData!
-                return listDataRecord
-            }
-        }
-        return listDataRecord
-    }
-    
-    /// Refresh shcedule table
+    /// Refresh schedule table
     func refresh() {
-        self.parser.sendScheduleRequest(listData, updateButtonPressed: true, isInHistory: false)
-        self.tableView.reloadData()
-        self.refreshControl.endRefreshing()
-    }
-    
-    /// Prepare and send schedule request in controller
-    private func loadSchedule() {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        let allKeys = userDefaults.dictionaryRepresentation().keys
-        if let listData = self.listData where allKeys.contains(UserDefaultsKey.scheduleKey(listData)) {
-            self.parser.sendScheduleRequest(listData, updateButtonPressed: false, isInHistory: true)
-        } else {
-            self.parser.sendScheduleRequest(listData, updateButtonPressed: false, isInHistory: false)
-        }
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        parser.sendScheduleRequest(listData)
     }
     
     /// Reload schedule, send new request
-    @IBAction func refreshSchedule(sender: AnyObject) {
-        self.parser.sendScheduleRequest(listData, updateButtonPressed: true, isInHistory: false)
+    func refreshSchedule() {
+        parser.sendScheduleRequest(listData)
     }
     
     /// Share schedule
-    @IBAction func share(sender: UIBarButtonItem) {
-        
-        parser.generateCalendarURL(listData)
-        
-        if let url = calendarURL {
-            UIApplication.sharedApplication().openURL(url)
+    func share() {
+        if recordsBySection.count > 0 {
+            parser.generateCalendarURL(listData)
+            if let url = calendarURL {
+                UIApplication.sharedApplication().openURL(url)
+            }
         }
-        
     }
 }
 
@@ -201,16 +212,19 @@ extension ScheduleViewController: UITableViewDelegate { }
 
 extension ScheduleViewController: UITableViewDataSource {
     
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        
-        // Create a date formatter
+    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return ScheduleSectionHeaderView.viewHeight
+    }
+    
+    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = tableView.dequeueReusableHeaderFooterViewWithIdentifier(ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
+        // Set data
         let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "dd MMMM, EEEE"
-        
-        // Generate section header
-        let sectionHeader = dateFormatter.stringFromDate(recordsBySection[section].date)
-
-        return sectionHeader
+        dateFormatter.dateFormat = "dd MMMM"
+        headerView.dateLabel.text = dateFormatter.stringFromDate(recordsBySection[section].date)
+        dateFormatter.dateFormat = "EEEE"
+        headerView.dayLabel.text = dateFormatter.stringFromDate(recordsBySection[section].date)
+        return headerView
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -221,53 +235,14 @@ extension ScheduleViewController: UITableViewDataSource {
         return recordsBySection[section].records.count
     }
     
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return ScheduleCell.cellHeight
+    }
+    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCellWithIdentifier(kCellReuseIdentifier, forIndexPath: indexPath) as! ScheduleCell
-        
+        let cell = tableView.dequeueReusableCellWithIdentifier(ScheduleCell.reuseIdentifier, forIndexPath: indexPath) as! ScheduleCell
         let scheduleRecord = recordsBySection[indexPath.section].records[indexPath.row]
-        
-        // Set pair name and type
-        var pairNameInCell = "-/-"
-        
-        if scheduleRecord.pairName.characters.count > 0 {
-            pairNameInCell = scheduleRecord.pairName
-        }
-        
-        if scheduleRecord.pairType.characters.count > 0 && scheduleRecord.pairName.characters.count > 0 {
-            pairNameInCell += " (" + scheduleRecord.pairType + ")"
-        }
-        
-        if scheduleRecord.pairType.characters.count > 0 && scheduleRecord.pairName.characters.count == 0 {
-            pairNameInCell = scheduleRecord.pairType
-        }
-        
-        cell.pairName.text = pairNameInCell
-        
-        // Set teacher name for pair
-        var pairTeacterNameInCell = scheduleRecord.auditoriumName
-        
-        if scheduleRecord.teacherName.characters.count > 0 {
-            pairTeacterNameInCell = scheduleRecord.teacherName
-            
-            if scheduleRecord.auditoriumName.characters.count > 0 {
-                pairTeacterNameInCell += ", " + scheduleRecord.auditoriumName
-            }
-        }
-        
-        cell.teacherName.text = pairTeacterNameInCell
-        
-        // Set pair time in cell
-        cell.pairTime.text = scheduleRecord.pairTime
-        
-        // Set pair groups
-        var groupNameForCell = ""
-        
-        if scheduleRecord.groupName.characters.count > 0 {
-            groupNameForCell = NSLocalizedString(" for ", comment: "") + scheduleRecord.groupName
-        }
-        cell.groupName.text = groupNameForCell
-        
+        cell.update(with: scheduleRecord)
         return cell
     }
 }
@@ -277,13 +252,13 @@ extension ScheduleViewController: UITableViewDataSource {
 extension ScheduleViewController: ParserScheduleDelegate {
     
     func getSchedule(response: JSON) {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
         if let jsonArray = response.array where jsonArray.count > 0 {
-            
             // All schedule records
             var allScheduleRecords: [Schedule] = []
             
-            // All schedule records sepatated by sections
+            // All schedule records separated by sections
             var forRecordsBySection: [Section] = []
             
             // Set of the unique schedule dates
@@ -302,12 +277,10 @@ extension ScheduleViewController: ParserScheduleDelegate {
                     allScheduleRecords.append(scheduleRecord)
                 }
             }
-            
             // Order set of dates
             let orderedDates = Set(sectionsDate).sort {
                 $0.compare($1) == .OrderedAscending
             }
-            
             // Iterate all dates
             for singleDate in orderedDates {
                 
@@ -324,24 +297,26 @@ extension ScheduleViewController: ParserScheduleDelegate {
                         scheduleRecordsInSection.append(singleScheduleRecord)
                     }
                 }
-                
                 // Sort schedule records in single section by pair order name
                 scheduleRecordsInSection.sortInPlace {
                     $0.pairOrderName < $1.pairOrderName
                 }
-                
                 // Append to array of sections
                 forRecordsBySection.append(Section(date: singleDate, records: scheduleRecordsInSection))
             }
-            
-            // Move data from tempopary var to public
+            // Move data from temporary var to public
             recordsBySection = forRecordsBySection
+        } else {
+            informationLabel.hidden = false
+            scheduleTableView.hidden = true
         }
-        
         // Tell refresh control it can stop showing up now
-        if self.refreshControl.refreshing {
-            self.refreshControl.endRefreshing()
+        if refreshControl.refreshing {
+            refreshControl.endRefreshing()
+        } else {
+            activityIndicatorView.stopAnimating()
         }
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
     }
     
     /// Get calendar URL

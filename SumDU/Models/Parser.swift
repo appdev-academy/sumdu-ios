@@ -2,14 +2,13 @@
 //  AppParser.swift
 //  SumDU
 //
-//  Created by Yura on 28.11.15.
+//  Created by Yura Voevodin on 28.11.15.
 //  Copyright © 2015 AppDevAcademy. All rights reserved.
 //
 
 import Foundation
 import Alamofire
 import SwiftyJSON
-import SVProgressHUD
 
 /// Request parameter for schedule
 enum ScheduleRequestParameter: String {
@@ -48,9 +47,9 @@ enum ListDataType: String {
 protocol ParserScheduleDelegate {
     /**
      Required method for schedule request
-    
+     
      - parameter response:  result of the schedule request in JSON type
-    */
+     */
     func getSchedule(response: JSON)
     
     /**
@@ -68,7 +67,7 @@ protocol ParserDataListDelegate {
      
      - parameter response:  result of the data request in JSON type
      - parameter requestType:  type of related request
-    */
+     */
     func getRelatedData(response: JSON, requestType: ListDataType)
 }
 
@@ -97,32 +96,32 @@ class Parser {
         // Returns base URL for each request
         var baseURLString: String {
             switch self {
-                case .ScheduleRequest, .ScheduleCalendarRequest:
-                    return Parser.baseURL
-                case .RelatedDataRequest:
-                    return Parser.mobileBaseURL
+            case .ScheduleRequest, .ScheduleCalendarRequest:
+                return Parser.baseURL
+            case .RelatedDataRequest:
+                return Parser.mobileBaseURL
             }
         }
         
         // Returns HTTP method for each request
         var method: Alamofire.Method {
             switch self {
-                case .ScheduleRequest:
-                    return .POST
-                case .RelatedDataRequest, .ScheduleCalendarRequest:
-                    return .GET
+            case .ScheduleRequest:
+                return .POST
+            case .RelatedDataRequest, .ScheduleCalendarRequest:
+                return .GET
             }
         }
         
         // Returns relative path to each API endpoint
         var path: String {
             switch self {
-                case .ScheduleRequest:
-                    return "/index/json"
-                case .RelatedDataRequest:
-                    return "/php/index.php"
-                case .ScheduleCalendarRequest:
-                    return "/index/ical"
+            case .ScheduleRequest:
+                return "/index/json"
+            case .RelatedDataRequest:
+                return "/php/index.php"
+            case .ScheduleCalendarRequest:
+                return "/index/ical"
             }
         }
         
@@ -134,12 +133,12 @@ class Parser {
             
             var parameters: [String: AnyObject] = [:]
             switch self {
-                case .ScheduleRequest(let params):
-                    parameters = params
-                case .ScheduleCalendarRequest(let params):
+            case .ScheduleRequest(let params):
                 parameters = params
-                case .RelatedDataRequest(let relatedDataParameter):
-                    parameters = ["method": relatedDataParameter.rawValue]
+            case .ScheduleCalendarRequest(let params):
+                parameters = params
+            case .RelatedDataRequest(let relatedDataParameter):
+                parameters = ["method": relatedDataParameter.rawValue]
             }
             let request = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
             return request
@@ -164,9 +163,9 @@ class Parser {
             let id = String(selectedId)
             
             switch selectedType {
-                case ListDataType.Group: groupId = id
-                case ListDataType.Teacher: teacherId = id
-                case ListDataType.Auditorium: auditoriumId = id
+            case ListDataType.Group: groupId = id
+            case ListDataType.Teacher: teacherId = id
+            case ListDataType.Auditorium: auditoriumId = id
             }
         }
         
@@ -186,31 +185,25 @@ class Parser {
         
         switch typeOfRequest {
             
-            case .CalendarRequest:
-            
-                // Calendar request parameters
-                requestData =
-                    [
-                        CalendarRequestParameter.BeginDate.rawValue: dateFormatter.stringFromDate(startDate),
-                        CalendarRequestParameter.EndDate.rawValue: dateFormatter.stringFromDate(endDate),
-                        CalendarRequestParameter.GroupId.rawValue: groupId,
-                        CalendarRequestParameter.NameId.rawValue: teacherId,
-                        CalendarRequestParameter.LectureRoomId.rawValue: auditoriumId,
-                ]
-            
-            case .ScheduleRequest:
-                
-                // Schedule request parameters
-                requestData =
-                    [
-                        ScheduleRequestParameter.BeginDate.rawValue: dateFormatter.stringFromDate(startDate),
-                        ScheduleRequestParameter.EndDate.rawValue: dateFormatter.stringFromDate(endDate),
-                        ScheduleRequestParameter.GroupId.rawValue: groupId,
-                        ScheduleRequestParameter.NameId.rawValue: teacherId,
-                        ScheduleRequestParameter.LectureRoomId.rawValue: auditoriumId,
-                ]
+        case .CalendarRequest:
+            // Calendar request parameters
+            requestData = [
+                CalendarRequestParameter.BeginDate.rawValue: dateFormatter.stringFromDate(startDate),
+                CalendarRequestParameter.EndDate.rawValue: dateFormatter.stringFromDate(endDate),
+                CalendarRequestParameter.GroupId.rawValue: groupId,
+                CalendarRequestParameter.NameId.rawValue: teacherId,
+                CalendarRequestParameter.LectureRoomId.rawValue: auditoriumId,
+            ]
+        case .ScheduleRequest:
+            // Schedule request parameters
+            requestData = [
+                ScheduleRequestParameter.BeginDate.rawValue: dateFormatter.stringFromDate(startDate),
+                ScheduleRequestParameter.EndDate.rawValue: dateFormatter.stringFromDate(endDate),
+                ScheduleRequestParameter.GroupId.rawValue: groupId,
+                ScheduleRequestParameter.NameId.rawValue: teacherId,
+                ScheduleRequestParameter.LectureRoomId.rawValue: auditoriumId,
+            ]
         }
-        
         return requestData
     }
     
@@ -236,39 +229,19 @@ class Parser {
      
      - parameter requestData: what parameters need for schedule request
      */
-    func sendScheduleRequest(requestData: ListData?, updateButtonPressed: Bool, isInHistory: Bool) {
-        
-        // Show alert if request starts not from segue
-        if !isInHistory {
-            Alert.showWithStatus()
-        }
+    func sendScheduleRequest(requestData: ListData?) {
         
         // Get data for request
         let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
         
         // Send request
-        Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
-            response in
+        Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON { response in
             
-            if response.result.isSuccess {
-                if let resultValue = response.result.value {
-                    
-                    if updateButtonPressed == true {
-                        Alert.showSuccessStatus()
-                    } else {
-                        Alert.dismiss()
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue(), {
-                        let response = JSON(resultValue)
-                        self.scheduleDelegate?.getSchedule(response)
-                    })
-                }
+            if response.result.isSuccess, let resultValue = response.result.value {
+                let response = JSON(resultValue)
+                self.scheduleDelegate?.getSchedule(response)
             } else {
-                // Show alert if request starts not from segue
-                if !isInHistory {
-                    Alert.showNetworkingError()
-                }
+                // Show error
             }
         }
     }
@@ -278,35 +251,22 @@ class Parser {
      
      - parameter withParameter: type of related request
      */
-    func sendDataRequest(relatedDataParameter: ListDataType, updateButtonPressed: Bool) {
+    func sendDataRequest(relatedDataParameter: ListDataType) {
         
-        // Start of showing progress and block user interface
-        Alert.showWithStatus()
-        
-        Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
-            response in
+        Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON { response in
             
-            if response.result.isSuccess {
-                if let resultValue = response.result.value {
-                    
-                    let defaults = NSUserDefaults.standardUserDefaults()
-                    defaults.setObject(NSDate(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
-                    defaults.synchronize()
-                    
-                    if updateButtonPressed {
-                        Alert.showSuccessStatus()
-                    } else {
-                        Alert.dismiss()
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue(), {
-                        let response = JSON(resultValue)
-                        self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
-                    })
-                }
+            if response.result.isSuccess, let resultValue = response.result.value {
+                
+                let defaults = NSUserDefaults.standardUserDefaults()
+                defaults.setObject(NSDate(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
+                defaults.synchronize()
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    let response = JSON(resultValue)
+                    self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
+                })
             } else {
                 // Show error
-                Alert.showNetworkingError()
             }
         }
     }

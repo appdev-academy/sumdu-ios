@@ -2,360 +2,430 @@
 //  SearchViewController.swift
 //  SumDU
 //
-//  Created by Maksym Skliarov on 12/10/15.
-//  Copyright © 2015 AppDecAcademy. All rights reserved.
+//  Created by Yura Voevodin on 11.07.16.
+//  Copyright © 2016 App Dev Academy. All rights reserved.
 //
 
+import Cartography
 import UIKit
 import SwiftyJSON
-import SVProgressHUD
-
 
 class SearchViewController: UIViewController {
     
-    enum SelectedSegment {
-        case Teachers
-        case Groups
-        case Auditoriums
-        case Favorites
-    }
-    
-    // MARK: - Outlets
-    
-    @IBOutlet private weak var searchBar: UISearchBar!
-    @IBOutlet private weak var typeSegmentedControl: UISegmentedControl!
-    @IBOutlet private weak var tableView: UITableView!
-    @IBOutlet private var refreshButton: UIBarButtonItem!
-    
     // MARK: - Constants
     
-    private let kCellReuseIdentifier = "kCellReuseIdentifier"
+    private let scrollConstraintGroup = ConstraintGroup()
     
     // MARK: - Variables
-    var delegate: SearchViewControllerDelegate?
-    /// Parser instance
-    var parser = Parser()
-    /// Array of all Auditoriums
-    var allAuditoriums: [ListData] = [] {
-        didSet {
-            self.reloadListData(self.allAuditoriums, forKey: UserDefaultsKey.Auditoriums.key)
-        }
-    }
-    /// Array of all Groups
-    var allGroups: [ListData] = [] {
-        didSet {
-            self.reloadListData(self.allGroups, forKey: UserDefaultsKey.Groups.key)
-        }
-    }
-    /// Array of all Teachers
-    var allTeachers: [ListData] = [] {
-        didSet {
-            self.reloadListData(self.allTeachers, forKey: UserDefaultsKey.Teachers.key)
-        }
-    }
-    var dataSource: [ListData] = [] {
-        didSet {
-            self.tableView.reloadData()
-        }
-    }
     
-    var history: [ListData] = [] {
-        didSet {
-            self.history = removeHistoryRecord(uniq(self.history))
-            self.saveListDataObjects(self.history, forKey: UserDefaultsKey.History.key)
-            self.tableView.reloadData()
-        }
-    }
+    private var previousScrollPoint: CGFloat = 0.0
+    private var needUpdateContent = true
+    private var updateOnScroll = true
+    private var parser = Parser()
+    private var model = DataModel(auditoriums: [], groups: [], teachers: [], history: [], currentState: .Favorites)
+    private var searchMode = false
+    private var searchText: String?
     
-    /// Currently selected segment
-    var selectedSegment: SelectedSegment = SelectedSegment.Teachers {
-        didSet {
-            self.filterDataSourceWithQuery(self.searchBar.text)
-            tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: UITableViewRowAnimation.Automatic)
-        }
-    }
+    // MARK: - UI objects
     
-    /// Remember data of selected cell
-    var selectedListDataObject: ListData?
+    private let searchBarView = SearchBarView()
+    private var menuCollectionView: UICollectionView!
+    private let scrollLineView = UIView()
+    private let scrollingIndicatorView = UIView()
+    private var contentCollectionView: UICollectionView!
     
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
+        // Data
+        parser.dataListDelegate = self
+        model.updateFromStorage()
+
+        // UI
+        initialSetup()
         
-        // Load and filter initial data
-        self.allTeachers = self.loadListDataObjects(UserDefaultsKey.Teachers.key)
-        self.allGroups = self.loadListDataObjects(UserDefaultsKey.Groups.key)
-        self.allAuditoriums = self.loadListDataObjects(UserDefaultsKey.Auditoriums.key)
-        self.history = self.loadListDataObjects(UserDefaultsKey.History.key)
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            if let firstItem = model.history.first {
+                let schedule = ScheduleViewController(data: firstItem)
+                splitViewController?.viewControllers[1] = schedule
+            }
+        }
+    }
+    
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
         
-        self.filterDataSourceWithQuery(nil)
+        // Menu
+        menuCollectionView.collectionViewLayout.invalidateLayout()
         
-        self.registerForNotifications()
-        
-        // Set DataListDelegate for Parser
-        self.parser.dataListDelegate = self
-        
-        // Set delegate for searchBar
-        self.searchBar.delegate = self
+        // Content
+        contentCollectionView.collectionViewLayout.invalidateLayout()
+//        contentCollectionView.reloadData()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.checkUpdatedAtDateAndLoadData()
-    }
-    
-    deinit {
-        self.deregisterFromNotifications()
-    }
-    
-    /// Refresh [ListData] objects
-    @IBAction func refreshListDataObjects(sender: AnyObject) {
-        self.parser.sendDataRequest(.Auditorium, updateButtonPressed: true)
-        self.parser.sendDataRequest(.Teacher, updateButtonPressed: true)
-        self.parser.sendDataRequest(.Group, updateButtonPressed: true)
-    }
-    
-    /// Check if lists of Teachers, Groups and Auditoriums was updated more than 3 days ago
-    func checkUpdatedAtDateAndLoadData() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        let lastUpdatedAtDate = defaults.objectForKey(UserDefaultsKey.LastUpdatedAtDate.key) as? NSDate
-        if (lastUpdatedAtDate == nil) || (lastUpdatedAtDate != nil && lastUpdatedAtDate!.compare(NSDate().dateBySubtractingDays(3)) == .OrderedAscending) {
-            self.parser.sendDataRequest(.Auditorium, updateButtonPressed: false)
-            self.parser.sendDataRequest(.Teacher, updateButtonPressed: false)
-            self.parser.sendDataRequest(.Group, updateButtonPressed: false)
+        // Check if lists of Teachers, Groups and Auditoriums was updated more than 3 days ago
+        let lastUpdatedDate = NSUserDefaults.standardUserDefaults().objectForKey(UserDefaultsKey.LastUpdatedAtDate.key) as? NSDate
+        if (lastUpdatedDate == nil) || (lastUpdatedDate != nil && lastUpdatedDate!.compare(NSDate().dateBySubtractingDays(3)) == .OrderedAscending) {
+            model.updateFromServer(with: parser)
         }
     }
     
-    /// Function which stores ListData entities using NSUserDefaults class
-    func saveListDataObjects(listDataObject: [ListData], forKey: String) {
-        var listDataCoders: [ListDataCoder] = []
-        for listDataRecord in listDataObject {
-            listDataCoders.append(listDataRecord.listDataCoder)
-        }
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
-        userDefaults.setObject(data, forKey: forKey)
-        userDefaults.synchronize()
-    }
-    
-    /// Function which loads ListData entities from NSUserDefaults class
-    func loadListDataObjects(forKey: String) -> [ListData] {
-        var listDataRecords: [ListData] = []
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
         
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let listDataCoder = userDefaults.dataForKey(forKey) {
+        updateMenuScrollIndicator()
+        preselectMenuItem()
+    }
+    
+    // MARK: - Helpers
+    
+    private func initialSetup() {
+        
+        view.backgroundColor = UIColor.whiteColor()
+        
+        // Search bar
+        searchBarView.delegate = self
+        view.addSubview(searchBarView)
+        constrain(searchBarView, view) { searchBarView, superview in
             
-            if let listDataArray = NSKeyedUnarchiver.unarchiveObjectWithData(listDataCoder) as? [ListDataCoder] {
-                for listDataStruct in listDataArray {
-                    if let listData = listDataStruct.listData {
-                        listDataRecords.append(listData)
-                    }
-                }
-                return listDataRecords
-            }
+            searchBarView.top == superview.top + 30.0
+            searchBarView.leading == superview.leading + 14.0
+            searchBarView.trailing == superview.trailing
+            searchBarView.height == SearchBarView.viewHeight
         }
-        return listDataRecords
-    }
-    
-    /// Save corresponding array of ListData and update UI
-    private func reloadListData(listData: [ListData], forKey key: String) {
-        self.saveListDataObjects(listData, forKey: key)
-        self.filterDataSourceWithQuery(self.searchBar.text)
-        self.tableView.reloadData()
-    }
-    
-    /// Select only uniq data from History
-    private func uniq <T: Equatable>(lst: [T]) -> [T] {
-        var seen: [T] = []
-        return lst.filter { x in
-            let unseen = seen.indexOf(x) == nil
-            if (unseen) {
-                seen.append(x)
-            }
-            return unseen
+        
+        // Menu
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.scrollDirection = .Horizontal
+        menuCollectionView = UICollectionView(frame: view.bounds, collectionViewLayout: flowLayout)
+        menuCollectionView.registerClass(MenuCollectionViewCell.self, forCellWithReuseIdentifier: MenuCollectionViewCell.reuseIdentifier)
+        menuCollectionView.delegate = self
+        menuCollectionView.dataSource = self
+        menuCollectionView.showsVerticalScrollIndicator = false
+        menuCollectionView.showsHorizontalScrollIndicator = false
+        menuCollectionView.pagingEnabled = true
+        menuCollectionView.backgroundColor = UIColor.whiteColor()
+        view.addSubview(menuCollectionView)
+        constrain(searchBarView, menuCollectionView, view) {
+            searchBarView, menuCollectionView, superview in
+            
+            menuCollectionView.top == searchBarView.bottom
+            menuCollectionView.leading == superview.leading
+            menuCollectionView.trailing == superview.trailing
+            menuCollectionView.height == 62.0
         }
-    }
-    
-    /// Remove the oldest saved data from History
-    private func removeHistoryRecord(var array: [ListData]) -> [ListData] {
-        while array.count > 50 {
-            array.removeFirst()
+        
+        // Scroll line
+        scrollLineView.backgroundColor = Color.separator
+        view.addSubview(scrollLineView)
+        constrain(scrollLineView, menuCollectionView, view) {
+            scrollLineView, menuCollectionView, superview in
+            
+            scrollLineView.top == menuCollectionView.bottom
+            scrollLineView.leading == superview.leading
+            scrollLineView.trailing == superview.trailing
+            scrollLineView.height == 1.0
         }
-        return array
-    }
-    
-    /// Filter data source with search query
-    private func filterDataSourceWithQuery(query: String?) {
-        var listDataArray: [ListData] = []
-        switch selectedSegment {
-            case .Teachers:
-                listDataArray = allTeachers
-            case .Groups:
-                listDataArray = allGroups
-            case .Auditoriums:
-                listDataArray = allAuditoriums
-            case .Favorites:
-                listDataArray = history
+        
+        // Scrolling indocator
+        scrollingIndicatorView.backgroundColor = Color.textBlack
+        view.addSubview(scrollingIndicatorView)
+        constrain(scrollingIndicatorView, scrollLineView, view) {
+            scrollingIndicatorView, scrollLineView, superview in
+            
+            scrollingIndicatorView.bottom == scrollLineView.bottom
+            scrollingIndicatorView.height == 2.0
         }
-        if let query = query where query.characters.count > 0 {
-            dataSource = listDataArray.filter { return $0.name.lowercaseString.containsString(query.lowercaseString) }
-        } else {
-            dataSource = listDataArray
-        }
-    }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Setting up destination view controller data source here
-        if let scheduleViewController = segue.destinationViewController as? ScheduleViewController where segue.identifier == "ShowSchedule" {
-            scheduleViewController.listData = selectedListDataObject
-        }
-    }
-    
-    @IBAction private func selectionDidChange(sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-            case 0:
-                self.selectedSegment = .Teachers
-            case 1:
-                self.selectedSegment = .Groups
-            case 2:
-                self.selectedSegment = .Auditoriums
-            case 3:
-                self.selectedSegment = .Favorites
-            default:
-                print("Unknown selected segment in SearchViewController")
+        
+        // Content
+        let contentFlowLayout = UICollectionViewFlowLayout()
+        contentFlowLayout.scrollDirection = .Horizontal
+        contentCollectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: contentFlowLayout)
+//        contentCollectionView.scrollEnabled = false
+        contentCollectionView.backgroundColor = UIColor.whiteColor()
+        contentCollectionView.registerClass(TypeCollectionViewCell.self, forCellWithReuseIdentifier: TypeCollectionViewCell.reuseIdentifier)
+        contentCollectionView.showsVerticalScrollIndicator = false
+        contentCollectionView.showsHorizontalScrollIndicator = false
+        contentCollectionView.delegate = self
+        contentCollectionView.dataSource = self
+        view.addSubview(contentCollectionView)
+        constrain(scrollLineView, contentCollectionView, view) {
+            scrollLineView, contentCollectionView, superview in
+            
+            contentCollectionView.top == scrollLineView.bottom
+            contentCollectionView.leading == superview.leading
+            contentCollectionView.trailing == superview.trailing
+            contentCollectionView.bottom == superview.bottom
         }
     }
     
-    // MARK: - Notifications
-    
-    private func registerForNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SearchViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(SearchViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+    private func labelWidth(text: String) -> CGFloat {
+        let size = CGSize(width: CGFloat.max, height: MenuCollectionViewCell.cellHeight)
+        let attributes = [NSFontAttributeName: FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)]
+        return text.boundingRectWithSize(size, options: .UsesLineFragmentOrigin, attributes: attributes, context: nil).size.width
     }
     
-    private func deregisterFromNotifications() {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+    /// Calculate spacing between items in menu
+    private func interItemSpacing() -> CGFloat {
+        let screenWidth = view.bounds.width
+        var spacing = screenWidth
+        spacing -= MenuCollectionViewCell.historyImageSize.width
+        spacing -= labelWidth(State.Teachers.name)
+        spacing -= labelWidth(State.Auditoriums.name)
+        spacing -= labelWidth(State.Groups.name)
+        return spacing/4.0
     }
     
-    func keyboardWillShow(notification: NSNotification) {
-        if let userInfo = notification.userInfo {
-            if let keyboardSize: CGSize = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue.size {
-                let contentInset = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height,  0.0);
-                
-                self.tableView.contentInset = contentInset
-                self.tableView.scrollIndicatorInsets = contentInset
-            }
+    /// Update scroll indicator in menu
+    private func updateMenuScrollIndicator() {
+        let spacing = interItemSpacing()
+        var leading: CGFloat = 0.0
+        var width: CGFloat = labelWidth(model.currentState.name)
+        let historyImageWidth = MenuCollectionViewCell.historyImageSize.width
+        switch model.currentState {
+            
+        case .Favorites:
+            leading = spacing/2
+            width = historyImageWidth
+            
+        case .Teachers:
+            leading = spacing + spacing/2
+            leading += historyImageWidth
+            
+        case .Groups:
+            leading = spacing*2 + spacing/2
+            leading += historyImageWidth
+            leading += labelWidth(State.Teachers.name)
+            
+        case .Auditoriums:
+            leading = spacing*3 + spacing/2
+            leading += historyImageWidth
+            leading += labelWidth(State.Teachers.name)
+            leading += labelWidth(State.Groups.name)
+        }
+        constrain(scrollingIndicatorView, view, replace: scrollConstraintGroup) { scrollingIndicatorView, superview in
+            scrollingIndicatorView.leading == superview.leading + leading
+            scrollingIndicatorView.width == width
         }
     }
     
-    func keyboardWillHide(notification: NSNotification) {
-        self.tableView.contentInset = UIEdgeInsetsZero;
-        self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
+    /// Select item in menu collection view
+    private func preselectMenuItem() {
+        let indexPath = NSIndexPath(forItem: model.currentState.rawValue, inSection: 0)
+        menuCollectionView.selectItemAtIndexPath(indexPath, animated: true, scrollPosition: .None)
+    }
+    
+    /// Reload current cell with content
+    private func reloadCurrentContent() {
+        let indexPath = NSIndexPath(forItem: model.currentState.rawValue, inSection: 0)
+        contentCollectionView.reloadItemsAtIndexPaths([indexPath])
+    }
+    
+    // MARK: - Actions
+    
+    /// Add new item to the history
+    func addToHistory(item: ListData) {
+        while model.history.count > 50 { model.history.removeFirst() }
+        if !model.history.contains(item) { model.history.append(item) }
+        ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
     }
 }
+
+// MARK: - SearchBarViewDelegate
+
+extension SearchViewController: SearchBarViewDelegate {
+    
+    func refreshContent(searchBarView view: SearchBarView) {
+        model.updateFromServer(with: parser)
+    }
+    
+    func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
+        searchText = text
+        reloadCurrentContent()
+    }
+    
+    func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
+        self.searchMode = searchMode
+        reloadCurrentContent()
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension SearchViewController: UICollectionViewDelegate {
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        // Menu
+        if collectionView == menuCollectionView {
+            if let current = State(rawValue: indexPath.row) {
+                model.currentState = current
+                updateOnScroll = false
+                
+                // Update menu
+                updateMenuScrollIndicator()
+                UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
+                
+                // Scroll to item in bottom collection view with content
+                reloadCurrentContent()
+                contentCollectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: .CenteredHorizontally, animated: true)
+            }
+        }
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+
+extension SearchViewController: UICollectionViewDataSource {
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 4
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        // Menu
+        if collectionView == menuCollectionView {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MenuCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! MenuCollectionViewCell
+            if indexPath.row != 0, let segment = State(rawValue: indexPath.row) {
+                cell.update(with: segment.name)
+            } else {
+                cell.updateWithImage()
+            }
+            return cell
+        } else {
+            // Content
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(TypeCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! TypeCollectionViewCell
+            let data = model.currentDataBySections(searchText)
+            if indexPath.row == 0 && data.count == 0 && !searchMode {
+                cell.updateWithImage()
+            } else {
+                cell.update(with: data, search: searchMode, searchText: searchText, viewController: self)
+            }
+            return cell
+        }
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+
+extension SearchViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 0.0
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 0.0
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        // Menu
+        if collectionView == menuCollectionView, let type = State(rawValue: indexPath.row) {
+            let spacing = interItemSpacing()
+            let cellHeight = MenuCollectionViewCell.cellHeight
+            switch type {
+            case .Favorites:
+                return CGSize(width: MenuCollectionViewCell.historyImageSize.width + spacing, height: cellHeight)
+            case .Auditoriums, .Groups, .Teachers:
+                return CGSize(width: labelWidth(type.name) + spacing, height: cellHeight)
+            }
+        } else if collectionView == contentCollectionView {
+            // Content
+            return CGSizeMake(collectionView.bounds.size.width, collectionView.bounds.size.height)
+        }
+        return CGSizeMake(0.0, 0.0)
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension SearchViewController: UIScrollViewDelegate {
+    
+    func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        let pageWidth = contentCollectionView.bounds.size.width
+        let currentOffset = scrollView.contentOffset.x
+        let targetOffset = targetContentOffset.memory.x
+        var newTargetOffset: CGFloat = 0.0
+        if (targetOffset > currentOffset) {
+            newTargetOffset = ceil(currentOffset/pageWidth)*pageWidth
+        } else {
+            newTargetOffset = floor(currentOffset/pageWidth)*pageWidth
+        }
+        if (newTargetOffset < 0) {
+            newTargetOffset = 0
+        } else if (newTargetOffset > scrollView.contentSize.width) {
+            newTargetOffset = scrollView.contentSize.width
+        }
+        targetContentOffset.memory.x = currentOffset
+        contentCollectionView.setContentOffset(CGPointMake(newTargetOffset, 0), animated: true)
+        
+        previousScrollPoint = newTargetOffset
+        updateOnScroll = true
+    }
+    
+    func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+        // Update state
+        let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
+        let indexPath = NSIndexPath(forItem: Int(pageNumber), inSection: 0)
+        if let state = State(rawValue: indexPath.row) { model.currentState = state }
+        // Update menu
+        updateMenuScrollIndicator()
+        UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
+        preselectMenuItem()
+        needUpdateContent = true
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        
+        if !updateOnScroll { return }
+        
+        let currentOffset = scrollView.contentOffset.x
+        let frameWidth = scrollView.frame.size.width
+        
+        if currentOffset > previousScrollPoint {
+            let newStateIndex = ceil(currentOffset/frameWidth)
+            if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
+        } else {
+            let newStateIndex = floor(currentOffset/frameWidth)
+            if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
+        }
+        if needUpdateContent {
+            reloadCurrentContent()
+            needUpdateContent = false
+        }
+    }
+}
+
+// MARK: - ParserDataListDelegate
 
 extension SearchViewController: ParserDataListDelegate {
-    /// Realization of ParserDelegate protocol function for getting related data (teachers, groups and auditorium data)
+    
     func getRelatedData(response: JSON, requestType: ListDataType) {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        var needToUpdateUI = false
+        let records = ListData.from(json: response, type: requestType)
         
-        var recordsToUpdate: [ListData] = []
-        
-        // Make sure JSON is array and not empty
-        if let jsonArray = response.array where jsonArray.count > 0 {
-            
-            for subJson in jsonArray {
-                if let record = ListData(json: subJson, type: requestType) {
-                    recordsToUpdate.append(record)
-                }
-            }
-            
-            // Assign array of corresponding objects
-            switch requestType {
-                case .Auditorium:
-                    self.allAuditoriums = recordsToUpdate.sort {$0.name.localizedCaseInsensitiveCompare($1.name) == NSComparisonResult.OrderedAscending}
-                case .Group:
-                    self.allGroups = recordsToUpdate.sort {$0.name.localizedCaseInsensitiveCompare($1.name) == NSComparisonResult.OrderedAscending}
-                case .Teacher:
-                    self.allTeachers = recordsToUpdate.sort {$0.name.localizedCaseInsensitiveCompare($1.name) == NSComparisonResult.OrderedAscending}
-            }
+        switch requestType {
+        case .Auditorium:
+            model.auditoriums = records
+            ListData.saveToStorage(model.auditoriums, forKey: UserDefaultsKey.Auditoriums.key)
+            if model.currentState == .Auditoriums { needToUpdateUI = true }
+        case .Group:
+            model.groups = records
+            ListData.saveToStorage(model.groups, forKey: UserDefaultsKey.Groups.key)
+            if model.currentState == .Groups { needToUpdateUI = true }
+        case .Teacher:
+            model.teachers = records
+            ListData.saveToStorage(model.teachers, forKey: UserDefaultsKey.Teachers.key)
+            if model.currentState == .Teachers { needToUpdateUI = true }
         }
+        // Update UI
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        if needToUpdateUI { reloadCurrentContent() }
     }
-}
-
-extension SearchViewController: UITableViewDelegate {
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        // Remember selected sell
-        self.selectedListDataObject = dataSource[indexPath.row]
-        self.history.append(selectedListDataObject!)
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            self.performSegueWithIdentifier("ShowSchedule", sender: nil)
-        }
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            self.delegate?.setListDataObject(self.selectedListDataObject!)
-        }
-    }
-}
-
-extension SearchViewController: UITableViewDataSource {
-    
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSource.count
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(kCellReuseIdentifier, forIndexPath: indexPath)
-        let listDataRecord = dataSource[indexPath.row]
-        cell.textLabel?.text = listDataRecord.name
-        
-        return cell
-    }
-}
-
-extension SearchViewController: UISearchBarDelegate {
-    
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        searchBar.showsCancelButton = true
-        self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.Interactive
-    }
-    
-    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
-        if searchBar.text != "" {
-            searchBar.showsCancelButton = true
-            searchBar.resignFirstResponder()
-        } else {
-            searchBar.text = ""
-            searchBar.showsCancelButton = false
-            searchBar.resignFirstResponder()
-            self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissMode.None
-            self.filterDataSourceWithQuery(nil)
-        }
-    }
-    
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
-        searchBar.text = ""
-        searchBar.showsCancelButton = false
-        searchBar.resignFirstResponder()
-        self.filterDataSourceWithQuery(nil)
-    }
-    
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        searchBar.showsCancelButton = true
-        searchBar.resignFirstResponder()
-    }
-    
-    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        self.filterDataSourceWithQuery(searchText)
-    }
-}
-
-protocol SearchViewControllerDelegate {
-    func setListDataObject(listData: ListData)
 }

@@ -2,9 +2,10 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-link_with 'SumDU'
+abstract_target 'SumDU App' do
+  pod 'Alamofire'
+  pod 'SwiftyJSON'
+  pod 'Cartography'
 
-pod 'Alamofire'
-pod 'SwiftyJSON'
-pod 'DateTools'
-pod 'SVProgressHUD'
+  target 'SumDU'
+end

@@ -2,7 +2,7 @@
 //  Schedule.swift
 //  SumDU
 //
-//  Created by Yura on 01.12.15.
+//  Created by Yura Voevodin on 01.12.15.
 //  Copyright © 2015 AppDevAcademy. All rights reserved.
 //
 
@@ -27,6 +27,8 @@ enum ScheduleResponseParameters: String {
 // MARK: - class of schedule
 
 class Schedule {
+    
+    // MARK: - Variables
     
     /// Name of pair
     var pairName: String
@@ -61,6 +63,8 @@ class Schedule {
             return ScheduleCoder(schedule: self)
         }
     }
+    
+    // MARK: - Initialization
     
     /**
      Initializer for schedule class
