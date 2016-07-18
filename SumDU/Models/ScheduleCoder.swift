@@ -17,7 +17,7 @@ class ScheduleCoder: NSObject, NSCoding {
     /// Schedule instance
     var schedule: Schedule?
     
-    // MARK: - Initialization
+    // MARK: - Lifecycle
     
     /// Initializer for ScheduleCoder class
     init(schedule: Schedule) {
@@ -38,7 +38,7 @@ class ScheduleCoder: NSObject, NSCoding {
         }
     }
     
-    // MARK: - Interface
+    // MARK: - Public interface
     
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(schedule?.pairName, forKey: "pairName")

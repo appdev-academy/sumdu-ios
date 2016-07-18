@@ -15,7 +15,7 @@ class SectionCoder: NSObject, NSCoding {
     /// Section instance
     var section: Section?
     
-    // MARK: - Initialization
+    // MARK: - Lifecycle
     
     init(section: Section) {
         super.init()
@@ -34,7 +34,7 @@ class SectionCoder: NSObject, NSCoding {
         }
     }
     
-    // MARK: - Interface
+    // MARK: - Public interface
     
     func encodeWithCoder(aCoder: NSCoder) {
         

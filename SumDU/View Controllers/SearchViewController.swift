@@ -227,7 +227,8 @@ class SearchViewController: UIViewController {
     /// Add new item to the history
     func addToHistory(item: ListData) {
         while model.history.count > 50 { model.history.removeFirst() }
-        if !model.history.contains(item) { model.history.append(item) }
+        let historyItems = model.history.filter { $0.name == item.name }
+        if historyItems.count == 0 { model.history.append(item) }
         ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
     }
 }

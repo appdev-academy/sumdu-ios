@@ -46,28 +46,28 @@ enum ListDataType: String {
 /// Protocol for Parser (returns JSON with schedule)
 protocol ParserScheduleDelegate {
     /**
-     Required method for schedule request
+        Required method for schedule request
      
-     - parameter response:  result of the schedule request in JSON type
-     */
+        - parameter response:  result of the schedule request in JSON type
+    */
     func getSchedule(response: JSON)
     
     /**
-     Required method for calendar request
+        Required method for calendar request
      
-     - parameter url:  generated calendar url
-     */
+        - parameter url:  generated calendar url
+    */
     func getCalendar(url: NSURL?)
 }
 
 /// Protocol for Parser (returns JSON for Auditoriums, Groups or Teachers)
 protocol ParserDataListDelegate {
     /**
-     Required method for mobile request (teachers, groups and auditorium data)
+        Required method for mobile request (teachers, groups and auditorium data)
      
-     - parameter response:  result of the data request in JSON type
-     - parameter requestType:  type of related request
-     */
+        - parameter response:  result of the data request in JSON type
+        - parameter requestType:  type of related request
+    */
     func getRelatedData(response: JSON, requestType: ListDataType)
 }
 
@@ -76,11 +76,15 @@ protocol ParserDataListDelegate {
 /// Class that parses responses from server
 class Parser {
     
+    // MARK: - Constants
+    
     /// Main URL for schedule requests
     static let baseURL       = "http://schedule.sumdu.edu.ua"
     
     /// URL of mobile API for data requests (teachers, groups and auditorium)
     static let mobileBaseURL = "http://m.schedule.sumdu.edu.ua"
+    
+    // MARK: - Variables
     
     /// Parser protocol delegates
     var scheduleDelegate: ParserScheduleDelegate?
@@ -146,10 +150,10 @@ class Parser {
     }
     
     /**
-     Function for generating request parameter for schedule requests
+        Function for generating request parameter for schedule requests
      
-     - parameter requestData:  what parameters need for schedule request
-     */
+        - parameter requestData:  what parameters need for schedule request
+    */
     func getRequestParameters(requestData: ListData?, typeOfRequest: RequestType) -> [String : String] {
         
         // Request data
@@ -208,10 +212,10 @@ class Parser {
     }
     
     /**
-     Function for generating schedule URL for calendar
+        Function for generating schedule URL for calendar
      
-     - parameter requestData:  what parameters need for schedule request
-     */
+        - parameter requestData:  what parameters need for schedule request
+    */
     func generateCalendarURL(requestData: ListData?) {
         
         // Get parameters for request
@@ -225,17 +229,18 @@ class Parser {
     }
     
     /**
-     Function for sending schedule request
+        Function for sending schedule request
      
-     - parameter requestData: what parameters need for schedule request
-     */
+        - parameter requestData: what parameters need for schedule request
+    */
     func sendScheduleRequest(requestData: ListData?) {
         
         // Get data for request
         let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
         
         // Send request
-        Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON { response in
+        Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
+            response in
             
             if response.result.isSuccess, let resultValue = response.result.value {
                 let response = JSON(resultValue)
@@ -247,13 +252,14 @@ class Parser {
     }
     
     /**
-     Send request for related data (groups, teachers, auditories)
+        Send request for related data (groups, teachers, auditories)
      
-     - parameter withParameter: type of related request
-     */
+        - parameter withParameter: type of related request
+    */
     func sendDataRequest(relatedDataParameter: ListDataType) {
         
-        Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON { response in
+        Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
+            response in
             
             if response.result.isSuccess, let resultValue = response.result.value {
                 

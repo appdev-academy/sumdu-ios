@@ -25,11 +25,11 @@ enum FontName {
 struct FontManager {
     
     /**
-     Get UIFont
+        Get UIFont
      
-     - parameter name: FontName value
-     - parameter size: size of the font
-     */
+        - parameter name: FontName value
+        - parameter size: size of the font
+    */
     static func getFont(name font: FontName, size: CGFloat) -> UIFont {
         guard let font = UIFont(name: font.name, size: size) else {
             // Fallback to system font if not found

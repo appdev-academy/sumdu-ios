@@ -61,8 +61,11 @@ struct DataModel {
                 uniqueCharacters.insert(first)
             }
         }
-        // Iterate lettres
-        for letter in uniqueCharacters.sort() {
+        // Iterate letters
+        let sortedCharacters = uniqueCharacters.sort { (s1, s2) -> Bool in
+            return String(s1).localizedCaseInsensitiveCompare(String(s2)) == .OrderedAscending
+        }
+        for letter in sortedCharacters {
             var sectionRecords: [ListData] = []
             for item in allData {
                 if letter == item.name.characters.first {
