@@ -62,7 +62,6 @@ class SearchViewController: UIViewController {
         
         // Content
         contentCollectionView.collectionViewLayout.invalidateLayout()
-//        contentCollectionView.reloadData()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -85,25 +84,26 @@ class SearchViewController: UIViewController {
     // MARK: - Helpers
     
     private func initialSetup() {
-        
+        // Background
         view.backgroundColor = UIColor.whiteColor()
         
         // Search bar
         searchBarView.delegate = self
         view.addSubview(searchBarView)
-        constrain(searchBarView, view) { searchBarView, superview in
+        constrain(searchBarView, view) {
+            searchBarView, superview in
             
             searchBarView.top == superview.top + 30.0
             searchBarView.leading == superview.leading + 14.0
             searchBarView.trailing == superview.trailing
             searchBarView.height == SearchBarView.viewHeight
         }
-        
         // Menu
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .Horizontal
         menuCollectionView = UICollectionView(frame: view.bounds, collectionViewLayout: flowLayout)
         menuCollectionView.registerClass(MenuCollectionViewCell.self, forCellWithReuseIdentifier: MenuCollectionViewCell.reuseIdentifier)
+        menuCollectionView.registerClass(MenuImageCollectionViewCell.self, forCellWithReuseIdentifier: MenuImageCollectionViewCell.reuseIdentifier)
         menuCollectionView.delegate = self
         menuCollectionView.dataSource = self
         menuCollectionView.showsVerticalScrollIndicator = false
@@ -119,7 +119,6 @@ class SearchViewController: UIViewController {
             menuCollectionView.trailing == superview.trailing
             menuCollectionView.height == 62.0
         }
-        
         // Scroll line
         scrollLineView.backgroundColor = Color.separator
         view.addSubview(scrollLineView)
@@ -131,7 +130,6 @@ class SearchViewController: UIViewController {
             scrollLineView.trailing == superview.trailing
             scrollLineView.height == 1.0
         }
-        
         // Scrolling indocator
         scrollingIndicatorView.backgroundColor = Color.textBlack
         view.addSubview(scrollingIndicatorView)
@@ -141,12 +139,10 @@ class SearchViewController: UIViewController {
             scrollingIndicatorView.bottom == scrollLineView.bottom
             scrollingIndicatorView.height == 2.0
         }
-        
         // Content
         let contentFlowLayout = UICollectionViewFlowLayout()
         contentFlowLayout.scrollDirection = .Horizontal
         contentCollectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: contentFlowLayout)
-//        contentCollectionView.scrollEnabled = false
         contentCollectionView.backgroundColor = UIColor.whiteColor()
         contentCollectionView.registerClass(TypeCollectionViewCell.self, forCellWithReuseIdentifier: TypeCollectionViewCell.reuseIdentifier)
         contentCollectionView.showsVerticalScrollIndicator = false
@@ -174,7 +170,7 @@ class SearchViewController: UIViewController {
     private func interItemSpacing() -> CGFloat {
         let screenWidth = view.bounds.width
         var spacing = screenWidth
-        spacing -= MenuCollectionViewCell.historyImageSize.width
+        spacing -= MenuImageCollectionViewCell.historyImageSize.width
         spacing -= labelWidth(State.Teachers.name)
         spacing -= labelWidth(State.Auditoriums.name)
         spacing -= labelWidth(State.Groups.name)
@@ -186,7 +182,7 @@ class SearchViewController: UIViewController {
         let spacing = interItemSpacing()
         var leading: CGFloat = 0.0
         var width: CGFloat = labelWidth(model.currentState.name)
-        let historyImageWidth = MenuCollectionViewCell.historyImageSize.width
+        let historyImageWidth = MenuImageCollectionViewCell.historyImageSize.width
         switch model.currentState {
             
         case .Favorites:
@@ -289,13 +285,14 @@ extension SearchViewController: UICollectionViewDataSource {
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         // Menu
         if collectionView == menuCollectionView {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MenuCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! MenuCollectionViewCell
             if indexPath.row != 0, let segment = State(rawValue: indexPath.row) {
-                cell.update(with: segment.name)
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MenuCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! MenuCollectionViewCell
+                cell.update(withTitle: segment.name)
+                return cell
             } else {
-                cell.updateWithImage()
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MenuImageCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! MenuImageCollectionViewCell
+                return cell
             }
-            return cell
         } else {
             // Content
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier(TypeCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! TypeCollectionViewCell
@@ -329,7 +326,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
             let cellHeight = MenuCollectionViewCell.cellHeight
             switch type {
             case .Favorites:
-                return CGSize(width: MenuCollectionViewCell.historyImageSize.width + spacing, height: cellHeight)
+                return CGSize(width: MenuImageCollectionViewCell.historyImageSize.width + spacing, height: cellHeight)
             case .Auditoriums, .Groups, .Teachers:
                 return CGSize(width: labelWidth(type.name) + spacing, height: cellHeight)
             }

@@ -45,8 +45,10 @@ class TypeCollectionViewCell: UICollectionViewCell {
         historyImage.clipsToBounds = true
         contentView.addSubview(historyImage)
         historyImage.image = UIImage(named: "empty_history")
-        constrain(historyImage, contentView) { historyImage, superview in
-            historyImage.top == superview.top + 66.0
+        constrain(historyImage, contentView) {
+            historyImage, superview in
+            
+            historyImage.top == superview.top + 46.0
             historyImage.centerX == superview.centerX
         }
         // History label
@@ -56,8 +58,10 @@ class TypeCollectionViewCell: UICollectionViewCell {
         emptyHistoryLabel.textColor = Color.textNormal
         emptyHistoryLabel.textAlignment = .Center
         contentView.addSubview(emptyHistoryLabel)
-        constrain(historyImage, emptyHistoryLabel, contentView) { historyImage, emptyHistoryLabel, superview in
-            emptyHistoryLabel.top == historyImage.bottom + 55.0
+        constrain(historyImage, emptyHistoryLabel, contentView) {
+            historyImage, emptyHistoryLabel, superview in
+            
+            emptyHistoryLabel.top == historyImage.bottom + 35.0
             emptyHistoryLabel.leading == superview.leading + 14.0
             emptyHistoryLabel.trailing == superview.trailing - 14.0
         }
@@ -69,7 +73,9 @@ class TypeCollectionViewCell: UICollectionViewCell {
         emptyHistoryDescriptionLabel.textAlignment = .Center
         emptyHistoryDescriptionLabel.numberOfLines = 0
         contentView.addSubview(emptyHistoryDescriptionLabel)
-        constrain(emptyHistoryDescriptionLabel, emptyHistoryLabel, contentView) { emptyHistoryDescriptionLabel, emptyHistoryLabel, superview in
+        constrain(emptyHistoryDescriptionLabel, emptyHistoryLabel, contentView) {
+            emptyHistoryDescriptionLabel, emptyHistoryLabel, superview in
+            
             emptyHistoryDescriptionLabel.top == emptyHistoryLabel.bottom + 8.0
             emptyHistoryDescriptionLabel.leading == superview.leading + 33.0
             emptyHistoryDescriptionLabel.trailing == superview.trailing - 33.0
@@ -88,7 +94,9 @@ class TypeCollectionViewCell: UICollectionViewCell {
         notFoudLabel.textColor = Color.textNormal
         notFoudLabel.textAlignment = .Center
         contentView.addSubview(notFoudLabel)
-        constrain(notFoudLabel, contentView) { notFoudLabel, superview in
+        constrain(notFoudLabel, contentView) {
+            notFoudLabel, superview in
+            
             notFoudLabel.top == superview.top + 66.0
             notFoudLabel.leading == superview.leading + 14.0
             notFoudLabel.trailing == superview.trailing - 14.0
