@@ -30,6 +30,7 @@
 		DE4CF0821D368E9A000F9199 /* ShareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF0811D368E9A000F9199 /* ShareButton.swift */; };
 		DE4CF0841D368EC0000F9199 /* RefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF0831D368EC0000F9199 /* RefreshButton.swift */; };
 		DE4E1DEE1D38E79A00FF2EC0 /* SearchViewController + Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */; };
+		DE4E1DF21D38EE0E00FF2EC0 /* TypeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4E1DF11D38EE0E00FF2EC0 /* TypeTableViewController.swift */; };
 		DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5533E31D3393EA0016AC67 /* SearchViewController.swift */; };
 		DE65F6371D3786470040A00D /* ScheduleSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */; };
 		E17F12291C2F1C09001AB284 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17F12281C2F1C09001AB284 /* ScheduleCell.swift */; };
@@ -40,7 +41,6 @@
 		E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */; };
 		E4583E951C25495F0031F164 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4583E941C25495F0031F164 /* Keys.swift */; };
 		E45B9D2C1CDE7B3200B4467B /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45B9D2B1CDE7B3200B4467B /* SearchTableViewCell.swift */; };
-		E49802F41CDA65850034B724 /* Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49802F31CDA65850034B724 /* Constraints.swift */; };
 		E4B3E0FA1C68F7C2005B8103 /* SectionCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B3E0F91C68F7C2005B8103 /* SectionCoder.swift */; };
 /* End PBXBuildFile section */
 
@@ -97,6 +97,7 @@
 		DE4CF0811D368E9A000F9199 /* ShareButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareButton.swift; sourceTree = "<group>"; };
 		DE4CF0831D368EC0000F9199 /* RefreshButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshButton.swift; sourceTree = "<group>"; };
 		DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SearchViewController + Model.swift"; sourceTree = "<group>"; };
+		DE4E1DF11D38EE0E00FF2EC0 /* TypeTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeTableViewController.swift; sourceTree = "<group>"; };
 		DE5533E31D3393EA0016AC67 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleSectionHeaderView.swift; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
@@ -107,7 +108,6 @@
 		E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDataCoder.swift; sourceTree = "<group>"; };
 		E4583E941C25495F0031F164 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
 		E45B9D2B1CDE7B3200B4467B /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
-		E49802F31CDA65850034B724 /* Constraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constraints.swift; sourceTree = "<group>"; };
 		E4B3E0F91C68F7C2005B8103 /* SectionCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionCoder.swift; sourceTree = "<group>"; };
 		FB032204C3608C736FD14CED /* Pods-SumDU App-SumDU.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SumDU App-SumDU.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SumDU App-SumDU/Pods-SumDU App-SumDU.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -272,6 +272,7 @@
 				DE2953B71D338B8C00304901 /* TypeCollectionViewCell.swift */,
 				DE5533E31D3393EA0016AC67 /* SearchViewController.swift */,
 				DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */,
+				DE4E1DF11D38EE0E00FF2EC0 /* TypeTableViewController.swift */,
 			);
 			name = Search;
 			sourceTree = "<group>";
@@ -318,7 +319,6 @@
 			children = (
 				E4583E941C25495F0031F164 /* Keys.swift */,
 				E40668B21C3EF6400011EF25 /* NSDate.swift */,
-				E49802F31CDA65850034B724 /* Constraints.swift */,
 				DE4CF07F1D36855F000F9199 /* Colors.swift */,
 			);
 			path = Constants;
@@ -516,13 +516,13 @@
 				DE65F6371D3786470040A00D /* ScheduleSectionHeaderView.swift in Sources */,
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
-				E49802F41CDA65850034B724 /* Constraints.swift in Sources */,
 				E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */,
 				DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */,
 				DE2953BB1D338B8C00304901 /* TypeCollectionViewCell.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
 				DE4E1DEE1D38E79A00FF2EC0 /* SearchViewController + Model.swift in Sources */,
 				E19526A31C3E5C3B008AD541 /* Section.swift in Sources */,
+				DE4E1DF21D38EE0E00FF2EC0 /* TypeTableViewController.swift in Sources */,
 				DE2953BE1D338B8C00304901 /* SearchTextField.swift in Sources */,
 				E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */,
 				E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */,
@@ -699,11 +699,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "$(SRCROOT)/SumDU/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.iosonrails.SumDU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Debug;
@@ -715,11 +717,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "$(SRCROOT)/SumDU/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.iosonrails.SumDU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Release;

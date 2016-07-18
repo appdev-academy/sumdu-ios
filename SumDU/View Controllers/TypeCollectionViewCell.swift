@@ -24,9 +24,10 @@ class TypeCollectionViewCell: UICollectionViewCell {
     
     // MARK: - UI Objects
     
-    private let tableView = UITableView()
+    let typeTableViewController = TypeTableViewController()
     private let historyImage = UIImageView()
     private let emptyHistoryLabel = UILabel()
+    private let emptyHistoryDescriptionLabel = UILabel()
     private let notFoudLabel = UILabel()
     
     // MARK: - Initialization
@@ -49,6 +50,7 @@ class TypeCollectionViewCell: UICollectionViewCell {
             historyImage.centerX == superview.centerX
         }
         // History label
+        emptyHistoryLabel.text = NSLocalizedString("History is empty", comment: "")
         emptyHistoryLabel.hidden = true
         emptyHistoryLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20)
         emptyHistoryLabel.textColor = Color.textNormal
@@ -59,18 +61,28 @@ class TypeCollectionViewCell: UICollectionViewCell {
             emptyHistoryLabel.leading == superview.leading + 14.0
             emptyHistoryLabel.trailing == superview.trailing - 14.0
         }
-        emptyHistoryLabel.text = NSLocalizedString("History is empty", comment: "")
+        // History description
+        emptyHistoryDescriptionLabel.text = NSLocalizedString("Swipe the screen left and right to navigate between the main sections and the search schedule", comment: "")
+        emptyHistoryDescriptionLabel.hidden = true
+        emptyHistoryDescriptionLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 15.0)
+        emptyHistoryDescriptionLabel.textColor = Color.textLight
+        emptyHistoryDescriptionLabel.textAlignment = .Center
+        emptyHistoryDescriptionLabel.numberOfLines = 0
+        contentView.addSubview(emptyHistoryDescriptionLabel)
+        constrain(emptyHistoryDescriptionLabel, emptyHistoryLabel, contentView) { emptyHistoryDescriptionLabel, emptyHistoryLabel, superview in
+            emptyHistoryDescriptionLabel.top == emptyHistoryLabel.bottom + 8.0
+            emptyHistoryDescriptionLabel.leading == superview.leading + 33.0
+            emptyHistoryDescriptionLabel.trailing == superview.trailing - 33.0
+            emptyHistoryDescriptionLabel.bottom == superview.bottom - 14.0
+        }
         // Table
-        tableView.registerClass(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
-        tableView.registerClass(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
-        tableView.separatorStyle = .None
-        tableView.delegate = self
-        tableView.dataSource = self
-        contentView.addSubview(tableView)
-        constrain(tableView, contentView) { tableView, superview in
+        typeTableViewController.delegate = self
+        contentView.addSubview(typeTableViewController.tableView)
+        constrain(typeTableViewController.tableView, contentView) { tableView, superview in
             tableView.edges == superview.edges
         }
         // Not found
+        notFoudLabel.text = NSLocalizedString("No data found", comment: "")
         notFoudLabel.hidden = true
         notFoudLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20)
         notFoudLabel.textColor = Color.textNormal
@@ -81,7 +93,6 @@ class TypeCollectionViewCell: UICollectionViewCell {
             notFoudLabel.leading == superview.leading + 14.0
             notFoudLabel.trailing == superview.trailing - 14.0
         }
-        notFoudLabel.text = NSLocalizedString("No data found", comment: "")
     }
     
     // MARK: - Helpers
@@ -89,22 +100,25 @@ class TypeCollectionViewCell: UICollectionViewCell {
     private func showEmptyHistory() {
         notFoudLabel.hidden = true
         emptyHistoryLabel.hidden = false
+        emptyHistoryDescriptionLabel.hidden = false
         historyImage.hidden = false
-        tableView.hidden = true
+        typeTableViewController.tableView.hidden = true
     }
     
     private func showEmptySearch() {
         notFoudLabel.hidden = false
         emptyHistoryLabel.hidden = true
+        emptyHistoryDescriptionLabel.hidden = true
         historyImage.hidden = true
-        tableView.hidden = true
+        typeTableViewController.tableView.hidden = true
     }
     
     private func showContent() {
         notFoudLabel.hidden = true
         emptyHistoryLabel.hidden = true
+        emptyHistoryDescriptionLabel.hidden = true
         historyImage.hidden = true
-        tableView.hidden = false
+        typeTableViewController.tableView.hidden = false
     }
     
     // MARK: - Interface
@@ -122,53 +136,23 @@ class TypeCollectionViewCell: UICollectionViewCell {
             self.search = search
             self.searchText = searchText
             self.recordsBySection = data
-            tableView.reloadData()
+            typeTableViewController.update(with: data, search: search, searchText: searchText)
         }
     }
 }
 
-// MARK: - UITableViewDataSource
+// MARK: - TypeTableViewControllerDelegate
 
-extension TypeCollectionViewCell: UITableViewDataSource {
+extension TypeCollectionViewCell: TypeTableViewControllerDelegate {
     
-    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return ScheduleSectionHeaderView.viewHeight
-    }
-    
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = tableView.dequeueReusableHeaderFooterViewWithIdentifier(ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
-        headerView.dateLabel.text = String(recordsBySection[section].letter)
-        return headerView
-    }
-    
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return SearchTableViewCell.cellHeight
-    }
-    
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return recordsBySection.count
-    }
-    
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return recordsBySection[section].records.count
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(SearchTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
-        cell.update(with: recordsBySection[indexPath.section].records[indexPath.row], search: search, searchingText: searchText)
-        return cell
-    }
-}
-
-// MARK: - UITableViewDelegate
-
-extension TypeCollectionViewCell: UITableViewDelegate {
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func typeTableViewController(typeTableViewController: TypeTableViewController, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let dataItem = recordsBySection[indexPath.section].records[indexPath.row]
         let scheduleViewController = ScheduleViewController(data: dataItem)
-        viewController?.navigationController?.pushViewController(scheduleViewController, animated: true)
-        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            viewController?.splitViewController?.viewControllers[1] = scheduleViewController
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            viewController?.navigationController?.pushViewController(scheduleViewController, animated: true)
+        }
         // Remember selected item
         viewController?.addToHistory(dataItem)
     }

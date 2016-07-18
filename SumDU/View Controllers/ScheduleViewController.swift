@@ -83,6 +83,10 @@ class ScheduleViewController: UIViewController {
             backButton.height == BackButton.buttonSize.height
             backButton.width == BackButton.buttonSize.width
         }
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            backButton.setImage(nil, forState: UIControlState.Normal)
+            backButton.setImage(nil, forState: UIControlState.Highlighted)
+        }
         // Refresh
         refreshButton.addTarget(self, action: #selector(refresh), forControlEvents: .TouchUpInside)
         view.addSubview(refreshButton)
@@ -174,7 +178,9 @@ class ScheduleViewController: UIViewController {
     // MARK: - Actions
     
     func backButtonPressed() {
-        navigationController?.popViewControllerAnimated(true)
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            navigationController?.popViewControllerAnimated(true)
+        }
     }
     
     /// Refresh schedule table

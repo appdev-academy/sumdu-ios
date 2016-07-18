@@ -18,6 +18,9 @@ class SearchViewController: UIViewController {
     
     // MARK: - Variables
     
+    private var previousScrollPoint: CGFloat = 0.0
+    private var needUpdateContent = true
+    private var updateOnScroll = true
     private var parser = Parser()
     private var model = DataModel(auditoriums: [], groups: [], teachers: [], history: [], currentState: .Favorites)
     private var searchMode = false
@@ -36,15 +39,30 @@ class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TODO: Update insets for table (not for collection view)
-//        registerForNotifications()
-        
         // Data
         parser.dataListDelegate = self
         model.updateFromStorage()
 
         // UI
         initialSetup()
+        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            if let firstItem = model.history.first {
+                let schedule = ScheduleViewController(data: firstItem)
+                splitViewController?.viewControllers[1] = schedule
+            }
+        }
+    }
+    
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        
+        // Menu
+        menuCollectionView.collectionViewLayout.invalidateLayout()
+        
+        // Content
+        contentCollectionView.collectionViewLayout.invalidateLayout()
+//        contentCollectionView.reloadData()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -62,34 +80,6 @@ class SearchViewController: UIViewController {
         
         updateMenuScrollIndicator()
         preselectMenuItem()
-    }
-    
-    deinit {
-//        deregisterFromNotifications()
-    }
-    
-    // MARK: - Notifications
-    
-    private func registerForNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
-    }
-    
-    private func deregisterFromNotifications() {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-    }
-    
-    func keyboardWillShow(notification: NSNotification) {
-        if let userInfo = notification.userInfo, keyboardSize: CGSize = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue.size {
-            let keyboardInset = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height,  0.0);
-            contentCollectionView.contentInset = keyboardInset
-            contentCollectionView.scrollIndicatorInsets = keyboardInset
-        }
-    }
-
-    func keyboardWillHide(notification: NSNotification) {
-        contentCollectionView.contentInset = UIEdgeInsetsZero
-        contentCollectionView.scrollIndicatorInsets = UIEdgeInsetsZero
     }
     
     // MARK: - Helpers
@@ -156,7 +146,7 @@ class SearchViewController: UIViewController {
         let contentFlowLayout = UICollectionViewFlowLayout()
         contentFlowLayout.scrollDirection = .Horizontal
         contentCollectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: contentFlowLayout)
-        contentCollectionView.scrollEnabled = false
+//        contentCollectionView.scrollEnabled = false
         contentCollectionView.backgroundColor = UIColor.whiteColor()
         contentCollectionView.registerClass(TypeCollectionViewCell.self, forCellWithReuseIdentifier: TypeCollectionViewCell.reuseIdentifier)
         contentCollectionView.showsVerticalScrollIndicator = false
@@ -182,7 +172,7 @@ class SearchViewController: UIViewController {
     
     /// Calculate spacing between items in menu
     private func interItemSpacing() -> CGFloat {
-        let screenWidth = min(screenSize.width, screenSize.height)
+        let screenWidth = view.bounds.width
         var spacing = screenWidth
         spacing -= MenuCollectionViewCell.historyImageSize.width
         spacing -= labelWidth(State.Teachers.name)
@@ -274,6 +264,7 @@ extension SearchViewController: UICollectionViewDelegate {
         if collectionView == menuCollectionView {
             if let current = State(rawValue: indexPath.row) {
                 model.currentState = current
+                updateOnScroll = false
                 
                 // Update menu
                 updateMenuScrollIndicator()
@@ -308,11 +299,11 @@ extension SearchViewController: UICollectionViewDataSource {
         } else {
             // Content
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier(TypeCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! TypeCollectionViewCell
-            let data = model.currentData(searchText)
+            let data = model.currentDataBySections(searchText)
             if indexPath.row == 0 && data.count == 0 && !searchMode {
                 cell.updateWithImage()
             } else {
-                cell.update(with: model.currentDataBySections(searchText), search: searchMode, searchText: searchText, viewController: self)
+                cell.update(with: data, search: searchMode, searchText: searchText, viewController: self)
             }
             return cell
         }
@@ -342,10 +333,11 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
             case .Auditoriums, .Groups, .Teachers:
                 return CGSize(width: labelWidth(type.name) + spacing, height: cellHeight)
             }
-        } else {
+        } else if collectionView == contentCollectionView {
             // Content
             return CGSizeMake(collectionView.bounds.size.width, collectionView.bounds.size.height)
         }
+        return CGSizeMake(0.0, 0.0)
     }
 }
 
@@ -354,6 +346,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
 extension SearchViewController: UIScrollViewDelegate {
     
     func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
         let pageWidth = contentCollectionView.bounds.size.width
         let currentOffset = scrollView.contentOffset.x
         let targetOffset = targetContentOffset.memory.x
@@ -370,17 +363,40 @@ extension SearchViewController: UIScrollViewDelegate {
         }
         targetContentOffset.memory.x = currentOffset
         contentCollectionView.setContentOffset(CGPointMake(newTargetOffset, 0), animated: true)
+        
+        previousScrollPoint = newTargetOffset
+        updateOnScroll = true
     }
     
     func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+        // Update state
         let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
         let indexPath = NSIndexPath(forItem: Int(pageNumber), inSection: 0)
-        if let state = State(rawValue: indexPath.row) {
-            model.currentState = state
-            // Update menu
-            updateMenuScrollIndicator()
-            UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
-            preselectMenuItem()
+        if let state = State(rawValue: indexPath.row) { model.currentState = state }
+        // Update menu
+        updateMenuScrollIndicator()
+        UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
+        preselectMenuItem()
+        needUpdateContent = true
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        
+        if !updateOnScroll { return }
+        
+        let currentOffset = scrollView.contentOffset.x
+        let frameWidth = scrollView.frame.size.width
+        
+        if currentOffset > previousScrollPoint {
+            let newStateIndex = ceil(currentOffset/frameWidth)
+            if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
+        } else {
+            let newStateIndex = floor(currentOffset/frameWidth)
+            if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
+        }
+        if needUpdateContent {
+            reloadCurrentContent()
+            needUpdateContent = false
         }
     }
 }
