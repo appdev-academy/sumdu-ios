@@ -17,7 +17,7 @@ class ContentCollectionViewCell: UICollectionViewCell {
     
     // MARK: - UI Objects
     
-    private let contentTableView = UITableView()
+    let contentTableView = UITableView()
     private let notFoudLabel = UILabel()
     
     // MARK: - Initialization
@@ -64,11 +64,5 @@ class ContentCollectionViewCell: UICollectionViewCell {
     func showContent() {
         notFoudLabel.hidden = true
         contentTableView.hidden = false
-    }
-    
-    func setTableViewDataSourceDelegate<D: protocol<UITableViewDataSource, UITableViewDelegate>>(dataSourceDelegate: D) {
-        contentTableView.dataSource = dataSourceDelegate
-        contentTableView.delegate = dataSourceDelegate
-        contentTableView.reloadData()
     }
 }

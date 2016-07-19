@@ -62,11 +62,14 @@ class SearchTableViewCell: UITableViewCell {
         let pattern = searchString
         let range: NSRange = NSMakeRange(0, resultString.characters.count)
         
-        let regex = try? NSRegularExpression(pattern: pattern, options: NSRegularExpressionOptions())
+        let regex = try? NSRegularExpression(pattern: pattern, options: [.CaseInsensitive])
         
-        regex?.enumerateMatchesInString(resultString, options: NSMatchingOptions(), range: range) { (textCheckingResult, matchingFlags, stop) -> Void in
-            let subRange = textCheckingResult?.range
-            attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textNormal, range: subRange!)
+        regex?.enumerateMatchesInString(resultString, options: NSMatchingOptions(), range: range) {
+            (textCheckingResult, matchingFlags, stop) -> Void in
+            
+            if let subRange = textCheckingResult?.range {
+                attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textNormal, range: subRange)
+            }
         }
         return attributedString
     }

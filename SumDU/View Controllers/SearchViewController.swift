@@ -304,7 +304,9 @@ extension SearchViewController: UICollectionViewDataSource {
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCellWithReuseIdentifier(ContentCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! ContentCollectionViewCell
-                cell.setTableViewDataSourceDelegate(self)
+                cell.contentTableView.delegate = self
+                cell.contentTableView.dataSource = self
+                cell.contentTableView.reloadData()
                 if model.currentData.count == 0 && model.searchMode {
                     cell.showEmptySearch()
                 } else {

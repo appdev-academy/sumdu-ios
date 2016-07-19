@@ -71,7 +71,7 @@ struct DataModel {
         case .Teachers: data = teachers
         }
         if let query = searchText where query.characters.count > 0 {
-            data = data.filter { return $0.name.containsString(query) }
+            data = data.filter { return $0.name.localizedCaseInsensitiveContainsString(query) }
         }
         return data
     }

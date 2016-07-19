@@ -44,7 +44,6 @@ class ScheduleViewController: UIViewController {
     private let titleLabel = UILabel()
     private let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .Gray)
     private let informationLabel = UILabel()
-    private let refreshControl = UIRefreshControl()
     private let scheduleTableView = UITableView()
     
     // MARK: - Initialization
@@ -145,11 +144,6 @@ class ScheduleViewController: UIViewController {
         }
         // Remove separators for empty cells
         scheduleTableView.tableFooterView = UIView()
-        
-        // Set up the refresh control
-        refreshControl.attributedTitle = NSAttributedString(string: NSLocalizedString("Pull to refresh", comment: ""))
-        refreshControl.addTarget(self, action: #selector(refreshButtonPressed), forControlEvents: .ValueChanged)
-        scheduleTableView.addSubview(refreshControl)
         
         // Information
         informationLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20.0)
@@ -322,11 +316,7 @@ extension ScheduleViewController: ParserScheduleDelegate {
             scheduleTableView.hidden = true
         }
         // Tell refresh control it can stop showing up now
-        if refreshControl.refreshing {
-            refreshControl.endRefreshing()
-        } else {
-            activityIndicatorView.stopAnimating()
-        }
+        activityIndicatorView.stopAnimating()
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
     }
     
