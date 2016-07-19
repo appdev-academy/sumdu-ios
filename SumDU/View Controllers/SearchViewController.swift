@@ -22,7 +22,6 @@ class SearchViewController: UIViewController {
     private var previousScrollPoint: CGFloat = 0.0
     
     private var needUpdateUI = true
-    private var updateOnScroll = true
     
     // Parser for working with server
     private var parser = Parser()
@@ -163,6 +162,7 @@ class SearchViewController: UIViewController {
         contentCollectionView.showsHorizontalScrollIndicator = false
         contentCollectionView.delegate = self
         contentCollectionView.dataSource = self
+        contentCollectionView.bounces = false
         view.addSubview(contentCollectionView)
         constrain(scrollLineView, contentCollectionView, view) {
             scrollLineView, contentCollectionView, superview in
@@ -265,15 +265,13 @@ extension SearchViewController: UICollectionViewDelegate {
         if collectionView == menuCollectionView {
             if let current = State(rawValue: indexPath.row) {
                 model.currentState = current
-                updateOnScroll = false
                 
                 // Update menu
                 updateMenuScrollIndicator()
                 UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
                 
-                // Scroll to item in bottom collection view with content
-                reloadCurrentContent()
-                contentCollectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: .CenteredHorizontally, animated: true)
+                // Scroll to item collection view with content
+                contentCollectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: .CenteredHorizontally, animated: false)
             }
         }
     }
@@ -354,15 +352,18 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
 extension SearchViewController: UIScrollViewDelegate {
     
     func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        // Only for UICollectionView with content
+        if scrollView != contentCollectionView { return }
         
-        let pageWidth = contentCollectionView.bounds.size.width
+        let frameWidth = scrollView.bounds.size.width
         let currentOffset = scrollView.contentOffset.x
         let targetOffset = targetContentOffset.memory.x
         var newTargetOffset: CGFloat = 0.0
+        
         if (targetOffset > currentOffset) {
-            newTargetOffset = ceil(currentOffset/pageWidth)*pageWidth
+            newTargetOffset = ceil(currentOffset/frameWidth)*frameWidth
         } else {
-            newTargetOffset = floor(currentOffset/pageWidth)*pageWidth
+            newTargetOffset = floor(currentOffset/frameWidth)*frameWidth
         }
         if (newTargetOffset < 0) {
             newTargetOffset = 0
@@ -371,12 +372,12 @@ extension SearchViewController: UIScrollViewDelegate {
         }
         targetContentOffset.memory.x = currentOffset
         contentCollectionView.setContentOffset(CGPointMake(newTargetOffset, 0), animated: true)
-        
-        previousScrollPoint = newTargetOffset
-        updateOnScroll = true
     }
     
     func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+        // Only for UICollectionView with content
+        if scrollView != contentCollectionView { return }
+        
         // Update state
         let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
         let indexPath = NSIndexPath(forItem: Int(pageNumber), inSection: 0)
@@ -388,9 +389,19 @@ extension SearchViewController: UIScrollViewDelegate {
         needUpdateUI = true
     }
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        // Only for UICollectionView with content
+        if scrollView != contentCollectionView { return }
         
-        if !updateOnScroll { return }
+        previousScrollPoint = scrollView.contentOffset.x
+        needUpdateUI = true
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        // Only for UICollectionView with content
+        if scrollView != contentCollectionView { return }
+        
+        if !needUpdateUI { return }
         
         let currentOffset = scrollView.contentOffset.x
         let frameWidth = scrollView.frame.size.width
@@ -402,10 +413,8 @@ extension SearchViewController: UIScrollViewDelegate {
             let newStateIndex = floor(currentOffset/frameWidth)
             if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
         }
-        if needUpdateUI {
-            reloadCurrentContent()
-            needUpdateUI = false
-        }
+        reloadCurrentContent()
+        needUpdateUI = false
     }
 }
 
@@ -414,7 +423,9 @@ extension SearchViewController: UIScrollViewDelegate {
 extension SearchViewController: ParserDataListDelegate {
     
     func getRelatedData(response: JSON, requestType: ListDataType) {
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        if !UIApplication.sharedApplication().networkActivityIndicatorVisible {
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        }
         var needToUpdateUI = false
         let records = ListData.from(json: response, type: requestType)
         
@@ -433,7 +444,9 @@ extension SearchViewController: ParserDataListDelegate {
             if model.currentState == .Teachers { needToUpdateUI = true }
         }
         // Update UI
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        if UIApplication.sharedApplication().networkActivityIndicatorVisible {
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        }
         if needToUpdateUI { reloadCurrentContent() }
     }
 }
@@ -454,7 +467,6 @@ extension SearchViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCellWithIdentifier(SearchTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
         
         cell.update(with: model.currentData[indexPath.section].records[indexPath.row], search: model.searchMode, searchingText: model.searchText)
-        
         return cell
     }
 }
