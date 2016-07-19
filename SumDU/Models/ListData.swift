@@ -94,9 +94,6 @@ extension ListData {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
         userDefaults.setObject(data, forKey: forKey)
-        
-        // TODO: Don't use synchronize?
-        userDefaults.synchronize()
     }
     
     /// Get ListData objects from JSON with ListDataType
@@ -121,7 +118,6 @@ extension ListData {
             let userDefaults = NSUserDefaults.standardUserDefaults()
             let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
             userDefaults.setObject(data, forKey: forKey)
-            userDefaults.synchronize()
         }
     }
     

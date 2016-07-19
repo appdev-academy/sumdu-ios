@@ -30,6 +30,9 @@ class ScheduleViewController: UIViewController {
     /// URL for add schedule events to calendar
     private var calendarURL: NSURL?
     
+    /// Load Schedule data from storage or from server
+    private var loadFromStorage = false
+    
     // MARK: - UI objects
     
     // Navigation bar
@@ -46,10 +49,11 @@ class ScheduleViewController: UIViewController {
     
     // MARK: - Initialization
     
-    init(data: ListData) {
+    init(data: ListData, fromStorage: Bool = false) {
         super.init(nibName: nil, bundle: nil)
         
         listData = data
+        loadFromStorage = fromStorage
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
@@ -90,7 +94,7 @@ class ScheduleViewController: UIViewController {
             backButton.setImage(nil, forState: UIControlState.Highlighted)
         }
         // Refresh
-        refreshButton.addTarget(self, action: #selector(refresh), forControlEvents: .TouchUpInside)
+        refreshButton.addTarget(self, action: #selector(refreshButtonPressed), forControlEvents: .TouchUpInside)
         view.addSubview(refreshButton)
         constrain(refreshButton, view) {
             refreshButton, superview in
@@ -101,7 +105,7 @@ class ScheduleViewController: UIViewController {
             refreshButton.width == RefreshButton.buttonSize.width
         }
         // Share
-        shareButton.addTarget(self, action: #selector(share), forControlEvents: .TouchUpInside)
+        shareButton.addTarget(self, action: #selector(shareButtonPressed), forControlEvents: .TouchUpInside)
         view.addSubview(shareButton)
         constrain(shareButton, refreshButton, view) {
             shareButton, refreshButton, superview in
@@ -112,6 +116,7 @@ class ScheduleViewController: UIViewController {
             shareButton.width == ShareButton.buttonSize.width
         }
         // Title
+        if let data = listData { titleLabel.text = data.name }
         titleLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 26.0)
         titleLabel.textColor = Color.textBlack
         titleLabel.numberOfLines = 0
@@ -125,7 +130,7 @@ class ScheduleViewController: UIViewController {
         }
         // Schedule table
         scheduleTableView.registerClass(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
-        scheduleTableView.registerClass(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)
+        scheduleTableView.registerClass(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.reuseIdentifier)
         scheduleTableView.delegate = self
         scheduleTableView.dataSource = self
         scheduleTableView.separatorStyle = .None
@@ -143,7 +148,7 @@ class ScheduleViewController: UIViewController {
         
         // Set up the refresh control
         refreshControl.attributedTitle = NSAttributedString(string: NSLocalizedString("Pull to refresh", comment: ""))
-        refreshControl.addTarget(self, action: #selector(refresh), forControlEvents: .ValueChanged)
+        refreshControl.addTarget(self, action: #selector(refreshButtonPressed), forControlEvents: .ValueChanged)
         scheduleTableView.addSubview(refreshControl)
         
         // Information
@@ -169,13 +174,19 @@ class ScheduleViewController: UIViewController {
             activityIndicatorView.center == superview.center
         }
         
-        // Send request
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-        activityIndicatorView.startAnimating()
-        parser.sendScheduleRequest(listData)
-        
-        // Set title
-        if let data = listData { titleLabel.text = data.name }
+        if loadFromStorage {
+            if let data = listData { recordsBySection = Section.loadData(UserDefaultsKey.scheduleKey(data)) }
+            // Empty data
+            if recordsBySection.count == 0 {
+                informationLabel.hidden = false
+                scheduleTableView.hidden = true
+            }
+        } else {
+            // Send request
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+            activityIndicatorView.startAnimating()
+            parser.sendScheduleRequest(listData)
+        }
     }
     
     // MARK: - Actions
@@ -187,17 +198,12 @@ class ScheduleViewController: UIViewController {
     }
     
     /// Refresh schedule table
-    func refresh() {
-        parser.sendScheduleRequest(listData)
-    }
-    
-    /// Reload schedule, send new request
-    func refreshSchedule() {
+    func refreshButtonPressed() {
         parser.sendScheduleRequest(listData)
     }
     
     /// Share schedule
-    func share() {
+    func shareButtonPressed() {
         if recordsBySection.count > 0 {
             parser.generateCalendarURL(listData)
             if let url = calendarURL {
@@ -239,11 +245,11 @@ extension ScheduleViewController: UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return ScheduleCell.cellHeight
+        return ScheduleTableViewCell.cellHeight
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(ScheduleCell.reuseIdentifier, forIndexPath: indexPath) as! ScheduleCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(ScheduleTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! ScheduleTableViewCell
         let scheduleRecord = recordsBySection[indexPath.section].records[indexPath.row]
         cell.update(withSchedule: scheduleRecord)
         return cell
@@ -309,6 +315,8 @@ extension ScheduleViewController: ParserScheduleDelegate {
             }
             // Move data from temporary var to public
             recordsBySection = forRecordsBySection
+            // Save data to persistent storage
+            if let data = listData { Section.saveData(recordsBySection, forKey: UserDefaultsKey.scheduleKey(data)) }
         } else {
             informationLabel.hidden = false
             scheduleTableView.hidden = true

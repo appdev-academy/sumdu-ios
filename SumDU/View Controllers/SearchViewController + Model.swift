@@ -24,20 +24,45 @@ enum State: Int {
     }
 }
 
-// Section for content table
+/// Section for content table
 struct DataSection {
     var letter: Character
     var records: [ListData]
 }
 
+// MARK: - Data model description
+
 struct DataModel {
+    
+    /// Text from search
+    var searchText: String? {
+        didSet {
+            self.updateCurrentDataBySections()
+        }
+    }
+    
+    /// Search or normal mode
+    var searchMode: Bool = false
+    
+    // Current model state
+    var currentState: State {
+        didSet {
+            self.updateCurrentDataBySections()
+        }
+    }
+    
+    // Data for current model state
+    var currentData: [DataSection]
+    
     var auditoriums: [ListData]
     var groups: [ListData]
     var teachers: [ListData]
     var history: [ListData]
-    var currentState: State
     
-    func currentData(query: String? = nil) -> [ListData] {
+    // MARK: - Helpers
+    
+    /// Filter current data with search text
+    private func filterCurrentData() -> [ListData] {
         var data: [ListData] = []
         switch currentState {
         case .Auditoriums: data = auditoriums
@@ -45,15 +70,17 @@ struct DataModel {
         case .Groups: data = groups
         case .Teachers: data = teachers
         }
-        if let query = query where query.characters.count > 0 {
+        if let query = searchText where query.characters.count > 0 {
             data = data.filter { return $0.name.containsString(query) }
         }
         return data
     }
     
-    func currentDataBySections(query: String? = nil) -> [DataSection] {
-        var recordsBySection: [DataSection] = []
-        let allData = self.currentData(query)
+    /// Update current data and group by sections
+    private mutating func updateCurrentDataBySections() {
+        // Clear previous data
+        currentData = []
+        let allData = self.filterCurrentData()
         // Get all unique first letters
         var uniqueCharacters = Set<Character>()
         for item in allData {
@@ -72,9 +99,8 @@ struct DataModel {
                     sectionRecords.append(item)
                 }
             }
-            recordsBySection.append(DataSection(letter: letter, records: sectionRecords))
+            currentData.append(DataSection(letter: letter, records: sectionRecords))
         }
-        return recordsBySection
     }
     
     /// Load data from storage
@@ -83,6 +109,7 @@ struct DataModel {
         groups = ListData.loadFromStorage(UserDefaultsKey.Groups.key)
         history = ListData.loadFromStorage(UserDefaultsKey.History.key)
         teachers = ListData.loadFromStorage(UserDefaultsKey.Teachers.key)
+        updateCurrentDataBySections()
     }
     
     /// Send request to server for update model data (asynchronously)

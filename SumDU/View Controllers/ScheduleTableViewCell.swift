@@ -1,5 +1,5 @@
 //
-//  ScheduleCell.swift
+//  ScheduleTableViewCell.swift
 //  SumDU
 //
 //  Created by Yura Voevodin on 26.12.15.
@@ -9,11 +9,11 @@
 import Cartography
 import UIKit
 
-class ScheduleCell: UITableViewCell {
+class ScheduleTableViewCell: UITableViewCell {
     
     // MARK: - Constants
     
-    static let reuseIdentifier = "\(ScheduleCell.self)"
+    static let reuseIdentifier = "\(ScheduleTableViewCell.self)"
     static let cellHeight: CGFloat = 126.0
     
     // MARK: - UI objects

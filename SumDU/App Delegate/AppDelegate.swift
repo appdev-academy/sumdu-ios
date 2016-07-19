@@ -18,22 +18,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
         
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad, let window = self.window {
-            let search = SearchViewController()
-            let schedule = ScheduleViewController()
-            let split = UISplitViewController()
-            split.viewControllers = [search, schedule]
-            split.preferredDisplayMode = .AllVisible
-            window.rootViewController = split
+            let searchViewController = SearchViewController()
+            let scheduleViewController = ScheduleViewController()
+            let splitViewController = UISplitViewController()
+            splitViewController.viewControllers = [searchViewController, scheduleViewController]
+            splitViewController.preferredDisplayMode = .AllVisible
+            window.rootViewController = splitViewController
             window.makeKeyAndVisible()
         }
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone, let window = self.window  {
-            let newSearchViewController = SearchViewController()
-            let navigationController = UINavigationController(rootViewController: newSearchViewController)
+            let searchViewController = SearchViewController()
+            let navigationController = UINavigationController(rootViewController: searchViewController)
             navigationController.navigationBarHidden = true
             window.rootViewController = navigationController
             window.makeKeyAndVisible()
         }
-        
         return true
     }
     

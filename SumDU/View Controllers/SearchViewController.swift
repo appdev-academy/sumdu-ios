@@ -18,13 +18,26 @@ class SearchViewController: UIViewController {
     
     // MARK: - Variables
     
+    /// Previous scroll point of the content collection view
     private var previousScrollPoint: CGFloat = 0.0
-    private var needUpdateContent = true
+    
+    private var needUpdateUI = true
     private var updateOnScroll = true
+    
+    // Parser for working with server
     private var parser = Parser()
-    private var model = DataModel(auditoriums: [], groups: [], teachers: [], history: [], currentState: .Favorites)
-    private var searchMode = false
-    private var searchText: String?
+    
+    /// Data model
+    private var model = DataModel(
+        searchText: nil,
+        searchMode: false,
+        currentState: State.Favorites,
+        currentData: [],
+        auditoriums: [],
+        groups: [],
+        teachers: [],
+        history: []
+    )
     
     // MARK: - UI objects
     
@@ -144,7 +157,8 @@ class SearchViewController: UIViewController {
         contentFlowLayout.scrollDirection = .Horizontal
         contentCollectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: contentFlowLayout)
         contentCollectionView.backgroundColor = UIColor.whiteColor()
-        contentCollectionView.registerClass(TypeCollectionViewCell.self, forCellWithReuseIdentifier: TypeCollectionViewCell.reuseIdentifier)
+        contentCollectionView.registerClass(ContentCollectionViewCell.self, forCellWithReuseIdentifier: ContentCollectionViewCell.reuseIdentifier)
+        contentCollectionView.registerClass(EmptyHistoryCollectionViewCell.self, forCellWithReuseIdentifier: EmptyHistoryCollectionViewCell.reuseIdentifier)
         contentCollectionView.showsVerticalScrollIndicator = false
         contentCollectionView.showsHorizontalScrollIndicator = false
         contentCollectionView.delegate = self
@@ -221,16 +235,6 @@ class SearchViewController: UIViewController {
         let indexPath = NSIndexPath(forItem: model.currentState.rawValue, inSection: 0)
         contentCollectionView.reloadItemsAtIndexPaths([indexPath])
     }
-    
-    // MARK: - Actions
-    
-    /// Add new item to the history
-    func addToHistory(item: ListData) {
-        while model.history.count > 50 { model.history.removeFirst() }
-        let historyItems = model.history.filter { $0.name == item.name }
-        if historyItems.count == 0 { model.history.append(item) }
-        ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
-    }
 }
 
 // MARK: - SearchBarViewDelegate
@@ -242,12 +246,12 @@ extension SearchViewController: SearchBarViewDelegate {
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
-        searchText = text
+        model.searchText = text
         reloadCurrentContent()
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
-        self.searchMode = searchMode
+        model.searchMode = searchMode
         reloadCurrentContent()
     }
 }
@@ -296,14 +300,20 @@ extension SearchViewController: UICollectionViewDataSource {
             }
         } else {
             // Content
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(TypeCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! TypeCollectionViewCell
-            let data = model.currentDataBySections(searchText)
-            if indexPath.row == 0 && data.count == 0 && !searchMode {
-                cell.updateWithImage()
+            if indexPath.row == 0 && model.history.count == 0 {
+                // Empty history
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier(EmptyHistoryCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! EmptyHistoryCollectionViewCell
+                return cell
             } else {
-                cell.update(with: data, search: searchMode, searchText: searchText, viewController: self)
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier(ContentCollectionViewCell.reuseIdentifier, forIndexPath: indexPath) as! ContentCollectionViewCell
+                cell.setTableViewDataSourceDelegate(self)
+                if model.currentData.count == 0 && model.searchMode {
+                    cell.showEmptySearch()
+                } else {
+                    cell.showContent()
+                }
+                return cell
             }
-            return cell
         }
     }
 }
@@ -375,7 +385,7 @@ extension SearchViewController: UIScrollViewDelegate {
         updateMenuScrollIndicator()
         UIView.animateWithDuration(0.3, animations: view.layoutIfNeeded)
         preselectMenuItem()
-        needUpdateContent = true
+        needUpdateUI = true
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -392,9 +402,9 @@ extension SearchViewController: UIScrollViewDelegate {
             let newStateIndex = floor(currentOffset/frameWidth)
             if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
         }
-        if needUpdateContent {
+        if needUpdateUI {
             reloadCurrentContent()
-            needUpdateContent = false
+            needUpdateUI = false
         }
     }
 }
@@ -425,5 +435,62 @@ extension SearchViewController: ParserDataListDelegate {
         // Update UI
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         if needToUpdateUI { reloadCurrentContent() }
+    }
+}
+
+// MARK: - UITableViewDataSource
+
+extension SearchViewController: UITableViewDataSource {
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return model.currentData.count
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return model.currentData[section].records.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier(SearchTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
+        
+        cell.update(with: model.currentData[indexPath.section].records[indexPath.row], search: model.searchMode, searchingText: model.searchText)
+        
+        return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+
+extension SearchViewController: UITableViewDelegate {
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return SearchTableViewCell.cellHeight
+    }
+    
+    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return ScheduleSectionHeaderView.viewHeight
+    }
+    
+    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = tableView.dequeueReusableHeaderFooterViewWithIdentifier(ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
+        headerView.dateLabel.text = String(model.currentData[section].letter)
+        return headerView
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let loadFromStorage = model.currentState == .Favorites ? true : false
+        let dataItem = model.currentData[indexPath.section].records[indexPath.row]
+        let scheduleViewController = ScheduleViewController(data: dataItem, fromStorage: loadFromStorage)
+        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            splitViewController?.viewControllers[1] = scheduleViewController
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            navigationController?.pushViewController(scheduleViewController, animated: true)
+        }
+        // Remember selected item
+        while model.history.count > 50 { model.history.removeFirst() }
+        let historyItems = model.history.filter { $0.name == dataItem.name }
+        if historyItems.count == 0 { model.history.append(dataItem) }
+        ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
     }
 }

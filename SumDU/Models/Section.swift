@@ -42,7 +42,6 @@ class Section {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         let data = NSKeyedArchiver.archivedDataWithRootObject(sectionCoder)
         userDefaults.setObject(data, forKey: forKey)
-        userDefaults.synchronize()
     }
     
     /// Load schedule information from userDefaults
