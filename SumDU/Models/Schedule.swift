@@ -64,7 +64,7 @@ class Schedule {
         }
     }
     
-    // MARK: - Initialization
+    // MARK: - Lifecycle
     
     /**
      Initializer for schedule class

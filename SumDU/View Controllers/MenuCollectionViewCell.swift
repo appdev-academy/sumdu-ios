@@ -6,9 +6,8 @@
 //  Copyright © 2016 App Dev Academy. All rights reserved.
 //
 
-import Foundation
-import UIKit
 import Cartography
+import UIKit
 
 class MenuCollectionViewCell: UICollectionViewCell {
     
@@ -16,38 +15,18 @@ class MenuCollectionViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "\(MenuCollectionViewCell.self)"
     static let cellHeight: CGFloat = 62.0
-    static let historyImageSize = CGSize(width: 24.0, height: 24.0)
     
     // MARK: - Variables
     
-    private var isHistory: Bool = false {
-        didSet {
-            if isHistory {
-                textLabel.hidden = true
-                historyImageView.hidden = false
-            } else {
-                textLabel.hidden = false
-                historyImageView.hidden = true
-            }
-        }
-    }
-    
     override var selected: Bool {
         didSet {
-            if isHistory {
-                historyImageView.image = selected ? activeHistoryImage : inactiveHistoryImage
-            } else {
-                textLabel.textColor = selected ? Color.textBlack : Color.textLight
-            }
+            textLabel.textColor = selected ? Color.textBlack : Color.textLight
         }
     }
     
     // MARK: - UI objects
     
-    private let activeHistoryImage = UIImage(named:"activeHistory")
-    private let inactiveHistoryImage = UIImage(named:"inactiveHistory")
     private let textLabel = UILabel()
-    private let historyImageView = UIImageView()
     
     // MARK: - Initialization
     
@@ -68,29 +47,11 @@ class MenuCollectionViewCell: UICollectionViewCell {
         constrain(textLabel, contentView) { textLabel, superview in
             textLabel.edges == superview.edges
         }
-        
-        // Image
-        historyImageView.contentMode = .ScaleAspectFill
-        historyImageView.clipsToBounds = true
-        historyImageView.hidden = true
-        contentView.addSubview(historyImageView)
-        constrain(historyImageView, contentView) { historyImageView, superview in
-            
-            historyImageView.center == superview.center
-            historyImageView.height == MenuCollectionViewCell.historyImageSize.height
-            historyImageView.width == MenuCollectionViewCell.historyImageSize.width
-        }
     }
     
-    // MARK: - Interface
+    // MARK: - Public interface
     
-    func update(with title: String) {
-        isHistory = false
+    func update(withTitle title: String) {
         textLabel.text = title
-    }
-    
-    func updateWithImage() {
-        isHistory = true
-        historyImageView.image = inactiveHistoryImage
     }
 }

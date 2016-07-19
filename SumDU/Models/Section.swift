@@ -24,7 +24,7 @@ class Section {
         }
     }
     
-    // MARK: - Initialization
+    // MARK: - Lifecycle
     
     init(date: NSDate, records: [Schedule]) {
         self.date = date
@@ -34,7 +34,7 @@ class Section {
     // MARK: - Interface
     
     /// Save schedule information to userDefaults
-    static func saveData(listDataCoder: [Section], forKey: String) {
+    class func saveData(listDataCoder: [Section], forKey: String) {
         var sectionCoder: [SectionCoder] = []
         for sectionCoderRecord in listDataCoder {
             sectionCoder.append(sectionCoderRecord.sectionCoder)
@@ -46,7 +46,7 @@ class Section {
     }
     
     /// Load schedule information from userDefaults
-    static func loadData(forKey: String) -> [Section] {
+    class func loadData(forKey: String) -> [Section] {
         var section: [Section] = []
         
         let userDefaults = NSUserDefaults.standardUserDefaults()

@@ -21,7 +21,7 @@ class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
     let dateLabel = UILabel()
     let dayLabel = UILabel()
     
-    // MARK: - Initialization
+    // MARK: - Lifecycle
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -40,7 +40,9 @@ class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
         dateLabel.textColor = Color.textNormal
         dateLabel.textAlignment = .Left
         addSubview(dateLabel)
-        constrain(dateLabel, self) { dateLabel, superview in
+        constrain(dateLabel, self) {
+            dateLabel, superview in
+            
             dateLabel.top == superview.top
             dateLabel.leading == superview.leading + leadingMargin
             dateLabel.trailing == superview.centerX - trailingMargin
@@ -51,7 +53,9 @@ class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
         dayLabel.textColor = Color.textLight
         dayLabel.textAlignment = .Right
         addSubview(dayLabel)
-        constrain(dayLabel, self) { dayLabel, superview in
+        constrain(dayLabel, self) {
+            dayLabel, superview in
+            
             dayLabel.top == superview.top
             dayLabel.leading == superview.centerX + leadingMargin
             dayLabel.trailing == superview.trailing - trailingMargin

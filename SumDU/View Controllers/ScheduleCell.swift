@@ -25,7 +25,7 @@ class ScheduleCell: UITableViewCell {
     private let teacherLabel = UILabel()
     private let separatorView = UIView()
     
-    // MARK: - Initialization
+    // MARK: - Lifecycle
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -52,7 +52,9 @@ class ScheduleCell: UITableViewCell {
         nameLabel.minimumScaleFactor = 0.7
         nameLabel.numberOfLines = 2
         contentView.addSubview(nameLabel)
-        constrain(nameLabel, contentView) { nameLabel, superview in
+        constrain(nameLabel, contentView) {
+            nameLabel, superview in
+            
             nameLabel.top == superview.top + 12.0
             nameLabel.leading == superview.leading + leadingMargin
             nameLabel.trailing == superview.trailing - trailingMargin
@@ -63,7 +65,9 @@ class ScheduleCell: UITableViewCell {
         timeLabel.textColor = Color.textNormal
         timeLabel.textAlignment = .Left
         contentView.addSubview(timeLabel)
-        constrain(timeLabel, nameLabel, contentView) { timeLabel, nameLabel, superview in
+        constrain(timeLabel, nameLabel, contentView) {
+            timeLabel, nameLabel, superview in
+            
             timeLabel.top == nameLabel.bottom + 8.0
             timeLabel.leading == superview.leading + leadingMargin
             timeLabel.height == 21.0
@@ -73,7 +77,9 @@ class ScheduleCell: UITableViewCell {
         dotImageView.contentMode = .ScaleAspectFill
         dotImageView.clipsToBounds = true
         contentView.addSubview(dotImageView)
-        constrain(dotImageView, timeLabel) { dotImageView, timeLabel in
+        constrain(dotImageView, timeLabel) {
+            dotImageView, timeLabel in
+            
             dotImageView.leading == timeLabel.trailing + itemSpacing
             dotImageView.centerY == timeLabel.centerY
             dotImageView.height == 6.0
@@ -84,7 +90,9 @@ class ScheduleCell: UITableViewCell {
         auditoriumLabel.textColor = Color.textNormal
         auditoriumLabel.textAlignment = .Left
         contentView.addSubview(auditoriumLabel)
-        constrain(auditoriumLabel, dotImageView, nameLabel, contentView) { auditoriumLabel, dotImageView, nameLabel, superview in
+        constrain(auditoriumLabel, dotImageView, nameLabel, contentView) {
+            auditoriumLabel, dotImageView, nameLabel, superview in
+            
             auditoriumLabel.top == nameLabel.bottom + 8.0
             auditoriumLabel.leading == dotImageView.trailing + itemSpacing
             auditoriumLabel.height == 21.0
@@ -92,7 +100,9 @@ class ScheduleCell: UITableViewCell {
         // Separator
         separatorView.backgroundColor = Color.backgroundGray
         contentView.addSubview(separatorView)
-        constrain(separatorView, contentView) { separatorView, superview in
+        constrain(separatorView, contentView) {
+            separatorView, superview in
+            
             separatorView.leading == superview.leading
             separatorView.trailing == superview.trailing
             separatorView.bottom == superview.bottom
@@ -103,7 +113,9 @@ class ScheduleCell: UITableViewCell {
         teacherLabel.textColor = Color.textLight
         teacherLabel.textAlignment = .Left
         contentView.addSubview(teacherLabel)
-        constrain(teacherLabel, timeLabel, separatorView, contentView) { teacherLabel, timeLabel, separatorView, superview in
+        constrain(teacherLabel, timeLabel, separatorView, contentView) {
+            teacherLabel, timeLabel, separatorView, superview in
+            
             teacherLabel.top == timeLabel.bottom + itemSpacing
             teacherLabel.leading == superview.leading + leadingMargin
             teacherLabel.trailing == superview.trailing - trailingMargin
@@ -111,10 +123,10 @@ class ScheduleCell: UITableViewCell {
         }
     }
     
-    // MARK: - Interface
+    // MARK: - Public interface
     
-    //// Update cell data
-    func update(with schedule: Schedule) {
+    /** Update cell data */
+    func update(withSchedule schedule: Schedule) {
         // Name
         var name = schedule.pairName
         if schedule.pairType.characters.count > 0 { name += "(" + schedule.pairType + ")" }

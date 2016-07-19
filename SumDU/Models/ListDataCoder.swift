@@ -18,7 +18,7 @@ class ListDataCoder: NSObject, NSCoding {
     /// ListData instance
     var listData: ListData?
     
-    // MARK: - Initialization
+    // MARK: - Lifecycle
     
     /// Initializer for LisaDataCoder class
     init(listData: ListData) {
@@ -35,7 +35,7 @@ class ListDataCoder: NSObject, NSCoding {
         }
     }
     
-    // MARK: - Interface
+    // MARK: - Public interface
     
     /// Serialize ListData enities: Auditorium, Group or Teacher
     func encodeWithCoder(coder: NSCoder) {

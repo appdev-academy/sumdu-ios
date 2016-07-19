@@ -18,7 +18,7 @@ struct ListData {
         case Value = "value"
     }
     
-    // MARK: - Variables
+    // MARK: - Constants
     
     /// Server ID for instance
     let id: Int
@@ -29,13 +29,15 @@ struct ListData {
     /// ListData type
     let type: ListDataType
     
+    // MARK: - Variables
+    
     var listDataCoder: ListDataCoder {
         get {
             return ListDataCoder(listData: self)
         }
     }
     
-    // MARK: - Initialization
+    // MARK: - Lifecycle
     
     /// Initializer for ListData entity
     init?(json: JSON, type: ListDataType) {
@@ -63,7 +65,7 @@ struct ListData {
     }
 }
 
-// MARK: - Interface
+// MARK: - Persistency interface
 
 extension ListData {
     
@@ -137,10 +139,4 @@ extension ListData {
         }
         return listDataRecord
     }
-}
-
-extension ListData: Equatable {}
-
-func ==(lhs: ListData, rhs:ListData) -> Bool {
-    return lhs.name == rhs.name
 }
