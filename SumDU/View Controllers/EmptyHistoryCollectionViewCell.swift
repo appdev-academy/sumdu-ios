@@ -38,7 +38,7 @@ class EmptyHistoryCollectionViewCell: UICollectionViewCell {
         constrain(historyImage, contentView) {
             historyImage, superview in
             
-            historyImage.top == superview.top + 36.0
+            historyImage.centerY == superview.centerY - 55.0
             historyImage.centerX == superview.centerX
         }
         
@@ -69,7 +69,6 @@ class EmptyHistoryCollectionViewCell: UICollectionViewCell {
             emptyHistoryDescriptionLabel.top == emptyHistoryLabel.bottom + 8.0
             emptyHistoryDescriptionLabel.leading == superview.leading + 33.0
             emptyHistoryDescriptionLabel.trailing == superview.trailing - 33.0
-            emptyHistoryDescriptionLabel.bottom == superview.bottom - 30.0
         }
     }
 }
