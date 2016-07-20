@@ -33,6 +33,9 @@ class ScheduleViewController: UIViewController {
     /// Load Schedule data from storage or from server
     private var loadFromStorage = false
     
+    /// Show empty data
+    private var emptySelection = false
+    
     // MARK: - UI objects
     
     // Navigation bar
@@ -47,6 +50,12 @@ class ScheduleViewController: UIViewController {
     private let scheduleTableView = UITableView()
     
     // MARK: - Initialization
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        
+        emptySelection = true
+    }
     
     init(data: ListData, fromStorage: Bool = false) {
         super.init(nibName: nil, bundle: nil)
@@ -168,18 +177,23 @@ class ScheduleViewController: UIViewController {
             activityIndicatorView.center == superview.center
         }
         
-        if loadFromStorage {
-            if let data = listData { recordsBySection = Section.loadData(UserDefaultsKey.scheduleKey(data)) }
-            // Empty data
-            if recordsBySection.count == 0 {
-                informationLabel.hidden = false
-                scheduleTableView.hidden = true
-            }
+        if emptySelection {
+            informationLabel.text = NSLocalizedString("No selection.", comment: "")
+            informationLabel.hidden = false
         } else {
-            // Send request
-            UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-            activityIndicatorView.startAnimating()
-            parser.sendScheduleRequest(listData)
+            if loadFromStorage {
+                if let data = listData { recordsBySection = Section.loadData(UserDefaultsKey.scheduleKey(data)) }
+                // Empty data
+                if recordsBySection.count == 0 {
+                    informationLabel.hidden = false
+                    scheduleTableView.hidden = true
+                }
+            } else {
+                // Send request
+                UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+                activityIndicatorView.startAnimating()
+                parser.sendScheduleRequest(listData)
+            }
         }
     }
     

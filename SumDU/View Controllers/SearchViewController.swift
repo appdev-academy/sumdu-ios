@@ -60,7 +60,10 @@ class SearchViewController: UIViewController {
         
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             if let firstItem = model.history.first {
-                let schedule = ScheduleViewController(data: firstItem)
+                let schedule = ScheduleViewController(data: firstItem, fromStorage: true)
+                splitViewController?.viewControllers[1] = schedule
+            } else {
+                let schedule = ScheduleViewController()
                 splitViewController?.viewControllers[1] = schedule
             }
         }
