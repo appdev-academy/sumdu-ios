@@ -24,12 +24,6 @@ enum State: Int {
     }
 }
 
-/// Section for content table
-struct DataSection {
-    var letter: Character
-    var records: [ListData]
-}
-
 // MARK: - Data model description
 
 struct DataModel {
@@ -37,7 +31,7 @@ struct DataModel {
     /// Text from search
     var searchText: String? {
         didSet {
-            self.updateCurrentDataBySections()
+            self.updateData()
         }
     }
     
@@ -47,12 +41,13 @@ struct DataModel {
     // Current model state
     var currentState: State {
         didSet {
-            self.updateCurrentDataBySections()
+            self.updateData()
         }
     }
     
     // Data for current model state
-    var currentData: [DataSection]
+    var current: Dictionary<Character, Array<ListData>>
+    var sortedSections = [Character]()
     
     var auditoriums: [ListData]
     var groups: [ListData]
@@ -62,7 +57,7 @@ struct DataModel {
     // MARK: - Helpers
     
     /// Filter current data with search text
-    private func filterCurrentData() -> [ListData] {
+    private func filteredData() -> [ListData] {
         var data: [ListData] = []
         switch currentState {
         case .Auditoriums: data = auditoriums
@@ -77,29 +72,20 @@ struct DataModel {
     }
     
     /// Update current data and group by sections
-    private mutating func updateCurrentDataBySections() {
-        // Clear previous data
-        currentData = []
-        let allData = self.filterCurrentData()
-        // Get all unique first letters
-        var uniqueCharacters = Set<Character>()
-        for item in allData {
-            if let first = item.name.characters.first {
-                uniqueCharacters.insert(first)
-            }
-        }
-        // Iterate letters
-        let sortedCharacters = uniqueCharacters.sort { (s1, s2) -> Bool in
-            return String(s1).localizedCaseInsensitiveCompare(String(s2)) == .OrderedAscending
-        }
-        for letter in sortedCharacters {
-            var sectionRecords: [ListData] = []
-            for item in allData {
-                if letter == item.name.characters.first {
-                    sectionRecords.append(item)
+    private mutating func updateData() {
+        var sections = Dictionary<Character, Array<ListData>>()
+        for item in self.filteredData() {
+            if let firstLetter = item.name.characters.first {
+                if sections.indexForKey(firstLetter) == nil {
+                    sections[firstLetter] = [item]
+                } else {
+                    sections[firstLetter]?.append(item)
                 }
             }
-            currentData.append(DataSection(letter: letter, records: sectionRecords))
+        }
+        current = sections
+        sortedSections = sections.keys.sort { (s1, s2) -> Bool in
+            return String(s1).localizedCaseInsensitiveCompare(String(s2)) == .OrderedAscending
         }
     }
     
@@ -107,9 +93,12 @@ struct DataModel {
     mutating func updateFromStorage() {
         auditoriums = ListData.loadFromStorage(UserDefaultsKey.Auditoriums.key)
         groups = ListData.loadFromStorage(UserDefaultsKey.Groups.key)
-        history = ListData.loadFromStorage(UserDefaultsKey.History.key)
         teachers = ListData.loadFromStorage(UserDefaultsKey.Teachers.key)
-        updateCurrentDataBySections()
+    }
+    
+    mutating func updateHistoryFromStorage() {
+        history = ListData.loadFromStorage(UserDefaultsKey.History.key)
+        updateData()
     }
     
     /// Send request to server for update model data (asynchronously)
