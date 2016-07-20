@@ -27,17 +27,7 @@ class SearchViewController: UIViewController {
     private var parser = Parser()
     
     /// Data model
-    private var model = DataModel(
-        searchText: nil,
-        searchMode: false,
-        currentState: State.Favorites,
-        current:  [:],
-        sortedSections: [],
-        auditoriums: [],
-        groups: [],
-        teachers: [],
-        history: []
-    )
+    private var model = DataModel(currentState: State.Favorites)
     
     // MARK: - UI objects
     
