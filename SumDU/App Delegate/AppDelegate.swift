@@ -23,6 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let splitViewController = UISplitViewController()
             splitViewController.viewControllers = [searchViewController, scheduleViewController]
             splitViewController.preferredDisplayMode = .AllVisible
+            splitViewController.minimumPrimaryColumnWidth = 360.0
+            splitViewController.maximumPrimaryColumnWidth = 360.0
             window.rootViewController = splitViewController
             window.makeKeyAndVisible()
         }

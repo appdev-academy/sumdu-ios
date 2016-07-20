@@ -31,14 +31,14 @@ class EmptyHistoryCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         // Image
-        historyImage.contentMode = .ScaleAspectFill
+        historyImage.contentMode = .ScaleAspectFit
         historyImage.clipsToBounds = true
         contentView.addSubview(historyImage)
         historyImage.image = UIImage(named: "empty_history")
         constrain(historyImage, contentView) {
             historyImage, superview in
             
-            historyImage.top == superview.top + 46.0
+            historyImage.top == superview.top + 36.0
             historyImage.centerX == superview.centerX
         }
         
@@ -51,7 +51,7 @@ class EmptyHistoryCollectionViewCell: UICollectionViewCell {
         constrain(historyImage, emptyHistoryLabel, contentView) {
             historyImage, emptyHistoryLabel, superview in
             
-            emptyHistoryLabel.top == historyImage.bottom + 35.0
+            emptyHistoryLabel.top == historyImage.bottom + 30.0
             emptyHistoryLabel.leading == superview.leading + 14.0
             emptyHistoryLabel.trailing == superview.trailing - 14.0
         }
@@ -69,7 +69,7 @@ class EmptyHistoryCollectionViewCell: UICollectionViewCell {
             emptyHistoryDescriptionLabel.top == emptyHistoryLabel.bottom + 8.0
             emptyHistoryDescriptionLabel.leading == superview.leading + 33.0
             emptyHistoryDescriptionLabel.trailing == superview.trailing - 33.0
-            emptyHistoryDescriptionLabel.bottom == superview.bottom - 14.0
+            emptyHistoryDescriptionLabel.bottom == superview.bottom - 30.0
         }
     }
 }

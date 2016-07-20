@@ -66,16 +66,6 @@ class SearchViewController: UIViewController {
         }
     }
     
-    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
-        
-        // Menu
-        menuCollectionView.collectionViewLayout.invalidateLayout()
-        
-        // Content
-        contentCollectionView.collectionViewLayout.invalidateLayout()
-    }
-    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -91,6 +81,15 @@ class SearchViewController: UIViewController {
         
         updateMenuScrollIndicator()
         preselectMenuItem()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        // Invalidate layout of the content collection view when device rotates
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            contentCollectionView.collectionViewLayout.invalidateLayout()
+        }
     }
     
     // MARK: - Helpers
