@@ -90,6 +90,8 @@ class Parser {
     var scheduleDelegate: ParserScheduleDelegate?
     var dataListDelegate: ParserDataListDelegate?
     
+    var scheduleRequest: Request?
+    
     /// Request router
     enum Router: URLRequestConvertible {
         
@@ -239,7 +241,7 @@ class Parser {
         let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
         
         // Send request
-        Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
+       scheduleRequest = Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
             response in
             
             if response.result.isSuccess, let resultValue = response.result.value {
@@ -274,6 +276,16 @@ class Parser {
             } else {
                 // Show error
             }
+        }
+    }
+    
+    /**
+        Manually cancel the Schedule request
+    */
+    func cancelScheduleRequest() {
+        if let request = scheduleRequest {
+            request.cancel()
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         }
     }
 }
