@@ -8,6 +8,7 @@
 
 import Cartography
 import UIKit
+import Quack
 import SwiftyJSON
 
 class SearchViewController: UIViewController {
@@ -448,6 +449,13 @@ extension SearchViewController: ParserDataListDelegate {
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         }
         if needToUpdateUI { reloadCurrentContent() }
+    }
+    
+    func requestError(parser: Parser, localizedError error: String?) {
+        if UIApplication.sharedApplication().networkActivityIndicatorVisible {
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        }
+        showAlert(title: NSLocalizedString("Error", comment: ""), message: error)
     }
 }
 

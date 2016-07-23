@@ -6,6 +6,7 @@ abstract_target 'SumDU App' do
   pod 'Alamofire'
   pod 'SwiftyJSON'
   pod 'Cartography'
+  pod 'Quack'
 
   target 'SumDU'
 end

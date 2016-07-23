@@ -8,6 +8,7 @@
 
 import Cartography
 import UIKit
+import Quack
 import SwiftyJSON
 
 class ScheduleViewController: UIViewController {
@@ -350,8 +351,13 @@ extension ScheduleViewController: ParserScheduleDelegate {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
     }
     
-    /// Get calendar URL
     func getCalendar(url: NSURL?) {
         calendarURL = url
+    }
+    
+    func scheduleRequestError(parser: Parser, localizedError error: String?) {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        activityIndicatorView.stopAnimating()
+        showAlert(title: NSLocalizedString("Error", comment: ""), message: error)
     }
 }
