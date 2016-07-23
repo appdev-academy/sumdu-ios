@@ -27,7 +27,16 @@ class SearchViewController: UIViewController {
     private var parser = Parser()
     
     /// Data model
-    private var model = DataModel(currentState: State.Favorites)
+    private var model = DataModel(
+        searchText: nil,
+        searchMode: false,
+        currentState: State.Favorites,
+        currentData: [],
+        auditoriums: [],
+        groups: [],
+        teachers: [],
+        history: []
+    )
     
     // MARK: - UI objects
     
@@ -44,36 +53,17 @@ class SearchViewController: UIViewController {
         
         // Data
         parser.dataListDelegate = self
-        
-        // Get background
-        let qualityOfServiceClass = QOS_CLASS_BACKGROUND
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+        model.updateFromStorage()
 
-        dispatch_async(backgroundQueue) {
-            
-            // Load History from storage in backgorund
-            self.model.updateHistoryFromStorage()
-            
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                
-                // Shows Schedule in right view controller for iPad
-                if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                    if let firstItem = self.model.history.first {
-                        let schedule = ScheduleViewController(data: firstItem, fromStorage: true)
-                        self.splitViewController?.viewControllers[1] = schedule
-                    } else {
-                        let schedule = ScheduleViewController()
-                        self.splitViewController?.viewControllers[1] = schedule
-                    }
-                }
-            })
-            
-            // Load other data in backgroud
-            self.model.updateFromStorage()
-        }
-        
         // UI
         initialSetup()
+        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            if let firstItem = model.history.first {
+                let schedule = ScheduleViewController(data: firstItem)
+                splitViewController?.viewControllers[1] = schedule
+            }
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -316,7 +306,7 @@ extension SearchViewController: UICollectionViewDataSource {
                 cell.contentTableView.delegate = self
                 cell.contentTableView.dataSource = self
                 cell.contentTableView.reloadData()
-                if model.current.count == 0 && model.searchMode {
+                if model.currentData.count == 0 && model.searchMode {
                     cell.showEmptySearch()
                 } else {
                     cell.showContent()
@@ -467,23 +457,17 @@ extension SearchViewController: ParserDataListDelegate {
 extension SearchViewController: UITableViewDataSource {
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return model.current.count
+        return model.currentData.count
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let section = model.current[model.sortedSections[section]] {
-            return section.count
-        } else {
-            return 0
-        }
+        return model.currentData[section].records.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(SearchTableViewCell.reuseIdentifier, forIndexPath: indexPath) as! SearchTableViewCell
-        if let section = model.current[model.sortedSections[indexPath.section]] {
-            let item = section[indexPath.row]
-            cell.update(with: item, search: model.searchMode, searchingText: model.searchText)
-        }
+        
+        cell.update(with: model.currentData[indexPath.section].records[indexPath.row], search: model.searchMode, searchingText: model.searchText)
         return cell
     }
 }
@@ -502,16 +486,14 @@ extension SearchViewController: UITableViewDelegate {
     
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = tableView.dequeueReusableHeaderFooterViewWithIdentifier(ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
-        headerView.dateLabel.text = String(model.sortedSections[section])
+        headerView.dateLabel.text = String(model.currentData[section].letter)
         return headerView
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let loadFromStorage = model.currentState == .Favorites ? true : false
-        
-        guard let section = model.current[model.sortedSections[indexPath.section]] else { return }
-        let item = section[indexPath.row]
-        let scheduleViewController = ScheduleViewController(data: item, fromStorage: loadFromStorage)
+        let dataItem = model.currentData[indexPath.section].records[indexPath.row]
+        let scheduleViewController = ScheduleViewController(data: dataItem, fromStorage: loadFromStorage)
         
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             splitViewController?.viewControllers[1] = scheduleViewController
@@ -520,8 +502,8 @@ extension SearchViewController: UITableViewDelegate {
         }
         // Remember selected item
         while model.history.count > 50 { model.history.removeFirst() }
-        let historyItems = model.history.filter { $0.name == item.name }
-        if historyItems.count == 0 { model.history.append(item) }
+        let historyItems = model.history.filter { $0.name == dataItem.name }
+        if historyItems.count == 0 { model.history.append(dataItem) }
         ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
     }
 }

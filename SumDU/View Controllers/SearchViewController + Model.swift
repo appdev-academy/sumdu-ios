@@ -24,6 +24,12 @@ enum State: Int {
     }
 }
 
+/// Section for content table
+struct DataSection {
+    var letter: Character
+    var records: [ListData]
+}
+
 // MARK: - Data model description
 
 struct DataModel {
@@ -31,61 +37,32 @@ struct DataModel {
     /// Text from search
     var searchText: String? = nil {
         didSet {
-            self.updateData()
+            self.updateCurrentDataBySections()
         }
     }
     
     /// Search or normal mode
-    var searchMode: Bool = false {
-        didSet {
-            auditoriunsSorted = [:]
-            auditoriunsSortedSections = []
-            groupsSorted = [:]
-            groupsSortedSections = []
-            teachersSorted = [:]
-            teachersSortedSections = []
-            historySorted = [:]
-            historySortedSections = []
-            self.updateData()
-        }
-    }
+    var searchMode: Bool = false
     
     // Current model state
     var currentState: State {
         didSet {
-            self.updateData()
+            self.updateCurrentDataBySections()
         }
     }
     
     // Data for current model state
-    var current: Dictionary<Character, Array<ListData>> = [:]
-    var sortedSections = [Character]()
+    var currentData: [DataSection]
     
-    var auditoriums: [ListData] = []
-    var groups: [ListData] = []
-    var teachers: [ListData] = []
-    var history: [ListData] = []
-    
-    private var auditoriunsSorted: Dictionary<Character, Array<ListData>> = [:]
-    private var groupsSorted: Dictionary<Character, Array<ListData>> = [:]
-    private var teachersSorted: Dictionary<Character, Array<ListData>> = [:]
-    private var historySorted: Dictionary<Character, Array<ListData>> = [:]
-    
-    private var auditoriunsSortedSections = [Character]()
-    private var groupsSortedSections = [Character]()
-    private var teachersSortedSections = [Character]()
-    private var historySortedSections = [Character]()
-    
-    // MARK: - Initialization
-    
-    init(currentState: State) {
-        self.currentState = currentState
-    }
+    var auditoriums: [ListData]
+    var groups: [ListData]
+    var teachers: [ListData]
+    var history: [ListData]
     
     // MARK: - Helpers
     
     /// Filter current data with search text
-    private func filteredData() -> [ListData] {
+    private func filterCurrentData() -> [ListData] {
         var data: [ListData] = []
         switch currentState {
         case .Auditoriums: data = auditoriums
@@ -100,76 +77,29 @@ struct DataModel {
     }
     
     /// Update current data and group by sections
-    private mutating func updateData() {
-        
-        if searchText == nil {
-            switch currentState {
-            case .Auditoriums:
-                if auditoriunsSorted.count > 0 {
-                    current = auditoriunsSorted
-                    sortedSections = auditoriunsSortedSections
-                } else {
-                    prepeaData()
-                }
-            case .Favorites:
-                if historySorted.count > 0 {
-                    current = historySorted
-                    sortedSections = historySortedSections
-                } else {
-                    prepeaData()
-                }
-            case .Groups:
-                if groupsSorted.count > 0 {
-                    current = groupsSorted
-                    sortedSections = groupsSortedSections
-                } else {
-                    prepeaData()
-                }
-            case .Teachers:
-                if teachersSorted.count > 0 {
-                    current = teachersSorted
-                    sortedSections = teachersSortedSections
-                } else {
-                    prepeaData()
-                }
-            }
-        } else {
-            prepeaData()
-        }
-    }
-    
-    private mutating func prepeaData() {
-        var sections = Dictionary<Character, Array<ListData>>()
-        for item in self.filteredData() {
-            if let firstLetter = item.name.characters.first {
-                if sections.indexForKey(firstLetter) == nil {
-                    sections[firstLetter] = [item]
-                } else {
-                    sections[firstLetter]?.append(item)
-                }
+    private mutating func updateCurrentDataBySections() {
+        // Clear previous data
+        currentData = []
+        let allData = self.filterCurrentData()
+        // Get all unique first letters
+        var uniqueCharacters = Set<Character>()
+        for item in allData {
+            if let first = item.name.characters.first {
+                uniqueCharacters.insert(first)
             }
         }
-        current = sections
-        sortedSections = sections.keys.sort { (s1, s2) -> Bool in
+        // Iterate letters
+        let sortedCharacters = uniqueCharacters.sort { (s1, s2) -> Bool in
             return String(s1).localizedCaseInsensitiveCompare(String(s2)) == .OrderedAscending
         }
-        
-        switch currentState {
-        case .Auditoriums:
-            auditoriunsSorted = current
-            auditoriunsSortedSections = sortedSections
-            
-        case .Teachers:
-            teachersSorted = current
-            teachersSortedSections = sortedSections
-            
-        case .Groups:
-            groupsSorted = current
-            groupsSortedSections = sortedSections
-            
-        case .Favorites:
-            historySorted = current
-            historySortedSections = sortedSections
+        for letter in sortedCharacters {
+            var sectionRecords: [ListData] = []
+            for item in allData {
+                if letter == item.name.characters.first {
+                    sectionRecords.append(item)
+                }
+            }
+            currentData.append(DataSection(letter: letter, records: sectionRecords))
         }
     }
     
@@ -177,12 +107,9 @@ struct DataModel {
     mutating func updateFromStorage() {
         auditoriums = ListData.loadFromStorage(UserDefaultsKey.Auditoriums.key)
         groups = ListData.loadFromStorage(UserDefaultsKey.Groups.key)
-        teachers = ListData.loadFromStorage(UserDefaultsKey.Teachers.key)
-    }
-    
-    mutating func updateHistoryFromStorage() {
         history = ListData.loadFromStorage(UserDefaultsKey.History.key)
-        updateData()
+        teachers = ListData.loadFromStorage(UserDefaultsKey.Teachers.key)
+        updateCurrentDataBySections()
     }
     
     /// Send request to server for update model data (asynchronously)
