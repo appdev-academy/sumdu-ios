@@ -513,7 +513,6 @@ extension SearchViewController: UITableViewDelegate {
             if model.currentState == .Favorites {
                 scheduleViewController.updateFromStorage(withItem: dataItem)
             } else {
-                scheduleViewController.parser.cancelScheduleRequest()
                 scheduleViewController.updateFromServer(withItem: dataItem)
             }
             navigationController?.pushViewController(scheduleViewController, animated: true)

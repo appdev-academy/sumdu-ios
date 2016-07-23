@@ -248,7 +248,7 @@ class Parser {
                 let response = JSON(resultValue)
                 self.scheduleDelegate?.getSchedule(response)
             } else {
-                // Show error
+                // TODO: Show error
             }
         }
     }
@@ -274,7 +274,7 @@ class Parser {
                     self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
                 })
             } else {
-                // Show error
+                // TODO: Show error
             }
         }
     }
@@ -283,9 +283,10 @@ class Parser {
         Manually cancel the Schedule request
     */
     func cancelScheduleRequest() {
-        if let request = scheduleRequest {
-            request.cancel()
+        if scheduleRequest != nil {
+            scheduleRequest?.cancel()
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+            scheduleRequest = nil
         }
     }
 }
