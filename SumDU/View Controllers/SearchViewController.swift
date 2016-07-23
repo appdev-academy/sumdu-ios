@@ -59,9 +59,8 @@ class SearchViewController: UIViewController {
         initialSetup()
         
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            if let firstItem = model.history.first {
-                let schedule = ScheduleViewController(data: firstItem)
-                splitViewController?.viewControllers[1] = schedule
+            if let firstItem = model.history.first, scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
+                scheduleViewController.updateFromStorage(withItem: firstItem)
             }
         }
     }
@@ -491,15 +490,35 @@ extension SearchViewController: UITableViewDelegate {
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let loadFromStorage = model.currentState == .Favorites ? true : false
-        let dataItem = model.currentData[indexPath.section].records[indexPath.row]
-        let scheduleViewController = ScheduleViewController(data: dataItem, fromStorage: loadFromStorage)
         
+        let dataItem = model.currentData[indexPath.section].records[indexPath.row]
+        
+        // For iPad
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            splitViewController?.viewControllers[1] = scheduleViewController
+            // Get Schedule controller
+            if let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
+                // Update data
+                if model.currentState == .Favorites {
+                    scheduleViewController.updateFromStorage(withItem: dataItem)
+                } else {
+                    // Reset previous request
+                    scheduleViewController.parser.cancelScheduleRequest()
+                    scheduleViewController.updateFromServer(withItem: dataItem)
+                }
+            }
+            
+            // For iPhone
         } else if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            let scheduleViewController = ScheduleViewController()
+            if model.currentState == .Favorites {
+                scheduleViewController.updateFromStorage(withItem: dataItem)
+            } else {
+                scheduleViewController.parser.cancelScheduleRequest()
+                scheduleViewController.updateFromServer(withItem: dataItem)
+            }
             navigationController?.pushViewController(scheduleViewController, animated: true)
         }
+
         // Remember selected item
         while model.history.count > 50 { model.history.removeFirst() }
         let historyItems = model.history.filter { $0.name == dataItem.name }
