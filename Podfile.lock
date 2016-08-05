@@ -1,18 +1,21 @@
 PODS:
   - Alamofire (3.2.1)
   - Cartography (0.6.0)
+  - Quack (0.1.0)
   - SwiftyJSON (2.3.2)
 
 DEPENDENCIES:
   - Alamofire
   - Cartography
+  - Quack
   - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: f11d8624a05f5d39e0c99309b3e600a3ba64298a
   Cartography: 70af183a248547694a8cfaa6b989cb7e04589985
+  Quack: f7dbe3f6257335837946a728da49109d32bce1a2
   SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
 
-PODFILE CHECKSUM: d0b900a9472be4514a53f5bf82d4d7e534be3fb6
+PODFILE CHECKSUM: 997e9a9eb007bcf2a11ca40018882731dd5910ea
 
 COCOAPODS: 1.0.1

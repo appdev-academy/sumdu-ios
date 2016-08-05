@@ -58,6 +58,14 @@ protocol ParserScheduleDelegate {
         - parameter url:  generated calendar url
     */
     func getCalendar(url: NSURL?)
+    
+    /**
+        Return error string if request fails
+     
+        - parameter parser: Entity of parser
+        - parameter localizedError: Error string
+     */
+    func scheduleRequestError(parser: Parser, localizedError error: String?)
 }
 
 /// Protocol for Parser (returns JSON for Auditoriums, Groups or Teachers)
@@ -69,6 +77,14 @@ protocol ParserDataListDelegate {
         - parameter requestType:  type of related request
     */
     func getRelatedData(response: JSON, requestType: ListDataType)
+    
+    /**
+        Return error string if request fails
+     
+        - parameter parser: Entity of parser
+        - parameter localizedError: Error string
+    */
+    func requestError(parser: Parser, localizedError error: String?)
 }
 
 // MARK: - Parser class
@@ -248,7 +264,7 @@ class Parser {
                 let response = JSON(resultValue)
                 self.scheduleDelegate?.getSchedule(response)
             } else {
-                // Show error
+                self.scheduleDelegate?.scheduleRequestError(self, localizedError: response.result.error?.localizedDescription)
             }
         }
     }
@@ -268,13 +284,11 @@ class Parser {
                 let defaults = NSUserDefaults.standardUserDefaults()
                 defaults.setObject(NSDate(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
                 defaults.synchronize()
+                let response = JSON(resultValue)
+                self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
                 
-                dispatch_async(dispatch_get_main_queue(), {
-                    let response = JSON(resultValue)
-                    self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
-                })
             } else {
-                // Show error
+                self.dataListDelegate?.requestError(self, localizedError: response.result.error?.localizedDescription)
             }
         }
     }
@@ -283,9 +297,10 @@ class Parser {
         Manually cancel the Schedule request
     */
     func cancelScheduleRequest() {
-        if let request = scheduleRequest {
-            request.cancel()
+        if scheduleRequest != nil {
+            scheduleRequest?.cancel()
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+            scheduleRequest = nil
         }
     }
 }

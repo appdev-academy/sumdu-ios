@@ -8,6 +8,7 @@
 
 import Cartography
 import UIKit
+import Quack
 import SwiftyJSON
 
 class ScheduleViewController: UIViewController {
@@ -18,7 +19,7 @@ class ScheduleViewController: UIViewController {
     private var listData: ListData?
     
     /// Object of Parser class
-    private var parser = Parser()
+    var parser = Parser()
     
     /// Schedule records separated by sections
     private var recordsBySection: [Section] = [] {
@@ -29,12 +30,6 @@ class ScheduleViewController: UIViewController {
     
     /// URL for add schedule events to calendar
     private var calendarURL: NSURL?
-    
-    /// Load Schedule data from storage or from server
-    private var loadFromStorage = false
-    
-    /// Show empty data
-    private var emptySelection = false
     
     // MARK: - UI objects
     
@@ -53,15 +48,6 @@ class ScheduleViewController: UIViewController {
     
     init() {
         super.init(nibName: nil, bundle: nil)
-        
-        emptySelection = true
-    }
-    
-    init(data: ListData, fromStorage: Bool = false) {
-        super.init(nibName: nil, bundle: nil)
-        
-        listData = data
-        loadFromStorage = fromStorage
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
@@ -124,7 +110,6 @@ class ScheduleViewController: UIViewController {
             shareButton.width == ShareButton.buttonSize.width
         }
         // Title
-        if let data = listData { titleLabel.text = data.name }
         titleLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 26.0)
         titleLabel.textColor = Color.textBlack
         titleLabel.numberOfLines = 0
@@ -155,6 +140,7 @@ class ScheduleViewController: UIViewController {
         scheduleTableView.tableFooterView = UIView()
         
         // Information
+        informationLabel.text = NSLocalizedString("Sorry. There are no results for your request.", comment: "")
         informationLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20.0)
         informationLabel.textColor = Color.textNormal
         informationLabel.textAlignment = .Center
@@ -168,45 +154,71 @@ class ScheduleViewController: UIViewController {
             informationLabel.trailing == superview.trailing - 20.0
             informationLabel.centerY == superview.centerY
         }
-        informationLabel.text = NSLocalizedString("Sorry. There are no results for your request.", comment: "")
-        informationLabel.hidden = true
         
         // Indicator
         view.addSubview(activityIndicatorView)
         constrain(activityIndicatorView, view) { activityIndicatorView, superview in
             activityIndicatorView.center == superview.center
         }
-        
-        if emptySelection {
-            informationLabel.text = NSLocalizedString("No selection.", comment: "")
-            informationLabel.hidden = false
+    }
+    
+    private func updateTitleText() {
+        if let data = listData {
+            titleLabel.text = data.name
         } else {
-            if loadFromStorage {
-                if let data = listData { recordsBySection = Section.loadData(UserDefaultsKey.scheduleKey(data)) }
-                // Empty data
-                if recordsBySection.count == 0 {
-                    informationLabel.hidden = false
-                    scheduleTableView.hidden = true
-                }
-            } else {
-                // Send request
-                UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-                activityIndicatorView.startAnimating()
-                parser.sendScheduleRequest(listData)
-            }
+            titleLabel.text = ""
         }
     }
     
     // MARK: - Actions
     
+    /**
+        Update data and UI in controller from storage
+    */
+    func updateFromStorage(withItem dataItem: ListData) {
+        listData = dataItem
+        
+        // Load data
+        recordsBySection = Section.loadData(UserDefaultsKey.scheduleKey(dataItem))
+        
+        // Update UI
+        if recordsBySection.count == 0 {
+            informationLabel.hidden = false
+            scheduleTableView.hidden = true
+        } else {
+            informationLabel.hidden = true
+            scheduleTableView.hidden = false
+        }
+        updateTitleText()
+    }
+    
+    /**
+        Update data and UI in controller from server
+    */
+    func updateFromServer(withItem item: ListData) {
+        listData = item
+        
+        // Update UI
+        informationLabel.hidden = true
+        scheduleTableView.hidden = true
+        updateTitleText()
+        
+        // Send request
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        activityIndicatorView.startAnimating()
+        parser.sendScheduleRequest(listData)
+    }
+    
     func backButtonPressed() {
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            parser.cancelScheduleRequest()
             navigationController?.popViewControllerAnimated(true)
         }
     }
     
     /// Refresh schedule table
     func refreshButtonPressed() {
+        parser.cancelScheduleRequest()
         parser.sendScheduleRequest(listData)
     }
     
@@ -321,11 +333,16 @@ extension ScheduleViewController: ParserScheduleDelegate {
                 // Append to array of sections
                 forRecordsBySection.append(Section(date: singleDate, records: scheduleRecordsInSection))
             }
+            // Update UI
+            informationLabel.hidden = true
+            scheduleTableView.hidden = false
+            
             // Move data from temporary var to public
             recordsBySection = forRecordsBySection
             // Save data to persistent storage
             if let data = listData { Section.saveData(recordsBySection, forKey: UserDefaultsKey.scheduleKey(data)) }
         } else {
+            // Empty data
             informationLabel.hidden = false
             scheduleTableView.hidden = true
         }
@@ -334,8 +351,13 @@ extension ScheduleViewController: ParserScheduleDelegate {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
     }
     
-    /// Get calendar URL
     func getCalendar(url: NSURL?) {
         calendarURL = url
+    }
+    
+    func scheduleRequestError(parser: Parser, localizedError error: String?) {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        activityIndicatorView.stopAnimating()
+        showAlert(title: NSLocalizedString("Error", comment: ""), message: error)
     }
 }
