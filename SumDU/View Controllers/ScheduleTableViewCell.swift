@@ -129,7 +129,7 @@ class ScheduleTableViewCell: UITableViewCell {
     func update(withSchedule schedule: Schedule) {
         // Name
         var name = schedule.pairName
-        if schedule.pairType.characters.count > 0 { name += "(" + schedule.pairType + ")" }
+        if schedule.pairType.characters.count > 0 { name += " (" + schedule.pairType + ")" }
         nameLabel.text = name
         // Time
         timeLabel.text = schedule.pairTime
