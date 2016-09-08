@@ -19,6 +19,9 @@ class SearchViewController: UIViewController {
     
     // MARK: - Variables
     
+    private var contentTableView: UITableView?
+    private var tableViewContentInset = UIEdgeInsetsZero
+    
     /// Previous scroll point of the content collection view
     private var previousScrollPoint: CGFloat = 0.0
     
@@ -51,6 +54,8 @@ class SearchViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        registerForNotifications()
         
         // Data
         parser.dataListDelegate = self
@@ -90,6 +95,10 @@ class SearchViewController: UIViewController {
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             contentCollectionView.collectionViewLayout.invalidateLayout()
         }
+    }
+    
+    deinit {
+        self.deregisterFromNotifications()
     }
     
     // MARK: - Helpers
@@ -233,6 +242,37 @@ class SearchViewController: UIViewController {
     private func reloadCurrentContent() {
         let indexPath = NSIndexPath(forItem: model.currentState.rawValue, inSection: 0)
         contentCollectionView.reloadItemsAtIndexPaths([indexPath])
+        updateTableContentInset()
+    }
+    
+    private func updateTableContentInset() {
+        contentTableView?.contentInset = tableViewContentInset
+        contentTableView?.scrollIndicatorInsets = tableViewContentInset
+    }
+    
+    // MARK: - Notifications
+    
+    private func registerForNotifications() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    private func deregisterFromNotifications() {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        if let userInfo = notification.userInfo {
+            if let keyboardSize: CGSize = userInfo[UIKeyboardFrameEndUserInfoKey]?.CGRectValue.size {
+                tableViewContentInset = UIEdgeInsetsMake(0.0, 0.0, keyboardSize.height,  0.0);
+                updateTableContentInset()
+            }
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        tableViewContentInset = UIEdgeInsetsZero
+        updateTableContentInset()
     }
 }
 
@@ -306,6 +346,7 @@ extension SearchViewController: UICollectionViewDataSource {
                 cell.contentTableView.delegate = self
                 cell.contentTableView.dataSource = self
                 cell.contentTableView.reloadData()
+                contentTableView = cell.contentTableView
                 if model.currentData.count == 0 && model.searchMode {
                     cell.showEmptySearch()
                 } else {
