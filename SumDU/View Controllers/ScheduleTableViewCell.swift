@@ -73,7 +73,7 @@ class ScheduleTableViewCell: UITableViewCell {
             timeLabel.height == 21.0
         }
         // Dot
-        dotImageView.image = UIImage(named: "Oval")
+        dotImageView.image = UIImage(named: "dot")
         dotImageView.contentMode = .ScaleAspectFill
         dotImageView.clipsToBounds = true
         contentView.addSubview(dotImageView)

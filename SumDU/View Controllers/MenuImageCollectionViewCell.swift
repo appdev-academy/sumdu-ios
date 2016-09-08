@@ -27,8 +27,8 @@ class MenuImageCollectionViewCell: UICollectionViewCell {
     
     // MARK: - UI objects
     
-    private let activeHistoryImage = UIImage(named:"activeHistory")
-    private let inactiveHistoryImage = UIImage(named:"inactiveHistory")
+    private let activeHistoryImage = UIImage(named:"history_pressed")
+    private let inactiveHistoryImage = UIImage(named:"history_normal")
     private let historyImageView = UIImageView()
     
     // MARK: - Initialization

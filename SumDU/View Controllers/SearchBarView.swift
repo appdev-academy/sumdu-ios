@@ -90,7 +90,7 @@ class SearchBarView: UIView {
             searchContainer.bottom == superview.bottom
         }
         // Magnifying glass
-        imageView.image = UIImage(named: "MagnifyingGlass")
+        imageView.image = UIImage(named: "search_normal")
         imageView.contentMode = .ScaleAspectFit
         imageView.layer.zPosition = 2.0
         searchContainer.addSubview(imageView)
@@ -120,7 +120,8 @@ class SearchBarView: UIView {
         // Cancel
         cancelButton.hidden = true
         cancelButton.addTarget(self, action: #selector(cancelButtonPressed), forControlEvents: .TouchUpInside)
-        cancelButton.setImage(UIImage(named: "InactiveCancelButton"), forState: .Normal)
+        cancelButton.setImage(UIImage(named: "cancel_normal"), forState: .Normal)
+        cancelButton.setImage(UIImage(named: "cancel_pressed"), forState: .Selected)
         containerForButtons.addSubview(cancelButton)
         constrain(cancelButton, containerForButtons) { cancelBarButton, superview in
             cancelBarButton.edges == superview.edges
