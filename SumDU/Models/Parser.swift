@@ -292,15 +292,4 @@ class Parser {
             }
         }
     }
-    
-    /**
-        Manually cancel the Schedule request
-    */
-    func cancelScheduleRequest() {
-        if scheduleRequest != nil {
-            scheduleRequest?.cancel()
-            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-            scheduleRequest = nil
-        }
-    }
 }

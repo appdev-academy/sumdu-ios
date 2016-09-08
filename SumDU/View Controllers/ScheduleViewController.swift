@@ -211,14 +211,12 @@ class ScheduleViewController: UIViewController {
     
     func backButtonPressed() {
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            parser.cancelScheduleRequest()
             navigationController?.popViewControllerAnimated(true)
         }
     }
     
     /// Refresh schedule table
     func refreshButtonPressed() {
-        parser.cancelScheduleRequest()
         parser.sendScheduleRequest(listData)
     }
     
