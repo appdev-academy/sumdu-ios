@@ -285,11 +285,13 @@ extension SearchViewController: SearchBarViewDelegate {
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
+        contentTableView?.setContentOffset(contentTableView?.contentOffset ?? CGPointZero, animated: false)
         model.searchText = text
         reloadCurrentContent()
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
+        contentTableView?.setContentOffset(contentTableView?.contentOffset ?? CGPointZero, animated: false)
         model.searchMode = searchMode
         reloadCurrentContent()
     }
