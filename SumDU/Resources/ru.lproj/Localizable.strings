@@ -1,12 +1,27 @@
 /* No comment provided by engineer. */
-" for " = " для ";
+"Auditorium" = "Аудитория";
 
 /* No comment provided by engineer. */
-"Done" = "Готово";
+"Error" = "Ошибка";
 
 /* No comment provided by engineer. */
-"Please, check your network connection or try again later" = "Пожалуйста, проверьте ваше подключение к сети или попробуйте обновить позже";
+"Group" = "Группа";
 
 /* No comment provided by engineer. */
-"Pull to refresh" = "Потяните для обновления";
+"History is empty" = "История пуста";
+
+/* No comment provided by engineer. */
+"No data found" = "Данные не найдены";
+
+/* No comment provided by engineer. */
+"Search" = "Поиск";
+
+/* No comment provided by engineer. */
+"Sorry. There are no results for your request." = "Извините. По вашему запросу ничего не найдено.";
+
+/* No comment provided by engineer. */
+"Swipe the screen left and right to navigate between the main sections and the search schedule" = "Листайте влево и вправо для перемещения между основными разделами и поиска расписания";
+
+/* No comment provided by engineer. */
+"Teacher" = "Преподаватель";
 

@@ -100,6 +100,10 @@
 		DE4F83441D3E2BBB00926328 /* EmptyHistoryCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyHistoryCollectionViewCell.swift; sourceTree = "<group>"; };
 		DE5533E31D3393EA0016AC67 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleSectionHeaderView.swift; sourceTree = "<group>"; };
+		DE769A4C1D81B40D00B07A6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DE769A4D1D81B4B900B07A6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DE769A4E1D81B4BB00B07A6C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DE769A4F1D81B4D700B07A6C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewCell.swift; sourceTree = "<group>"; };
 		E19526A21C3E5C3B008AD541 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		E1CD3B491C5CB88D0028B9A0 /* ScheduleCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCoder.swift; sourceTree = "<group>"; };
@@ -609,6 +613,8 @@
 			children = (
 				B4E40A7C1C5CEC9B0057E53D /* ru */,
 				B4E40A851C5CECD40057E53D /* uk */,
+				DE769A4C1D81B40D00B07A6C /* Base */,
+				DE769A4F1D81B4D700B07A6C /* en */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -618,6 +624,8 @@
 			children = (
 				B4E40A811C5CEC9B0057E53D /* ru */,
 				B4E40A861C5CECD40057E53D /* uk */,
+				DE769A4D1D81B4B900B07A6C /* Base */,
+				DE769A4E1D81B4BB00B07A6C /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

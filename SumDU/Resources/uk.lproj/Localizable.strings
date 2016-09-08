@@ -1,12 +1,27 @@
 /* No comment provided by engineer. */
-" for " = " для ";
+"Auditorium" = "Аудиторія";
 
 /* No comment provided by engineer. */
-"Done" = "Готово";
+"Error" = "Помилка";
 
 /* No comment provided by engineer. */
-"Please, check your network connection or try again later" = "Перевірте ваше підключення до мережі або спробуйте пізніше";
+"Group" = "Група";
 
 /* No comment provided by engineer. */
-"Pull to refresh" = "Потягніть для оновлення";
+"History is empty" = "Історія порожня";
+
+/* No comment provided by engineer. */
+"No data found" = "Даних не знайдено";
+
+/* No comment provided by engineer. */
+"Search" = "Пошук";
+
+/* No comment provided by engineer. */
+"Sorry. There are no results for your request." = "Вибачте. За вашим запитом нічого не знайдено.";
+
+/* No comment provided by engineer. */
+"Swipe the screen left and right to navigate between the main sections and the search schedule" = "Гортайте вліво та вправо щоб переміщатися між основними розділами та шукати розклад";
+
+/* No comment provided by engineer. */
+"Teacher" = "Викладач";
 
