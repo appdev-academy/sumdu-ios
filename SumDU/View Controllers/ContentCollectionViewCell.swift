@@ -34,7 +34,9 @@ class ContentCollectionViewCell: UICollectionViewCell {
         contentTableView.registerClass(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
         contentTableView.separatorStyle = .None
         contentView.addSubview(contentTableView)
-        constrain(contentTableView, contentView) { contentTableView, superview in
+        constrain(contentTableView, contentView) {
+            contentTableView, superview in
+            
             contentTableView.edges == superview.edges
         }
         

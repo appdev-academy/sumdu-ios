@@ -241,7 +241,13 @@ class SearchViewController: UIViewController {
     /// Reload current cell with content
     private func reloadCurrentContent() {
         let indexPath = NSIndexPath(forItem: model.currentState.rawValue, inSection: 0)
-        contentCollectionView.reloadItemsAtIndexPaths([indexPath])
+        let cell = contentCollectionView.cellForItemAtIndexPath(indexPath) as? ContentCollectionViewCell
+        if model.currentData.count == 0 && model.searchMode {
+            cell?.showEmptySearch()
+        } else {
+            cell?.showContent()
+        }
+        contentTableView?.reloadData()
         updateTableContentInset()
     }
     
@@ -285,13 +291,11 @@ extension SearchViewController: SearchBarViewDelegate {
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
-        contentTableView?.setContentOffset(contentTableView?.contentOffset ?? CGPointZero, animated: false)
         model.searchText = text
         reloadCurrentContent()
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
-        contentTableView?.setContentOffset(contentTableView?.contentOffset ?? CGPointZero, animated: false)
         model.searchMode = searchMode
         reloadCurrentContent()
     }
