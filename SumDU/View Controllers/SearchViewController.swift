@@ -502,8 +502,12 @@ extension SearchViewController: ParserDataListDelegate {
         if UIApplication.shared.isNetworkActivityIndicatorVisible {
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
         }
-        // TODO: Show alert
-//        showAlert(title: NSLocalizedString("Error", comment: ""), message: error)
+        // Create alert
+        let alertController = UIAlertController(title: NSLocalizedString("Error", comment: ""), message: error, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK button title in alerts"), style: .default, handler: nil))
+        
+        // Present alert
+        present(alertController, animated: true, completion: nil)
     }
 }
 
