@@ -10,15 +10,15 @@ import Foundation
 
 enum State: Int {
     case favorites
-    case teachers
     case groups
+    case teachers
     case auditoriums
     
     var name: String {
         switch self {
-        case .favorites: return "Favorites"
-        case .teachers: return NSLocalizedString("Teacher", comment: "")
+        case .favorites: return ""
         case .groups: return NSLocalizedString("Group", comment: "")
+        case .teachers: return NSLocalizedString("Teacher", comment: "")
         case .auditoriums: return NSLocalizedString("Auditorium", comment: "")
         }
     }

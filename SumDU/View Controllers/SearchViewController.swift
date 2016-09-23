@@ -210,14 +210,14 @@ class SearchViewController: UIViewController {
             leading = spacing/2
             width = historyImageWidth
             
-        case .teachers:
+        case .groups:
             leading = spacing + spacing/2
             leading += historyImageWidth
             
-        case .groups:
+        case .teachers:
             leading = spacing*2 + spacing/2
             leading += historyImageWidth
-            leading += labelWidth(State.teachers.name)
+            leading += labelWidth(State.groups.name)
             
         case .auditoriums:
             leading = spacing*3 + spacing/2
@@ -308,7 +308,7 @@ extension SearchViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // Menu
         if collectionView == menuCollectionView {
-            if let current = State(rawValue: (indexPath as NSIndexPath).row) {
+            if let current = State(rawValue: indexPath.row) {
                 model.currentState = current
                 
                 // Update menu
@@ -333,7 +333,7 @@ extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         // Menu
         if collectionView == menuCollectionView {
-            if (indexPath as NSIndexPath).row != 0, let segment = State(rawValue: (indexPath as NSIndexPath).row) {
+            if indexPath.row != 0, let segment = State(rawValue: indexPath.row) {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCollectionViewCell.reuseIdentifier, for: indexPath) as! MenuCollectionViewCell
                 cell.update(withTitle: segment.name)
                 return cell
@@ -343,7 +343,7 @@ extension SearchViewController: UICollectionViewDataSource {
             }
         } else {
             // Content
-            if (indexPath as NSIndexPath).row == 0 && model.history.count == 0 {
+            if indexPath.row == 0 && model.history.count == 0 {
                 // Empty history
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyHistoryCollectionViewCell.reuseIdentifier, for: indexPath) as! EmptyHistoryCollectionViewCell
                 return cell
@@ -378,7 +378,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         // Menu
-        if collectionView == menuCollectionView, let type = State(rawValue: (indexPath as NSIndexPath).row) {
+        if collectionView == menuCollectionView, let type = State(rawValue: indexPath.row) {
             let spacing = interItemSpacing()
             let cellHeight = MenuCollectionViewCell.cellHeight
             switch type {
@@ -429,7 +429,7 @@ extension SearchViewController: UIScrollViewDelegate {
         // Update state
         let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
         let indexPath = IndexPath(item: Int(pageNumber), section: 0)
-        if let state = State(rawValue: (indexPath as NSIndexPath).row) { model.currentState = state }
+        if let state = State(rawValue: indexPath.row) { model.currentState = state }
         // Update menu
         updateMenuScrollIndicator()
         UIView.animate(withDuration: 0.3, animations: view.layoutIfNeeded)
@@ -522,7 +522,7 @@ extension SearchViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as! SearchTableViewCell
         
-        cell.update(with: model.currentData[(indexPath as NSIndexPath).section].records[(indexPath as NSIndexPath).row], search: model.searchMode, searchingText: model.searchText)
+        cell.update(with: model.currentData[indexPath.section].records[indexPath.row], search: model.searchMode, searchingText: model.searchText)
         return cell
     }
 }
@@ -547,7 +547,7 @@ extension SearchViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let dataItem = model.currentData[(indexPath as NSIndexPath).section].records[(indexPath as NSIndexPath).row]
+        let dataItem = model.currentData[indexPath.section].records[indexPath.row]
         
         // For iPad
         if UIDevice.current.userInterfaceIdiom == .pad {
