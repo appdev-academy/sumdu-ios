@@ -48,7 +48,7 @@ struct ListData {
             return nil
         }
         
-        if let name = json[ResponseLabel.Label.rawValue].string where name.characters.count > 0 {
+        if let name = json[ResponseLabel.Label.rawValue].string, name.characters.count > 0 {
             self.name = name
         } else {
             return nil
@@ -70,11 +70,11 @@ struct ListData {
 extension ListData {
     
     /// Function which loads ListData entities from NSUserDefaults class
-    static func loadFromStorage(forKey: String) -> [ListData] {
+    static func loadFromStorage(_ forKey: String) -> [ListData] {
         var listDataRecords: [ListData] = []
         
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let listDataCoder = userDefaults.dataForKey(forKey), listDataArray = NSKeyedUnarchiver.unarchiveObjectWithData(listDataCoder) as? [ListDataCoder] {
+        let userDefaults = UserDefaults.standard
+        if let listDataCoder = userDefaults.data(forKey: forKey), let listDataArray = NSKeyedUnarchiver.unarchiveObject(with: listDataCoder) as? [ListDataCoder] {
             
             for listDataStruct in listDataArray {
                 if let listData = listDataStruct.listData {
@@ -86,14 +86,14 @@ extension ListData {
     }
     
     /// Function which stores ListData entities using NSUserDefaults class
-    static func saveToStorage(listDataObject: [ListData], forKey: String) {
+    static func saveToStorage(_ listDataObject: [ListData], forKey: String) {
         var listDataCoders: [ListDataCoder] = []
         for listDataRecord in listDataObject {
             listDataCoders.append(listDataRecord.listDataCoder)
         }
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
-        userDefaults.setObject(data, forKey: forKey)
+        let userDefaults = UserDefaults.standard
+        let data = NSKeyedArchiver.archivedData(withRootObject: listDataCoders)
+        userDefaults.set(data, forKey: forKey)
     }
     
     /// Get ListData objects from JSON with ListDataType
@@ -106,29 +106,29 @@ extension ListData {
                 }
             }
         }
-        let sortedRecords = result.sort {$0.name.localizedCaseInsensitiveCompare($1.name) == NSComparisonResult.OrderedAscending}
+        let sortedRecords = result.sorted {$0.name.localizedCaseInsensitiveCompare($1.name) == ComparisonResult.orderedAscending}
         return sortedRecords
     }
     
     /// Function which stores ListData entity
-    static func saveObject(listDataObject: ListData?, forKey: String) {
+    static func saveObject(_ listDataObject: ListData?, forKey: String) {
         var listDataCoders: [ListDataCoder] = []
         if let lisData = listDataObject {
             listDataCoders.append(lisData.listDataCoder)
-            let userDefaults = NSUserDefaults.standardUserDefaults()
-            let data = NSKeyedArchiver.archivedDataWithRootObject(listDataCoders)
-            userDefaults.setObject(data, forKey: forKey)
+            let userDefaults = UserDefaults.standard
+            let data = NSKeyedArchiver.archivedData(withRootObject: listDataCoders)
+            userDefaults.set(data, forKey: forKey)
         }
     }
     
     /// Function which loads ListData entity
-    static func loadObject(forKey: String) -> ListData? {
+    static func loadObject(_ forKey: String) -> ListData? {
         var listDataRecord: ListData?
         
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let listDataCoder = userDefaults.dataForKey(forKey) {
+        let userDefaults = UserDefaults.standard
+        if let listDataCoder = userDefaults.data(forKey: forKey) {
             
-            if let listData = NSKeyedUnarchiver.unarchiveObjectWithData(listDataCoder) as? ListDataCoder {
+            if let listData = NSKeyedUnarchiver.unarchiveObject(with: listDataCoder) as? ListDataCoder {
                 listDataRecord = listData.listData!
                 return listDataRecord
             }

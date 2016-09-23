@@ -8,6 +8,26 @@
 
 import Cartography
 import UIKit
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 protocol SearchBarViewDelegate {
     func refreshContent(searchBarView view: SearchBarView)
@@ -25,19 +45,19 @@ class SearchBarView: UIView {
     
     var delegate: SearchBarViewDelegate?
     
-    private var isEditingMode = false {
+    fileprivate var isEditingMode = false {
         didSet {
             delegate?.searchBarView(searchBarView: self, searchMode: isEditingMode)
             if isEditingMode {
-                refreshButton.hidden = true
-                cancelButton.hidden = false
+                refreshButton.isHidden = true
+                cancelButton.isHidden = false
                 cancelButton.alpha = 0.0
             } else {
-                cancelButton.hidden = true
-                refreshButton.hidden = false
+                cancelButton.isHidden = true
+                refreshButton.isHidden = false
                 refreshButton.alpha = 0.0
             }
-            UIView.animateWithDuration(0.5, animations: {
+            UIView.animate(withDuration: 0.5, animations: {
                 if self.isEditingMode {
                     self.cancelButton.alpha = 1.0
                 } else {
@@ -50,14 +70,14 @@ class SearchBarView: UIView {
     // MARK: - UIObjects
     
     // Left
-    private let searchContainer = UIView()
-    private let textField = SearchTextField()
-    private let imageView = UIImageView()
+    fileprivate let searchContainer = UIView()
+    fileprivate let textField = SearchTextField()
+    fileprivate let imageView = UIImageView()
     
     // Right
-    private let containerForButtons = UIView()
-    private let refreshButton = RefreshButton()
-    private let cancelButton = UIButton()
+    fileprivate let containerForButtons = UIView()
+    fileprivate let refreshButton = RefreshButton()
+    fileprivate let cancelButton = UIButton()
     
     // MARK: - Initialization
     
@@ -91,7 +111,7 @@ class SearchBarView: UIView {
         }
         // Magnifying glass
         imageView.image = UIImage(named: "search_normal")
-        imageView.contentMode = .ScaleAspectFit
+        imageView.contentMode = .scaleAspectFit
         imageView.layer.zPosition = 2.0
         searchContainer.addSubview(imageView)
         constrain(imageView, searchContainer) { imageView, superview in
@@ -112,16 +132,16 @@ class SearchBarView: UIView {
             textField.centerY == superview.centerY
         }
         // Refresh
-        refreshButton.addTarget(self, action: #selector(refreshButtonPressed), forControlEvents: .TouchUpInside)
+        refreshButton.addTarget(self, action: #selector(refreshButtonPressed), for: .touchUpInside)
         containerForButtons.addSubview(refreshButton)
         constrain(refreshButton, containerForButtons) { refreshBarButton, superview in
             refreshBarButton.edges == superview.edges
         }
         // Cancel
-        cancelButton.hidden = true
-        cancelButton.addTarget(self, action: #selector(cancelButtonPressed), forControlEvents: .TouchUpInside)
-        cancelButton.setImage(UIImage(named: "cancel_normal"), forState: .Normal)
-        cancelButton.setImage(UIImage(named: "cancel_pressed"), forState: .Selected)
+        cancelButton.isHidden = true
+        cancelButton.addTarget(self, action: #selector(cancelButtonPressed), for: .touchUpInside)
+        cancelButton.setImage(UIImage(named: "cancel_normal"), for: UIControlState())
+        cancelButton.setImage(UIImage(named: "cancel_pressed"), for: .selected)
         containerForButtons.addSubview(cancelButton)
         constrain(cancelButton, containerForButtons) { cancelBarButton, superview in
             cancelBarButton.edges == superview.edges
@@ -144,11 +164,11 @@ class SearchBarView: UIView {
 
 extension SearchBarView: UITextFieldDelegate {
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         isEditingMode = true
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         if textField.text?.characters.count > 0 {
             isEditingMode = true
         } else {
@@ -156,14 +176,14 @@ extension SearchBarView: UITextFieldDelegate {
         }
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
     
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-        var newText: NSString = textField.text ?? ""
-        newText = newText.stringByReplacingCharactersInRange(range, withString: string)
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        var newText: NSString = textField.text as NSString? ?? ""
+        newText = newText.replacingCharacters(in: range, with: string) as NSString
         delegate?.searchBarView(searchBarView: self, searchWithText: newText as String)
         return true
     }

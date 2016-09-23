@@ -33,11 +33,11 @@
 		DE4F83451D3E2BBB00926328 /* EmptyHistoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4F83441D3E2BBB00926328 /* EmptyHistoryCollectionViewCell.swift */; };
 		DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5533E31D3393EA0016AC67 /* SearchViewController.swift */; };
 		DE65F6371D3786470040A00D /* ScheduleSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */; };
+		DE8517C81D956C98001942B2 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8517C71D956C98001942B2 /* Date.swift */; };
 		E17F12291C2F1C09001AB284 /* ScheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17F12281C2F1C09001AB284 /* ScheduleTableViewCell.swift */; };
 		E19526A31C3E5C3B008AD541 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19526A21C3E5C3B008AD541 /* Section.swift */; };
 		E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD3B491C5CB88D0028B9A0 /* ScheduleCoder.swift */; };
 		E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA623A1C26A71400584099 /* ScheduleViewController.swift */; };
-		E40668B31C3EF6400011EF25 /* NSDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40668B21C3EF6400011EF25 /* NSDate.swift */; };
 		E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */; };
 		E4583E951C25495F0031F164 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4583E941C25495F0031F164 /* Keys.swift */; };
 		E45B9D2C1CDE7B3200B4467B /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E45B9D2B1CDE7B3200B4467B /* SearchTableViewCell.swift */; };
@@ -104,11 +104,11 @@
 		DE769A4D1D81B4B900B07A6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DE769A4E1D81B4BB00B07A6C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DE769A4F1D81B4D700B07A6C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DE8517C71D956C98001942B2 /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewCell.swift; sourceTree = "<group>"; };
 		E19526A21C3E5C3B008AD541 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		E1CD3B491C5CB88D0028B9A0 /* ScheduleCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCoder.swift; sourceTree = "<group>"; };
 		E1DA623A1C26A71400584099 /* ScheduleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
-		E40668B21C3EF6400011EF25 /* NSDate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDate.swift; sourceTree = "<group>"; };
 		E43B299D1C1B7B10007DB3B0 /* ListDataCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDataCoder.swift; sourceTree = "<group>"; };
 		E4583E941C25495F0031F164 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
 		E45B9D2B1CDE7B3200B4467B /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
@@ -218,10 +218,11 @@
 		7D181E2A1C006D96000C04B5 /* SumDU */ = {
 			isa = PBXGroup;
 			children = (
+				7D07F8161C099C56007DF3FD /* App Delegate */,
 				DE4CF0791D367E9F000F9199 /* Components */,
 				E4583E931C25494A0031F164 /* Constants */,
+				DE8517C61D956C98001942B2 /* Extensions */,
 				B4EEB8231C5A153800879965 /* Helpers */,
-				7D07F8161C099C56007DF3FD /* App Delegate */,
 				7D07F8211C099CAF007DF3FD /* Models */,
 				7D07F8181C099C56007DF3FD /* Resources */,
 				7D07F81B1C099C56007DF3FD /* View Controllers */,
@@ -334,11 +335,18 @@
 			name = Content;
 			sourceTree = "<group>";
 		};
+		DE8517C61D956C98001942B2 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DE8517C71D956C98001942B2 /* Date.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		E4583E931C25494A0031F164 /* Constants */ = {
 			isa = PBXGroup;
 			children = (
 				E4583E941C25495F0031F164 /* Keys.swift */,
-				E40668B21C3EF6400011EF25 /* NSDate.swift */,
 				DE4CF07F1D36855F000F9199 /* Colors.swift */,
 			);
 			path = Constants;
@@ -410,19 +418,21 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 0710;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "App Dev Academy";
 				TargetAttributes = {
 					7D181E271C006D96000C04B5 = {
 						CreatedOnToolsVersion = 7.1.1;
-						DevelopmentTeam = CBGX48BZ8F;
+						LastSwiftMigration = 0800;
 					};
 					7D181E3B1C006D96000C04B5 = {
 						CreatedOnToolsVersion = 7.1.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = 7D181E271C006D96000C04B5;
 					};
 					7D181E461C006D96000C04B5 = {
 						CreatedOnToolsVersion = 7.1.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = 7D181E271C006D96000C04B5;
 					};
 				};
@@ -545,7 +555,6 @@
 				DE2953BE1D338B8C00304901 /* SearchTextField.swift in Sources */,
 				E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */,
 				E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */,
-				E40668B31C3EF6400011EF25 /* NSDate.swift in Sources */,
 				DE4CF07E1D3684C1000F9199 /* FontManager.swift in Sources */,
 				DE2953BC1D338B8C00304901 /* MenuCollectionViewCell.swift in Sources */,
 				DE4F83451D3E2BBB00926328 /* EmptyHistoryCollectionViewCell.swift in Sources */,
@@ -555,6 +564,7 @@
 				7D07F81D1C099C56007DF3FD /* AppDelegate.swift in Sources */,
 				DE4CF0841D368EC0000F9199 /* RefreshButton.swift in Sources */,
 				E4B3E0FA1C68F7C2005B8103 /* SectionCoder.swift in Sources */,
+				DE8517C81D956C98001942B2 /* Date.swift in Sources */,
 				E45B9D2C1CDE7B3200B4467B /* SearchTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -638,6 +648,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -647,8 +658,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -670,7 +683,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -683,6 +696,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -692,8 +706,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -709,9 +725,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -721,17 +738,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FB032204C3608C736FD14CED /* Pods-SumDU App-SumDU.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/SumDU/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Maksym.Skliarov.SumDU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -739,17 +759,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 39F26E60412F76F92FD02551 /* Pods-SumDU App-SumDU.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/SumDU/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Maksym.Skliarov.SumDU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -761,6 +784,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.iosonrails.SumDUTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SumDU.app/SumDU";
 			};
 			name = Debug;
@@ -773,6 +797,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.iosonrails.SumDUTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SumDU.app/SumDU";
 			};
 			name = Release;
@@ -784,6 +809,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.iosonrails.SumDUUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = SumDU;
 				USES_XCTRUNNER = YES;
 			};
@@ -796,6 +822,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.iosonrails.SumDUUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = SumDU;
 				USES_XCTRUNNER = YES;
 			};

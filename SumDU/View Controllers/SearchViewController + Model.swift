@@ -9,17 +9,17 @@
 import Foundation
 
 enum State: Int {
-    case Favorites
-    case Teachers
-    case Groups
-    case Auditoriums
+    case favorites
+    case teachers
+    case groups
+    case auditoriums
     
     var name: String {
         switch self {
-        case .Favorites: return "Favorites"
-        case .Teachers: return NSLocalizedString("Teacher", comment: "")
-        case .Groups: return NSLocalizedString("Group", comment: "")
-        case .Auditoriums: return NSLocalizedString("Auditorium", comment: "")
+        case .favorites: return "Favorites"
+        case .teachers: return NSLocalizedString("Teacher", comment: "")
+        case .groups: return NSLocalizedString("Group", comment: "")
+        case .auditoriums: return NSLocalizedString("Auditorium", comment: "")
         }
     }
 }
@@ -62,22 +62,22 @@ struct DataModel {
     // MARK: - Helpers
     
     /// Filter current data with search text
-    private func filterCurrentData() -> [ListData] {
+    fileprivate func filterCurrentData() -> [ListData] {
         var data: [ListData] = []
         switch currentState {
-        case .Auditoriums: data = auditoriums
-        case .Favorites: data = history
-        case .Groups: data = groups
-        case .Teachers: data = teachers
+        case .auditoriums: data = auditoriums
+        case .favorites: data = history
+        case .groups: data = groups
+        case .teachers: data = teachers
         }
-        if let query = searchText where query.characters.count > 0 {
-            data = data.filter { return $0.name.localizedCaseInsensitiveContainsString(query) }
+        if let query = searchText , query.characters.count > 0 {
+            data = data.filter { return $0.name.localizedCaseInsensitiveContains(query) }
         }
         return data
     }
     
     /// Update current data and group by sections
-    private mutating func updateCurrentDataBySections() {
+    fileprivate mutating func updateCurrentDataBySections() {
         // Clear previous data
         currentData = []
         let allData = self.filterCurrentData()
@@ -89,8 +89,8 @@ struct DataModel {
             }
         }
         // Iterate letters
-        let sortedCharacters = uniqueCharacters.sort { (s1, s2) -> Bool in
-            return String(s1).localizedCaseInsensitiveCompare(String(s2)) == .OrderedAscending
+        let sortedCharacters = uniqueCharacters.sorted { (s1, s2) -> Bool in
+            return String(s1).localizedCaseInsensitiveCompare(String(s2)) == .orderedAscending
         }
         for letter in sortedCharacters {
             var sectionRecords: [ListData] = []

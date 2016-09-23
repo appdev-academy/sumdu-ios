@@ -18,15 +18,15 @@ class MenuCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Variables
     
-    override var selected: Bool {
+    override var isSelected: Bool {
         didSet {
-            textLabel.textColor = selected ? Color.textBlack : Color.textLight
+            textLabel.textColor = isSelected ? Color.textBlack : Color.textLight
         }
     }
     
     // MARK: - UI objects
     
-    private let textLabel = UILabel()
+    fileprivate let textLabel = UILabel()
     
     // MARK: - Initialization
     
@@ -37,12 +37,12 @@ class MenuCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         // Background
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         
         // Title
-        textLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
+        textLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 17.0)
         textLabel.textColor = Color.textLight
-        textLabel.textAlignment = .Center
+        textLabel.textAlignment = .center
         contentView.addSubview(textLabel)
         constrain(textLabel, contentView) { textLabel, superview in
             textLabel.edges == superview.edges

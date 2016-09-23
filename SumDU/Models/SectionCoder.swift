@@ -23,7 +23,7 @@ class SectionCoder: NSObject, NSCoding {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        if let date = aDecoder.decodeObjectForKey("title") as? NSDate, scheduleCoders = aDecoder.decodeObjectForKey("records") as? [ScheduleCoder] {
+        if let date = aDecoder.decodeObject(forKey: "title") as? Date, let scheduleCoders = aDecoder.decodeObject(forKey: "records") as? [ScheduleCoder] {
             var scheduleArray: [Schedule] = []
             for scheduleCoder in scheduleCoders {
                 if let currentSchedule = scheduleCoder.schedule {
@@ -36,9 +36,9 @@ class SectionCoder: NSObject, NSCoding {
     
     // MARK: - Public interface
     
-    func encodeWithCoder(aCoder: NSCoder) {
+    func encode(with aCoder: NSCoder) {
         
-        aCoder.encodeObject(self.section?.date, forKey: "title")
+        aCoder.encode(self.section?.date, forKey: "title")
         
         var scheduleCoders: [ScheduleCoder] = []
         if let scheduleArray = self.section?.records {
@@ -47,6 +47,6 @@ class SectionCoder: NSObject, NSCoding {
                 scheduleCoders.append(currentScheduleCoder)
             }
         }
-        aCoder.encodeObject(scheduleCoders, forKey: "records")
+        aCoder.encode(scheduleCoders, forKey: "records")
     }
 }

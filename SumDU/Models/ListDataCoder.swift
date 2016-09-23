@@ -27,9 +27,9 @@ class ListDataCoder: NSObject, NSCoding {
     
     /// Decode ListData enities: Auditorium, Group or Teacher
     required init(coder aDecoder: NSCoder) {
-        if let id = aDecoder.decodeObjectForKey("id") as? Int,
-            let name = aDecoder.decodeObjectForKey("name") as? String,
-            let type = aDecoder.decodeObjectForKey("type") as? String,
+        if let id = aDecoder.decodeObject(forKey: "id") as? Int,
+            let name = aDecoder.decodeObject(forKey: "name") as? String,
+            let type = aDecoder.decodeObject(forKey: "type") as? String,
             let listDataType = ListDataType(rawValue: type) {
             self.listData = ListData(id: id, name: name, type: listDataType)
         }
@@ -38,9 +38,9 @@ class ListDataCoder: NSObject, NSCoding {
     // MARK: - Public interface
     
     /// Serialize ListData enities: Auditorium, Group or Teacher
-    func encodeWithCoder(coder: NSCoder) {
-        coder.encodeObject(listData?.id, forKey: "id")
-        coder.encodeObject(listData?.name, forKey: "name")
-        coder.encodeObject(listData?.type.rawValue, forKey: "type")
+    func encode(with coder: NSCoder) {
+        coder.encode(listData?.id, forKey: "id")
+        coder.encode(listData?.name, forKey: "name")
+        coder.encode(listData?.type.rawValue, forKey: "type")
     }
 }

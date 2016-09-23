@@ -10,13 +10,13 @@ import UIKit
 
 /// Enumeration of all app fonts
 enum FontName {
-    case HelveticaNeueMedium
-    case HelveticaNeueRegular
+    case helveticaNeueMedium
+    case helveticaNeueRegular
     
     var name: String {
         switch self {
-        case .HelveticaNeueMedium: return "HelveticaNeue-Medium"
-        case .HelveticaNeueRegular: return "HelveticaNeue-Regular"
+        case .helveticaNeueMedium: return "HelveticaNeue-Medium"
+        case .helveticaNeueRegular: return "HelveticaNeue-Regular"
         }
     }
 }
@@ -33,7 +33,7 @@ struct FontManager {
     static func getFont(name font: FontName, size: CGFloat) -> UIFont {
         guard let font = UIFont(name: font.name, size: size) else {
             // Fallback to system font if not found
-            return UIFont.systemFontOfSize(size)
+            return UIFont.systemFont(ofSize: size)
         }
         return font
     }

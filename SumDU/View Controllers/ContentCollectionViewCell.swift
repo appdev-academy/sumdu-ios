@@ -18,7 +18,7 @@ class ContentCollectionViewCell: UICollectionViewCell {
     // MARK: - UI Objects
     
     let contentTableView = UITableView()
-    private let notFoudLabel = UILabel()
+    fileprivate let notFoudLabel = UILabel()
     
     // MARK: - Initialization
     
@@ -30,9 +30,9 @@ class ContentCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
 
         // Table
-        contentTableView.registerClass(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
-        contentTableView.registerClass(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
-        contentTableView.separatorStyle = .None
+        contentTableView.register(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
+        contentTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
+        contentTableView.separatorStyle = .none
         contentView.addSubview(contentTableView)
         constrain(contentTableView, contentView) {
             contentTableView, superview in
@@ -41,11 +41,11 @@ class ContentCollectionViewCell: UICollectionViewCell {
         }
         
         // Not found
-        notFoudLabel.hidden = true
+        notFoudLabel.isHidden = true
         notFoudLabel.text = NSLocalizedString("No data found", comment: "")
-        notFoudLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20)
+        notFoudLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 20)
         notFoudLabel.textColor = Color.textNormal
-        notFoudLabel.textAlignment = .Center
+        notFoudLabel.textAlignment = .center
         contentView.addSubview(notFoudLabel)
         constrain(notFoudLabel, contentView) {
             notFoudLabel, superview in
@@ -59,12 +59,12 @@ class ContentCollectionViewCell: UICollectionViewCell {
     // MARK: - Public interface
     
     func showEmptySearch() {
-        contentTableView.hidden = true
-        notFoudLabel.hidden = false
+        contentTableView.isHidden = true
+        notFoudLabel.isHidden = false
     }
     
     func showContent() {
-        notFoudLabel.hidden = true
-        contentTableView.hidden = false
+        notFoudLabel.isHidden = true
+        contentTableView.isHidden = false
     }
 }

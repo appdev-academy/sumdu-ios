@@ -23,9 +23,9 @@ class BackButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        setImage(UIImage(named: "back_normal"), forState: .Normal)
-        setImage(UIImage(named: "back_pressed"), forState: .Selected)
-        contentMode = .ScaleAspectFill
+        setImage(#imageLiteral(resourceName: "back_normal"), for: .normal)
+        setImage(#imageLiteral(resourceName: "back_pressed"), for: .selected)
+        contentMode = .scaleAspectFill
         imageEdgeInsets = UIEdgeInsetsMake(0.0, -20.0, 0.0, 0.0)
         clipsToBounds = true
     }

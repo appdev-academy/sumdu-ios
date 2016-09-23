@@ -50,7 +50,7 @@ class Schedule {
     
     
     /// Date of pair
-    var pairDate: NSDate
+    var pairDate: Date
     
     /// Human pair order
     var pairOrderName: String
@@ -81,7 +81,7 @@ class Schedule {
         self.teacherName = ""
         self.groupName = ""
         
-        self.pairDate = NSDate()
+        self.pairDate = Date()
         self.pairOrderName = ""
         self.dayOfWeek = ""
         
@@ -124,7 +124,15 @@ class Schedule {
         
         
         if let pairDate = record[ScheduleResponseParameters.PairDate.rawValue].string {
-            self.pairDate = NSDate(dateString:pairDate)
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "dd.MM.yyyy"
+            if let date = dateFormatter.date(from: pairDate) {
+                self.pairDate = date
+            } else {
+                return nil
+            }
+            
         } else {
             return nil
         }
@@ -143,7 +151,7 @@ class Schedule {
     }
     
     /// Initializer which is used for ScheduleCoder class
-    init(pairName: String, pairTime: String, pairType: String, auditoriumName: String, teacherName: String, groupName: String, pairDate: NSDate, pairOrderName: String, dayOfWeek: String) {
+    init(pairName: String, pairTime: String, pairType: String, auditoriumName: String, teacherName: String, groupName: String, pairDate: Date, pairOrderName: String, dayOfWeek: String) {
         
         self.pairName = pairName
         self.pairTime = pairTime

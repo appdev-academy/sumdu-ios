@@ -17,9 +17,9 @@ class EmptyHistoryCollectionViewCell: UICollectionViewCell {
     
     // MARK: - UI objects
     
-    private let historyImage = UIImageView()
-    private let emptyHistoryLabel = UILabel()
-    private let emptyHistoryDescriptionLabel = UILabel()
+    fileprivate let historyImage = UIImageView()
+    fileprivate let emptyHistoryLabel = UILabel()
+    fileprivate let emptyHistoryDescriptionLabel = UILabel()
     
     // MARK: - Initialization
     
@@ -31,10 +31,10 @@ class EmptyHistoryCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         // Image
-        historyImage.contentMode = .ScaleAspectFit
+        historyImage.contentMode = .scaleAspectFit
         historyImage.clipsToBounds = true
         contentView.addSubview(historyImage)
-        historyImage.image = UIImage(named: "empty_history")
+        historyImage.image = #imageLiteral(resourceName: "empty_history")
         constrain(historyImage, contentView) {
             historyImage, superview in
             
@@ -44,9 +44,9 @@ class EmptyHistoryCollectionViewCell: UICollectionViewCell {
         
         // Label
         emptyHistoryLabel.text = NSLocalizedString("History is empty", comment: "")
-        emptyHistoryLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20)
+        emptyHistoryLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 20)
         emptyHistoryLabel.textColor = Color.textNormal
-        emptyHistoryLabel.textAlignment = .Center
+        emptyHistoryLabel.textAlignment = .center
         contentView.addSubview(emptyHistoryLabel)
         constrain(historyImage, emptyHistoryLabel, contentView) {
             historyImage, emptyHistoryLabel, superview in
@@ -58,9 +58,9 @@ class EmptyHistoryCollectionViewCell: UICollectionViewCell {
         
         // Description
         emptyHistoryDescriptionLabel.text = NSLocalizedString("Swipe the screen left and right to navigate between the main sections and the search schedule", comment: "")
-        emptyHistoryDescriptionLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 15.0)
+        emptyHistoryDescriptionLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 15.0)
         emptyHistoryDescriptionLabel.textColor = Color.textLight
-        emptyHistoryDescriptionLabel.textAlignment = .Center
+        emptyHistoryDescriptionLabel.textAlignment = .center
         emptyHistoryDescriptionLabel.numberOfLines = 0
         contentView.addSubview(emptyHistoryDescriptionLabel)
         constrain(emptyHistoryDescriptionLabel, emptyHistoryLabel, contentView) {
