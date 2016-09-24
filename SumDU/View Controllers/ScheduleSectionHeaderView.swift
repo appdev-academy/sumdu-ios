@@ -14,7 +14,7 @@ class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
     // MARK: - Constants
     
     static let reuseIdentifier = "\(ScheduleSectionHeaderView.self)"
-    static let viewHeight: CGFloat = 48.0
+    static let viewHeight: CGFloat = 30.0
     
     // MARK: - UI objects
     

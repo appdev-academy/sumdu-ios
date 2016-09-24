@@ -26,20 +26,11 @@ class SearchViewController: UIViewController {
     
     fileprivate var needUpdateUI = true
     
-    // Parser for working with server
+    /// Parser for working with server
     fileprivate var parser = Parser()
     
     /// Data model
-    fileprivate var model = DataModel(
-        searchText: nil,
-        searchMode: false,
-        currentState: State.favorites,
-        currentData: [],
-        auditoriums: [],
-        groups: [],
-        teachers: [],
-        history: []
-    )
+    fileprivate var model = DataModel()
     
     // MARK: - UI objects
     
@@ -240,13 +231,7 @@ class SearchViewController: UIViewController {
     /// Reload current cell with content
     fileprivate func reloadCurrentContent() {
         let indexPath = IndexPath(item: model.currentState.rawValue, section: 0)
-        let cell = contentCollectionView.cellForItem(at: indexPath) as? ContentCollectionViewCell
-        if model.currentData.count == 0 && model.searchMode {
-            cell?.showEmptySearch()
-        } else {
-            cell?.showContent()
-        }
-        contentTableView?.reloadData()
+        contentCollectionView.reloadItems(at: [indexPath])
         updateTableContentInset()
     }
     
@@ -291,11 +276,19 @@ extension SearchViewController: SearchBarViewDelegate {
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
+        // Stop scroll of table
+        contentTableView?.setContentOffset(contentTableView?.contentOffset ?? CGPoint.zero, animated: false)
+        
+        // Update content
         model.searchText = text
         reloadCurrentContent()
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
+        // Stop scroll of table
+        contentTableView?.setContentOffset(contentTableView?.contentOffset ?? CGPoint.zero, animated: false)
+        
+        // Update content
         model.searchMode = searchMode
         reloadCurrentContent()
     }
@@ -315,8 +308,12 @@ extension SearchViewController: UICollectionViewDelegate {
                 updateMenuScrollIndicator()
                 UIView.animate(withDuration: 0.3, animations: view.layoutIfNeeded)
                 
+                // Scroll to the top of table
+                contentTableView?.setContentOffset(CGPoint.zero, animated: false)
+                
                 // Scroll to item collection view with content
                 contentCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+                reloadCurrentContent()
             }
         }
     }
@@ -435,6 +432,12 @@ extension SearchViewController: UIScrollViewDelegate {
         UIView.animate(withDuration: 0.3, animations: view.layoutIfNeeded)
         preselectMenuItem()
         needUpdateUI = true
+        
+        // Reload content
+        reloadCurrentContent()
+        
+        // Scroll to the top of table
+        contentTableView?.setContentOffset(CGPoint.zero, animated: false)
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -461,6 +464,8 @@ extension SearchViewController: UIScrollViewDelegate {
             let newStateIndex = floor(currentOffset/frameWidth)
             if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
         }
+        
+        // Reload content
         reloadCurrentContent()
         needUpdateUI = false
     }

@@ -44,20 +44,21 @@ struct DataModel {
     /// Search or normal mode
     var searchMode: Bool = false
     
-    // Current model state
-    var currentState: State {
+    /// Current model state
+    var currentState: State = .favorites {
         didSet {
             self.updateCurrentDataBySections()
         }
     }
     
     // Data for current model state
-    var currentData: [DataSection]
+    var currentData: [DataSection] = []
     
-    var auditoriums: [ListData]
-    var groups: [ListData]
-    var teachers: [ListData]
-    var history: [ListData]
+    /// All data, not filtered
+    var auditoriums: [ListData] = []
+    var groups: [ListData] = []
+    var teachers: [ListData] = []
+    var history: [ListData] = []
     
     // MARK: - Helpers
     
@@ -81,6 +82,7 @@ struct DataModel {
         // Clear previous data
         currentData = []
         let allData = self.filterCurrentData()
+        
         // Get all unique first letters
         var uniqueCharacters = Set<Character>()
         for item in allData {
@@ -99,6 +101,7 @@ struct DataModel {
                     sectionRecords.append(item)
                 }
             }
+            // Append sections
             currentData.append(DataSection(letter: letter, records: sectionRecords))
         }
     }

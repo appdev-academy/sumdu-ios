@@ -116,7 +116,7 @@ class ScheduleViewController: UIViewController {
         constrain(titleLabel, backButton, view) {
             titleLabel, backButton, superview in
             
-            titleLabel.top == backButton.bottom + 10.0
+            titleLabel.top == backButton.bottom + 5.0
             titleLabel.leading == superview.leading + leadingMargin
             titleLabel.trailing == superview.trailing - trailingMargin
         }
@@ -130,7 +130,7 @@ class ScheduleViewController: UIViewController {
         constrain(scheduleTableView, titleLabel, view) {
             scheduleTableView, titleLabel, superview in
             
-            scheduleTableView.top == titleLabel.bottom + 20.0
+            scheduleTableView.top == titleLabel.bottom + 10.0
             scheduleTableView.leading == superview.leading
             scheduleTableView.trailing == superview.trailing
             scheduleTableView.bottom == superview.bottom
