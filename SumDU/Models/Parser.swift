@@ -50,14 +50,14 @@ protocol ParserScheduleDelegate {
      
         - parameter response:  result of the schedule request in JSON type
     */
-    func getSchedule(response: JSON)
+    func getSchedule(_ response: JSON)
     
     /**
         Required method for calendar request
      
         - parameter url:  generated calendar url
     */
-    func getCalendar(url: NSURL?)
+    func getCalendar(_ url: URL?)
     
     /**
         Return error string if request fails
@@ -65,7 +65,7 @@ protocol ParserScheduleDelegate {
         - parameter parser: Entity of parser
         - parameter localizedError: Error string
      */
-    func scheduleRequestError(parser: Parser, localizedError error: String?)
+    func scheduleRequestError(_ parser: Parser, localizedError error: String?)
 }
 
 /// Protocol for Parser (returns JSON for Auditoriums, Groups or Teachers)
@@ -76,7 +76,7 @@ protocol ParserDataListDelegate {
         - parameter response:  result of the data request in JSON type
         - parameter requestType:  type of related request
     */
-    func getRelatedData(response: JSON, requestType: ListDataType)
+    func getRelatedData(_ response: JSON, requestType: ListDataType)
     
     /**
         Return error string if request fails
@@ -84,21 +84,13 @@ protocol ParserDataListDelegate {
         - parameter parser: Entity of parser
         - parameter localizedError: Error string
     */
-    func requestError(parser: Parser, localizedError error: String?)
+    func requestError(_ parser: Parser, localizedError error: String?)
 }
 
 // MARK: - Parser class
 
 /// Class that parses responses from server
 class Parser {
-    
-    // MARK: - Constants
-    
-    /// Main URL for schedule requests
-    static let baseURL       = "http://schedule.sumdu.edu.ua"
-    
-    /// URL of mobile API for data requests (teachers, groups and auditorium)
-    static let mobileBaseURL = "http://m.schedule.sumdu.edu.ua"
     
     // MARK: - Variables
     
@@ -111,59 +103,68 @@ class Parser {
     /// Request router
     enum Router: URLRequestConvertible {
         
-        case ScheduleRequest([String: AnyObject])
-        case RelatedDataRequest(relatedDataParameter: ListDataType)
-        case ScheduleCalendarRequest([String: AnyObject])
+        case scheduleRequest([String: String])
+        case relatedDataRequest(relatedDataParameter: ListDataType)
+        case scheduleCalendarRequest([String: String])
+        
+        /// Main URL for schedule requests
+        static let baseURL = "http://schedule.sumdu.edu.ua"
+        
+        /// URL of mobile API for data requests (teachers, groups and auditorium)
+        static let mobileBaseURL = "http://m.schedule.sumdu.edu.ua"
         
         // Returns base URL for each request
         var baseURLString: String {
             switch self {
-            case .ScheduleRequest, .ScheduleCalendarRequest:
-                return Parser.baseURL
-            case .RelatedDataRequest:
-                return Parser.mobileBaseURL
+            case .scheduleRequest, .scheduleCalendarRequest:
+                return Router.baseURL
+            case .relatedDataRequest:
+                return Router.mobileBaseURL
             }
         }
         
-        // Returns HTTP method for each request
-        var method: Alamofire.Method {
+        /// Returns HTTP method for each request
+        var method: HTTPMethod {
             switch self {
-            case .ScheduleRequest:
-                return .POST
-            case .RelatedDataRequest, .ScheduleCalendarRequest:
-                return .GET
+            case .scheduleRequest:
+                return .post
+            case .relatedDataRequest, .scheduleCalendarRequest:
+                return .get
             }
         }
         
-        // Returns relative path to each API endpoint
+        /// Returns relative path to each API endpoint
         var path: String {
             switch self {
-            case .ScheduleRequest:
+            case .scheduleRequest:
                 return "/index/json"
-            case .RelatedDataRequest:
+            case .relatedDataRequest:
                 return "/php/index.php"
-            case .ScheduleCalendarRequest:
+            case .scheduleCalendarRequest:
                 return "/index/ical"
             }
         }
         
-        // URLRequestConvertible protocol realization
-        var URLRequest: NSMutableURLRequest {
-            let URL = NSURL(string: baseURLString)!
-            let mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
-            mutableURLRequest.HTTPMethod = method.rawValue
+         // MARK: - URLRequestConvertible
+        
+        func asURLRequest() throws -> URLRequest {
+            let url = try baseURLString.asURL()
             
-            var parameters: [String: AnyObject] = [:]
+            var urlRequest = URLRequest(url: url.appendingPathComponent(path))
+            urlRequest.httpMethod = method.rawValue
+            
             switch self {
-            case .ScheduleRequest(let params):
-                parameters = params
-            case .ScheduleCalendarRequest(let params):
-                parameters = params
-            case .RelatedDataRequest(let relatedDataParameter):
-                parameters = ["method": relatedDataParameter.rawValue]
+            case .scheduleRequest(let params):
+                urlRequest = try URLEncoding.default.encode(urlRequest, with: params)
+                
+            case .scheduleCalendarRequest(let params):
+                urlRequest = try URLEncoding.default.encode(urlRequest, with: params)
+                
+            case .relatedDataRequest(let params):
+                let parameters: [String: AnyObject] = ["method": params.rawValue as AnyObject]
+                urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
             }
-            let request = Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
-            return request
+            return urlRequest
         }
     }
     
@@ -172,7 +173,7 @@ class Parser {
      
         - parameter requestData:  what parameters need for schedule request
     */
-    func getRequestParameters(requestData: ListData?, typeOfRequest: RequestType) -> [String : String] {
+    func getRequestParameters(_ requestData: ListData?, typeOfRequest: RequestType) -> [String : String] {
         
         // Request data
         var groupId = "0"
@@ -192,16 +193,16 @@ class Parser {
         }
         
         // Get start date
-        let startDate = NSDate()
-        let dateFormatter = NSDateFormatter()
-        let locale = NSLocale(localeIdentifier: "en_US_POSIX")
+        let startDate = Date()
+        let dateFormatter = DateFormatter()
+        let locale = Locale(identifier: "en_US_POSIX")
         
         dateFormatter.dateFormat = "dd.MM.yyyy"
         dateFormatter.locale = locale
         
         // Get end date
-        let additionalDays: NSTimeInterval = 30*60*60*24
-        let endDate = startDate.dateByAddingTimeInterval(additionalDays)
+        let additionalDays: TimeInterval = 30*60*60*24
+        let endDate = startDate.addingTimeInterval(additionalDays)
         
         var requestData: [String : String]
         
@@ -210,8 +211,8 @@ class Parser {
         case .CalendarRequest:
             // Calendar request parameters
             requestData = [
-                CalendarRequestParameter.BeginDate.rawValue: dateFormatter.stringFromDate(startDate),
-                CalendarRequestParameter.EndDate.rawValue: dateFormatter.stringFromDate(endDate),
+                CalendarRequestParameter.BeginDate.rawValue: dateFormatter.string(from: startDate),
+                CalendarRequestParameter.EndDate.rawValue: dateFormatter.string(from: endDate),
                 CalendarRequestParameter.GroupId.rawValue: groupId,
                 CalendarRequestParameter.NameId.rawValue: teacherId,
                 CalendarRequestParameter.LectureRoomId.rawValue: auditoriumId,
@@ -219,8 +220,8 @@ class Parser {
         case .ScheduleRequest:
             // Schedule request parameters
             requestData = [
-                ScheduleRequestParameter.BeginDate.rawValue: dateFormatter.stringFromDate(startDate),
-                ScheduleRequestParameter.EndDate.rawValue: dateFormatter.stringFromDate(endDate),
+                ScheduleRequestParameter.BeginDate.rawValue: dateFormatter.string(from: startDate),
+                ScheduleRequestParameter.EndDate.rawValue: dateFormatter.string(from: endDate),
                 ScheduleRequestParameter.GroupId.rawValue: groupId,
                 ScheduleRequestParameter.NameId.rawValue: teacherId,
                 ScheduleRequestParameter.LectureRoomId.rawValue: auditoriumId,
@@ -234,16 +235,16 @@ class Parser {
      
         - parameter requestData:  what parameters need for schedule request
     */
-    func generateCalendarURL(requestData: ListData?) {
+    func generateCalendarURL(_ requestData: ListData?) {
         
         // Get parameters for request
-        let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .CalendarRequest)
-        
+        let dataForRequest = getRequestParameters(requestData, typeOfRequest: .CalendarRequest)
+
         // Generate url
-        let calendarURL = Router.ScheduleCalendarRequest(dataForRequest).URLRequest.URL
-        
+        let calendarURL = Router.scheduleCalendarRequest(dataForRequest).urlRequest?.url
+
         // Call delegate function
-        self.scheduleDelegate?.getCalendar(calendarURL)
+        scheduleDelegate?.getCalendar(calendarURL)
     }
     
     /**
@@ -251,13 +252,13 @@ class Parser {
      
         - parameter requestData: what parameters need for schedule request
     */
-    func sendScheduleRequest(requestData: ListData?) {
+    func sendScheduleRequest(_ requestData: ListData?) {
         
         // Get data for request
-        let dataForRequest = self.getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
-        
+        let dataForRequest = getRequestParameters(requestData, typeOfRequest: .ScheduleRequest)
+
         // Send request
-       scheduleRequest = Alamofire.request(Router.ScheduleRequest(dataForRequest)).responseJSON {
+       scheduleRequest = Alamofire.request(Router.scheduleRequest(dataForRequest)).responseJSON {
             response in
             
             if response.result.isSuccess, let resultValue = response.result.value {
@@ -274,19 +275,16 @@ class Parser {
      
         - parameter withParameter: type of related request
     */
-    func sendDataRequest(relatedDataParameter: ListDataType) {
+    func sendDataRequest(_ relatedDataParameter: ListDataType) {
         
-        Alamofire.request(Router.RelatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON {
-            response in
+        Alamofire.request(Router.relatedDataRequest(relatedDataParameter: relatedDataParameter)).responseJSON { (response) in
             
             if response.result.isSuccess, let resultValue = response.result.value {
-                
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.setObject(NSDate(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
-                defaults.synchronize()
+                // Save last update date
+                UserDefaults.standard.set(Date(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
                 let response = JSON(resultValue)
+                // Call delegate method
                 self.dataListDelegate?.getRelatedData(response, requestType: relatedDataParameter)
-                
             } else {
                 self.dataListDelegate?.requestError(self, localizedError: response.result.error?.localizedDescription)
             }

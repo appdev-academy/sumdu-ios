@@ -1,12 +1,9 @@
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '8.0'
 use_frameworks!
 
 abstract_target 'SumDU App' do
-  pod 'Alamofire'
-  pod 'Cartography'
-  pod 'Quack'
-  pod 'SwiftyJSON'
-
+  pod 'Alamofire', '~> 4.0'
+  pod 'Cartography', :git => 'https://github.com/robb/Cartography.git', :branch => 'orta-swift3'
+  pod 'SwiftyJSON', :git => 'https://github.com/BaiduHiDeviOS/SwiftyJSON.git', :branch => 'swift3'
   target 'SumDU'
 end

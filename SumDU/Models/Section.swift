@@ -13,7 +13,7 @@ class Section {
     // MARK: - Variables
     
     /// title of section
-    var date: NSDate
+    var date: Date
     
     /// array of section records
     var records: [Schedule]
@@ -26,7 +26,7 @@ class Section {
     
     // MARK: - Lifecycle
     
-    init(date: NSDate, records: [Schedule]) {
+    init(date: Date, records: [Schedule]) {
         self.date = date
         self.records = records
     }
@@ -34,22 +34,22 @@ class Section {
     // MARK: - Interface
     
     /// Save schedule information to userDefaults
-    class func saveData(listDataCoder: [Section], forKey: String) {
+    class func saveData(_ listDataCoder: [Section], forKey: String) {
         var sectionCoder: [SectionCoder] = []
         for sectionCoderRecord in listDataCoder {
             sectionCoder.append(sectionCoderRecord.sectionCoder)
         }
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        let data = NSKeyedArchiver.archivedDataWithRootObject(sectionCoder)
-        userDefaults.setObject(data, forKey: forKey)
+        let userDefaults = UserDefaults.standard
+        let data = NSKeyedArchiver.archivedData(withRootObject: sectionCoder)
+        userDefaults.set(data, forKey: forKey)
     }
     
     /// Load schedule information from userDefaults
-    class func loadData(forKey: String) -> [Section] {
+    class func loadData(_ forKey: String) -> [Section] {
         var section: [Section] = []
         
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let listScheduleCoder = userDefaults.dataForKey(forKey), listScheduleDataArray = NSKeyedUnarchiver.unarchiveObjectWithData(listScheduleCoder) as? [SectionCoder] {
+        let userDefaults = UserDefaults.standard
+        if let listScheduleCoder = userDefaults.data(forKey: forKey), let listScheduleDataArray = NSKeyedUnarchiver.unarchiveObject(with: listScheduleCoder) as? [SectionCoder] {
             
             for scheduleDataStruct in listScheduleDataArray {
                 if let sectionData = scheduleDataStruct.section {

@@ -18,8 +18,8 @@ class SearchTableViewCell: UITableViewCell {
 
     // MARK: - UIObjects
     
-    private let label = UILabel()
-    private let separatorLine = UIView()
+    fileprivate let label = UILabel()
+    fileprivate let separatorLine = UIView()
     
     // MARK: - Initialization
     
@@ -41,7 +41,7 @@ class SearchTableViewCell: UITableViewCell {
         }
         // Text label
         label.textColor = Color.textNormal
-        label.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20.0)
+        label.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 20.0)
         contentView.addSubview(label)
         constrain(label, separatorLine, contentView) {
             label, separatorLine, superview in
@@ -56,15 +56,15 @@ class SearchTableViewCell: UITableViewCell {
     // MARK: - Helpers
     
     /// Show matching pattern
-    private func highlightSearchResults(searchString: String, resultString: String) -> NSMutableAttributedString {
+    fileprivate func highlightSearchResults(_ searchString: String, resultString: String) -> NSMutableAttributedString {
         
         let attributedString: NSMutableAttributedString = NSMutableAttributedString(string: resultString)
         let pattern = searchString
         let range: NSRange = NSMakeRange(0, resultString.characters.count)
         
-        let regex = try? NSRegularExpression(pattern: pattern, options: [.CaseInsensitive])
+        let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
         
-        regex?.enumerateMatchesInString(resultString, options: NSMatchingOptions(), range: range) {
+        regex?.enumerateMatches(in: resultString, options: NSRegularExpression.MatchingOptions(), range: range) {
             (textCheckingResult, matchingFlags, stop) -> Void in
             
             if let subRange = textCheckingResult?.range {

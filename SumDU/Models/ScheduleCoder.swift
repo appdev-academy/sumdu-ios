@@ -25,30 +25,30 @@ class ScheduleCoder: NSObject, NSCoding {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        if let pairName = aDecoder.decodeObjectForKey("pairName") as? String,
-            let pairTime = aDecoder.decodeObjectForKey("pairTime") as? String,
-            let pairType = aDecoder.decodeObjectForKey("pairType") as? String,
-            let auditoriumName = aDecoder.decodeObjectForKey("auditoriumName") as? String,
-            let teacherName = aDecoder.decodeObjectForKey("teacherName") as? String,
-            let groupName = aDecoder.decodeObjectForKey("groupName") as? String,
-            let pairDate = aDecoder.decodeObjectForKey("pairDate") as? NSDate,
-            let pairOrderName = aDecoder.decodeObjectForKey("pairOrderName") as? String,
-            let dayOfWeek = aDecoder.decodeObjectForKey("dayOfWeek") as? String{
+        if let pairName = aDecoder.decodeObject(forKey: "pairName") as? String,
+            let pairTime = aDecoder.decodeObject(forKey: "pairTime") as? String,
+            let pairType = aDecoder.decodeObject(forKey: "pairType") as? String,
+            let auditoriumName = aDecoder.decodeObject(forKey: "auditoriumName") as? String,
+            let teacherName = aDecoder.decodeObject(forKey: "teacherName") as? String,
+            let groupName = aDecoder.decodeObject(forKey: "groupName") as? String,
+            let pairDate = aDecoder.decodeObject(forKey: "pairDate") as? Date,
+            let pairOrderName = aDecoder.decodeObject(forKey: "pairOrderName") as? String,
+            let dayOfWeek = aDecoder.decodeObject(forKey: "dayOfWeek") as? String{
             self.schedule = Schedule(pairName: pairName, pairTime: pairTime, pairType: pairType, auditoriumName: auditoriumName, teacherName: teacherName, groupName: groupName, pairDate: pairDate, pairOrderName: pairOrderName, dayOfWeek: dayOfWeek)
         }
     }
     
     // MARK: - Public interface
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(schedule?.pairName, forKey: "pairName")
-        aCoder.encodeObject(schedule?.pairTime, forKey: "pairTime")
-        aCoder.encodeObject(schedule?.pairType, forKey: "pairType")
-        aCoder.encodeObject(schedule?.auditoriumName, forKey: "auditoriumName")
-        aCoder.encodeObject(schedule?.teacherName, forKey: "teacherName")
-        aCoder.encodeObject(schedule?.groupName, forKey: "groupName")
-        aCoder.encodeObject(schedule?.pairDate, forKey: "pairDate")
-        aCoder.encodeObject(schedule?.pairOrderName, forKey: "pairOrderName")
-        aCoder.encodeObject(schedule?.dayOfWeek, forKey: "dayOfWeek")
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(schedule?.pairName, forKey: "pairName")
+        aCoder.encode(schedule?.pairTime, forKey: "pairTime")
+        aCoder.encode(schedule?.pairType, forKey: "pairType")
+        aCoder.encode(schedule?.auditoriumName, forKey: "auditoriumName")
+        aCoder.encode(schedule?.teacherName, forKey: "teacherName")
+        aCoder.encode(schedule?.groupName, forKey: "groupName")
+        aCoder.encode(schedule?.pairDate, forKey: "pairDate")
+        aCoder.encode(schedule?.pairOrderName, forKey: "pairOrderName")
+        aCoder.encode(schedule?.dayOfWeek, forKey: "dayOfWeek")
     }
 }

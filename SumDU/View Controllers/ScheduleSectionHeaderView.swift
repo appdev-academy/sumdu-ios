@@ -14,7 +14,7 @@ class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
     // MARK: - Constants
     
     static let reuseIdentifier = "\(ScheduleSectionHeaderView.self)"
-    static let viewHeight: CGFloat = 48.0
+    static let viewHeight: CGFloat = 30.0
     
     // MARK: - UI objects
     
@@ -36,9 +36,9 @@ class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
         contentView.backgroundColor = Color.backgroundGray
         
         // Date
-        dateLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
+        dateLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 17.0)
         dateLabel.textColor = Color.textNormal
-        dateLabel.textAlignment = .Left
+        dateLabel.textAlignment = .left
         addSubview(dateLabel)
         constrain(dateLabel, self) {
             dateLabel, superview in
@@ -49,9 +49,9 @@ class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
             dateLabel.bottom == superview.bottom
         }
         // Day
-        dayLabel.font = FontManager.getFont(name: FontName.HelveticaNeueRegular, size: 15.0)
+        dayLabel.font = FontManager.getFont(name: FontName.helveticaNeueRegular, size: 15.0)
         dayLabel.textColor = Color.textLight
-        dayLabel.textAlignment = .Right
+        dayLabel.textAlignment = .right
         addSubview(dayLabel)
         constrain(dayLabel, self) {
             dayLabel, superview in

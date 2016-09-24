@@ -23,9 +23,9 @@ class RefreshButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        setImage(UIImage(named: "refresh_normal"), forState: .Normal)
-        setImage(UIImage(named: "refresh_pressed"), forState: .Selected)
-        contentMode = .ScaleAspectFill
+        setImage(#imageLiteral(resourceName: "refresh_normal"), for: .normal)
+        setImage(#imageLiteral(resourceName: "refresh_pressed"), for: .selected)
+        contentMode = .scaleAspectFill
         clipsToBounds = true
     }
 }

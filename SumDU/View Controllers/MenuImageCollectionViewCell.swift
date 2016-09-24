@@ -19,17 +19,17 @@ class MenuImageCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Variables
     
-    override var selected: Bool {
+    override var isSelected: Bool {
         didSet {
-            historyImageView.image = selected ? activeHistoryImage : inactiveHistoryImage
+            historyImageView.image = isSelected ? activeHistoryImage : inactiveHistoryImage
         }
     }
     
     // MARK: - UI objects
     
-    private let activeHistoryImage = UIImage(named:"history_pressed")
-    private let inactiveHistoryImage = UIImage(named:"history_normal")
-    private let historyImageView = UIImageView()
+    fileprivate let activeHistoryImage = #imageLiteral(resourceName: "history_pressed")
+    fileprivate let inactiveHistoryImage = #imageLiteral(resourceName: "history_normal")
+    fileprivate let historyImageView = UIImageView()
     
     // MARK: - Initialization
     
@@ -40,9 +40,9 @@ class MenuImageCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         // Background
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         
-        historyImageView.contentMode = .ScaleAspectFill
+        historyImageView.contentMode = .scaleAspectFill
         historyImageView.clipsToBounds = true
         contentView.addSubview(historyImageView)
         constrain(historyImageView, contentView) {

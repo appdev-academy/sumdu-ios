@@ -18,12 +18,12 @@ class ScheduleTableViewCell: UITableViewCell {
     
     // MARK: - UI objects
     
-    private let nameLabel = UILabel()
-    private let timeLabel = UILabel()
-    private let dotImageView = UIImageView()
-    private let auditoriumLabel = UILabel()
-    private let teacherLabel = UILabel()
-    private let separatorView = UIView()
+    fileprivate let nameLabel = UILabel()
+    fileprivate let timeLabel = UILabel()
+    fileprivate let dotImageView = UIImageView()
+    fileprivate let auditoriumLabel = UILabel()
+    fileprivate let teacherLabel = UILabel()
+    fileprivate let separatorView = UIView()
     
     // MARK: - Lifecycle
     
@@ -39,15 +39,15 @@ class ScheduleTableViewCell: UITableViewCell {
     
     // MARK: - Helpers
     
-    private func initialSetup() {
+    fileprivate func initialSetup() {
         let leadingMargin: CGFloat = 14.0
         let trailingMargin: CGFloat = 14.0
         let itemSpacing: CGFloat = 6.0
-        selectionStyle = .None
+        selectionStyle = .none
         // Name
-        nameLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 20.0)
+        nameLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 20.0)
         nameLabel.textColor = Color.textBlack
-        nameLabel.textAlignment = .Left
+        nameLabel.textAlignment = .left
         nameLabel.adjustsFontSizeToFitWidth = true
         nameLabel.minimumScaleFactor = 0.7
         nameLabel.numberOfLines = 2
@@ -61,9 +61,9 @@ class ScheduleTableViewCell: UITableViewCell {
             nameLabel.height == 48.0
         }
         // Time
-        timeLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
+        timeLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 17.0)
         timeLabel.textColor = Color.textNormal
-        timeLabel.textAlignment = .Left
+        timeLabel.textAlignment = .left
         contentView.addSubview(timeLabel)
         constrain(timeLabel, nameLabel, contentView) {
             timeLabel, nameLabel, superview in
@@ -74,7 +74,7 @@ class ScheduleTableViewCell: UITableViewCell {
         }
         // Dot
         dotImageView.image = UIImage(named: "dot")
-        dotImageView.contentMode = .ScaleAspectFill
+        dotImageView.contentMode = .scaleAspectFill
         dotImageView.clipsToBounds = true
         contentView.addSubview(dotImageView)
         constrain(dotImageView, timeLabel) {
@@ -86,9 +86,9 @@ class ScheduleTableViewCell: UITableViewCell {
             dotImageView.width == 6.0
         }
         // Auditorium
-        auditoriumLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 17.0)
+        auditoriumLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 17.0)
         auditoriumLabel.textColor = Color.textNormal
-        auditoriumLabel.textAlignment = .Left
+        auditoriumLabel.textAlignment = .left
         contentView.addSubview(auditoriumLabel)
         constrain(auditoriumLabel, dotImageView, nameLabel, contentView) {
             auditoriumLabel, dotImageView, nameLabel, superview in
@@ -109,9 +109,9 @@ class ScheduleTableViewCell: UITableViewCell {
             separatorView.height == 1.0
         }
         // Teacher
-        teacherLabel.font = FontManager.getFont(name: FontName.HelveticaNeueMedium, size: 15.0)
+        teacherLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 15.0)
         teacherLabel.textColor = Color.textLight
-        teacherLabel.textAlignment = .Left
+        teacherLabel.textAlignment = .left
         contentView.addSubview(teacherLabel)
         constrain(teacherLabel, timeLabel, separatorView, contentView) {
             teacherLabel, timeLabel, separatorView, superview in
