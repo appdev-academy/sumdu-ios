@@ -333,7 +333,7 @@ extension SearchViewController: SearchBarViewDelegate {
         
         // Clear search text if canceled
         if !searchMode {
-            model.searchText = ""
+            model.searchText = nil
         }
         
         if searchMode != model.searchMode {
