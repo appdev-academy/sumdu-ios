@@ -34,31 +34,45 @@ struct DataSection {
 
 struct DataModel {
     
-    /// Text from search
-    var searchText: String? = nil {
-        didSet {
-            self.updateCurrentDataBySections()
-        }
-    }
-    
     /// Search or normal mode
     var searchMode: Bool = false
     
+    /// Text from search
+    var searchText: String? = nil {
+        didSet {
+            if searchText == nil {
+                getSordetData()
+            } else {
+                sortData()
+            }
+        }
+    }
+
     /// Current model state
     var currentState: State = .favorites {
         didSet {
-            self.updateCurrentDataBySections()
+            if searchMode && searchText != nil {
+                sortData()
+            } else {
+                getSordetData()
+            }
         }
     }
     
     // Data for current model state
     var currentData: [DataSection] = []
     
-    /// All data, not filtered
+    // All data, not filtered
     var auditoriums: [ListData] = []
     var groups: [ListData] = []
     var teachers: [ListData] = []
     var history: [ListData] = []
+    
+    // Sections, filtered
+    fileprivate var auditoriumsSorted: [DataSection] = []
+    fileprivate var groupSorted: [DataSection] = []
+    fileprivate var teachersSorted: [DataSection] = []
+    fileprivate var historySorted: [DataSection] = []
     
     // MARK: - Helpers
     
@@ -71,16 +85,41 @@ struct DataModel {
         case .groups: data = groups
         case .teachers: data = teachers
         }
-        if let query = searchText , query.characters.count > 0 {
+        if let query = searchText, query.characters.count > 0 {
             data = data.filter { return $0.name.localizedCaseInsensitiveContains(query) }
         }
         return data
     }
     
+    /// Update current data and group by sections from cache
+    fileprivate mutating func getSordetData() {
+        switch currentState {
+        case .auditoriums:
+            if auditoriumsSorted.count > 0 {
+                currentData = auditoriumsSorted
+            } else {
+                sortData()
+            }
+        case .groups:
+            if groupSorted.count > 0 {
+                currentData = groupSorted
+            } else {
+                sortData()
+            }
+        case .teachers:
+            if teachersSorted.count > 0 {
+                currentData = teachersSorted
+            } else {
+                sortData()
+            }
+        case .favorites:
+            sortData()
+        }
+    }
+    
     /// Update current data and group by sections
-    fileprivate mutating func updateCurrentDataBySections() {
-        // Clear previous data
-        currentData = []
+    fileprivate mutating func sortData() {
+        var filteredDate: [DataSection] = []
         let allData = self.filterCurrentData()
         
         // Get all unique first letters
@@ -102,7 +141,22 @@ struct DataModel {
                 }
             }
             // Append sections
-            currentData.append(DataSection(letter: letter, records: sectionRecords))
+            filteredDate.append(DataSection(letter: letter, records: sectionRecords))
+        }
+        currentData = filteredDate
+        
+        // Store filtered data
+        if searchText == nil {
+            switch currentState {
+            case .auditoriums:
+                auditoriumsSorted = currentData
+            case .favorites:
+                historySorted = currentData
+            case .groups:
+                groupSorted = currentData
+            case .teachers:
+                teachersSorted = currentData
+            }
         }
     }
     
@@ -112,7 +166,7 @@ struct DataModel {
         groups = ListData.loadFromStorage(UserDefaultsKey.Groups.key)
         history = ListData.loadFromStorage(UserDefaultsKey.History.key)
         teachers = ListData.loadFromStorage(UserDefaultsKey.Teachers.key)
-        updateCurrentDataBySections()
+        sortData()
     }
     
     /// Send request to server for update model data (asynchronously)

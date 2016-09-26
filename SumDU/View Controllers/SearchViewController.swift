@@ -12,19 +12,42 @@ import SwiftyJSON
 
 class SearchViewController: UIViewController {
     
+    // MARK: - Properties
+    
+    enum ContentState {
+        case showContent
+        case emptySearch
+        case emptyHistory
+    }
+    
     // MARK: - Constants
     
     fileprivate let scrollConstraintGroup = ConstraintGroup()
     
     // MARK: - Variables
     
-    fileprivate var contentTableView: UITableView?
     fileprivate var tableViewContentInset = UIEdgeInsets.zero
-    
-    /// Previous scroll point of the content collection view
-    fileprivate var previousScrollPoint: CGFloat = 0.0
-    
-    fileprivate var needUpdateUI = true
+    fileprivate var contentState: ContentState = .showContent {
+        didSet {
+            switch contentState {
+            case .emptyHistory:
+                // Hide table and show empty history
+                contentTableView.isHidden = true
+                emptyHistoryView.isHidden = false
+                notFoudLabel.isHidden = true
+            case .showContent:
+                // Hide empty history and show table
+                emptyHistoryView.isHidden = true
+                contentTableView.isHidden = false
+                notFoudLabel.isHidden = true
+            case .emptySearch:
+                // Hide table and show "not found" label
+                contentTableView.isHidden = true
+                emptyHistoryView.isHidden = true
+                notFoudLabel.isHidden = false
+            }
+        }
+    }
     
     /// Parser for working with server
     fileprivate var parser = Parser()
@@ -38,7 +61,9 @@ class SearchViewController: UIViewController {
     fileprivate var menuCollectionView: UICollectionView!
     fileprivate let scrollLineView = UIView()
     fileprivate let scrollingIndicatorView = UIView()
-    fileprivate var contentCollectionView: UICollectionView!
+    fileprivate let notFoudLabel = UILabel()
+    fileprivate let contentTableView = UITableView()
+    fileprivate let emptyHistoryView = EmptyHistoryView()
     
     // MARK: - Lifecycle
 
@@ -47,18 +72,20 @@ class SearchViewController: UIViewController {
         
         registerForNotifications()
         
+        // UI
+        initialSetup()
+        
         // Data
         parser.dataListDelegate = self
         model.updateFromStorage()
 
-        // UI
-        initialSetup()
-        
         if UIDevice.current.userInterfaceIdiom == .pad {
             if let firstItem = model.history.first, let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
                 scheduleViewController.updateFromStorage(withItem: firstItem)
             }
         }
+        
+        updateContent()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -75,24 +102,35 @@ class SearchViewController: UIViewController {
         super.viewDidAppear(animated)
         
         updateMenuScrollIndicator()
-        preselectMenuItem()
-    }
-    
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        // Invalidate layout of the content collection view when device rotates
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            contentCollectionView.collectionViewLayout.invalidateLayout()
-        }
+        // Select menu item
+        let indexPath = IndexPath(item: model.currentState.rawValue, section: 0)
+        menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition())
     }
     
     deinit {
-        self.deregisterFromNotifications()
+        deregisterFromNotifications()
     }
     
     // MARK: - Helpers
     
+    fileprivate func updateContent() {
+        if model.currentData.count == 0 && model.searchMode {
+            contentState = .emptySearch
+            
+        } else if model.currentData.count == 0 && model.currentState == .favorites {
+            contentState = .emptyHistory
+            
+        } else {
+            contentState = .showContent
+        }
+        // Reload table
+        if contentState == .showContent {
+            contentTableView.reloadData()
+            updateTableContentInset()
+        }
+    }
+    
+    /// Add UI objects and set constraints
     fileprivate func initialSetup() {
         // Background
         view.backgroundColor = UIColor.white
@@ -149,26 +187,42 @@ class SearchViewController: UIViewController {
             scrollingIndicatorView.bottom == scrollLineView.bottom
             scrollingIndicatorView.height == 2.0
         }
-        // Content
-        let contentFlowLayout = UICollectionViewFlowLayout()
-        contentFlowLayout.scrollDirection = .horizontal
-        contentCollectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: contentFlowLayout)
-        contentCollectionView.backgroundColor = UIColor.white
-        contentCollectionView.register(ContentCollectionViewCell.self, forCellWithReuseIdentifier: ContentCollectionViewCell.reuseIdentifier)
-        contentCollectionView.register(EmptyHistoryCollectionViewCell.self, forCellWithReuseIdentifier: EmptyHistoryCollectionViewCell.reuseIdentifier)
-        contentCollectionView.showsVerticalScrollIndicator = false
-        contentCollectionView.showsHorizontalScrollIndicator = false
-        contentCollectionView.delegate = self
-        contentCollectionView.dataSource = self
-        contentCollectionView.bounces = false
-        view.addSubview(contentCollectionView)
-        constrain(scrollLineView, contentCollectionView, view) {
-            scrollLineView, contentCollectionView, superview in
+        // Content table
+        contentTableView.delegate = self
+        contentTableView.dataSource = self
+        contentTableView.register(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
+        contentTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
+        contentTableView.separatorStyle = .none
+        view.addSubview(contentTableView)
+        constrain(contentTableView, scrollLineView, view) {
+            contentTableView, scrollLineView, superview in
             
-            contentCollectionView.top == scrollLineView.bottom
-            contentCollectionView.leading == superview.leading
-            contentCollectionView.trailing == superview.trailing
-            contentCollectionView.bottom == superview.bottom
+            contentTableView.top == scrollLineView.bottom
+            contentTableView.leading == superview.leading
+            contentTableView.trailing == superview.trailing
+            contentTableView.bottom == superview.bottom
+        }
+        // Not found
+        notFoudLabel.isHidden = true
+        notFoudLabel.text = NSLocalizedString("No data found", comment: "")
+        notFoudLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 20)
+        notFoudLabel.textColor = Color.textNormal
+        notFoudLabel.textAlignment = .center
+        view.addSubview(notFoudLabel)
+        constrain(notFoudLabel, scrollLineView, view) {
+            notFoudLabel, scrollLineView, superview in
+            
+            notFoudLabel.top == scrollLineView.top + 66.0
+            notFoudLabel.leading == superview.leading + 14.0
+            notFoudLabel.trailing == superview.trailing - 14.0
+        }
+        // Empty history
+        emptyHistoryView.isHidden = true
+        view.addSubview(emptyHistoryView)
+        constrain(contentTableView, emptyHistoryView) {
+            contentTableView, emptyHistoryView in
+            
+            emptyHistoryView.edges == contentTableView.edges
         }
     }
     
@@ -222,22 +276,9 @@ class SearchViewController: UIViewController {
         }
     }
     
-    /// Select item in menu collection view
-    fileprivate func preselectMenuItem() {
-        let indexPath = IndexPath(item: model.currentState.rawValue, section: 0)
-        menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition())
-    }
-    
-    /// Reload current cell with content
-    fileprivate func reloadCurrentContent() {
-        let indexPath = IndexPath(item: model.currentState.rawValue, section: 0)
-        contentCollectionView.reloadItems(at: [indexPath])
-        updateTableContentInset()
-    }
-    
     fileprivate func updateTableContentInset() {
-        contentTableView?.contentInset = tableViewContentInset
-        contentTableView?.scrollIndicatorInsets = tableViewContentInset
+        contentTableView.contentInset = tableViewContentInset
+        contentTableView.scrollIndicatorInsets = tableViewContentInset
     }
     
     // MARK: - Notifications
@@ -277,20 +318,29 @@ extension SearchViewController: SearchBarViewDelegate {
     
     func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
         // Stop scroll of table
-        contentTableView?.setContentOffset(contentTableView?.contentOffset ?? CGPoint.zero, animated: false)
+        contentTableView.setContentOffset(CGPoint.zero, animated: false)
         
-        // Update content
-        model.searchText = text
-        reloadCurrentContent()
+        if model.searchMode {
+            // Update search text
+            model.searchText = text
+            updateContent()
+        }
     }
     
     func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
         // Stop scroll of table
-        contentTableView?.setContentOffset(contentTableView?.contentOffset ?? CGPoint.zero, animated: false)
+        contentTableView.setContentOffset(CGPoint.zero, animated: false)
         
-        // Update content
-        model.searchMode = searchMode
-        reloadCurrentContent()
+        // Clear search text if canceled
+        if !searchMode {
+            model.searchText = nil
+        }
+        
+        if searchMode != model.searchMode {
+            // Update search mode
+            model.searchMode = searchMode
+            updateContent()
+        }
     }
 }
 
@@ -299,23 +349,27 @@ extension SearchViewController: SearchBarViewDelegate {
 extension SearchViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // Menu
-        if collectionView == menuCollectionView {
-            if let current = State(rawValue: indexPath.row) {
-                model.currentState = current
-                
-                // Update menu
-                updateMenuScrollIndicator()
-                UIView.animate(withDuration: 0.3, animations: view.layoutIfNeeded)
-                
-                // Scroll to the top of table
-                contentTableView?.setContentOffset(CGPoint.zero, animated: false)
-                
-                // Scroll to item collection view with content
-                contentCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
-                reloadCurrentContent()
-            }
+        
+        // Get new state
+        guard let newState = State(rawValue: indexPath.row) else {
+            return
         }
+        
+        // If user select other state
+        guard model.currentState != newState else {
+            return
+        }
+        
+        // Scroll to the top of table
+        contentTableView.setContentOffset(CGPoint.zero, animated: false)
+        
+        // Update state
+        model.currentState = newState
+        updateContent()
+        
+        // Update menu
+        updateMenuScrollIndicator()
+        UIView.animate(withDuration: 0.3, animations: view.layoutIfNeeded)
     }
 }
 
@@ -328,35 +382,14 @@ extension SearchViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        // Menu
-        if collectionView == menuCollectionView {
-            if indexPath.row != 0, let segment = State(rawValue: indexPath.row) {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCollectionViewCell.reuseIdentifier, for: indexPath) as! MenuCollectionViewCell
-                cell.update(withTitle: segment.name)
-                return cell
-            } else {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuImageCollectionViewCell.reuseIdentifier, for: indexPath) as! MenuImageCollectionViewCell
-                return cell
-            }
+        
+        if indexPath.row != 0, let segment = State(rawValue: indexPath.row) {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCollectionViewCell.reuseIdentifier, for: indexPath) as! MenuCollectionViewCell
+            cell.update(withTitle: segment.name)
+            return cell
         } else {
-            // Content
-            if indexPath.row == 0 && model.history.count == 0 {
-                // Empty history
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyHistoryCollectionViewCell.reuseIdentifier, for: indexPath) as! EmptyHistoryCollectionViewCell
-                return cell
-            } else {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ContentCollectionViewCell.reuseIdentifier, for: indexPath) as! ContentCollectionViewCell
-                cell.contentTableView.delegate = self
-                cell.contentTableView.dataSource = self
-                cell.contentTableView.reloadData()
-                contentTableView = cell.contentTableView
-                if model.currentData.count == 0 && model.searchMode {
-                    cell.showEmptySearch()
-                } else {
-                    cell.showContent()
-                }
-                return cell
-            }
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuImageCollectionViewCell.reuseIdentifier, for: indexPath) as! MenuImageCollectionViewCell
+            return cell
         }
     }
 }
@@ -374,100 +407,20 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        guard let type = State(rawValue: indexPath.row) else {
+            return CGSize(width: 0.0, height: 0.0)
+        }
+        
         // Menu
-        if collectionView == menuCollectionView, let type = State(rawValue: indexPath.row) {
-            let spacing = interItemSpacing()
-            let cellHeight = MenuCollectionViewCell.cellHeight
-            switch type {
-            case .favorites:
-                return CGSize(width: MenuImageCollectionViewCell.historyImageSize.width + spacing, height: cellHeight)
-            case .auditoriums, .groups, .teachers:
-                return CGSize(width: labelWidth(type.name) + spacing, height: cellHeight)
-            }
-        } else if collectionView == contentCollectionView {
-            // Content
-            return CGSize(width: collectionView.bounds.size.width, height: collectionView.bounds.size.height)
+        let spacing = interItemSpacing()
+        let cellHeight = MenuCollectionViewCell.cellHeight
+        switch type {
+        case .favorites:
+            return CGSize(width: MenuImageCollectionViewCell.historyImageSize.width + spacing, height: cellHeight)
+        case .auditoriums, .groups, .teachers:
+            return CGSize(width: labelWidth(type.name) + spacing, height: cellHeight)
         }
-        return CGSize(width: 0.0, height: 0.0)
-    }
-}
-
-// MARK: - UIScrollViewDelegate
-
-extension SearchViewController: UIScrollViewDelegate {
-    
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        // Only for UICollectionView with content
-        if scrollView != contentCollectionView { return }
-        
-        let frameWidth = scrollView.bounds.size.width
-        let currentOffset = scrollView.contentOffset.x
-        let targetOffset = targetContentOffset.pointee.x
-        var newTargetOffset: CGFloat = 0.0
-        
-        if (targetOffset > currentOffset) {
-            newTargetOffset = ceil(currentOffset/frameWidth)*frameWidth
-        } else {
-            newTargetOffset = floor(currentOffset/frameWidth)*frameWidth
-        }
-        if (newTargetOffset < 0) {
-            newTargetOffset = 0
-        } else if (newTargetOffset > scrollView.contentSize.width) {
-            newTargetOffset = scrollView.contentSize.width
-        }
-        targetContentOffset.pointee.x = currentOffset
-        contentCollectionView.setContentOffset(CGPoint(x: newTargetOffset, y: 0), animated: true)
-    }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        // Only for UICollectionView with content
-        if scrollView != contentCollectionView { return }
-        
-        // Update state
-        let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
-        let indexPath = IndexPath(item: Int(pageNumber), section: 0)
-        if let state = State(rawValue: indexPath.row) { model.currentState = state }
-        // Update menu
-        updateMenuScrollIndicator()
-        UIView.animate(withDuration: 0.3, animations: view.layoutIfNeeded)
-        preselectMenuItem()
-        needUpdateUI = true
-        
-        // Reload content
-        reloadCurrentContent()
-        
-        // Scroll to the top of table
-        contentTableView?.setContentOffset(CGPoint.zero, animated: false)
-    }
-    
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        // Only for UICollectionView with content
-        if scrollView != contentCollectionView { return }
-        
-        previousScrollPoint = scrollView.contentOffset.x
-        needUpdateUI = true
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // Only for UICollectionView with content
-        if scrollView != contentCollectionView { return }
-        
-        if !needUpdateUI { return }
-        
-        let currentOffset = scrollView.contentOffset.x
-        let frameWidth = scrollView.frame.size.width
-        
-        if currentOffset > previousScrollPoint {
-            let newStateIndex = ceil(currentOffset/frameWidth)
-            if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
-        } else {
-            let newStateIndex = floor(currentOffset/frameWidth)
-            if let state = State(rawValue: Int(newStateIndex)) { model.currentState = state }
-        }
-        
-        // Reload content
-        reloadCurrentContent()
-        needUpdateUI = false
     }
 }
 
@@ -483,14 +436,17 @@ extension SearchViewController: ParserDataListDelegate {
         let records = ListData.from(json: response, type: requestType)
         
         switch requestType {
+            
         case .Auditorium:
             model.auditoriums = records
             ListData.saveToStorage(model.auditoriums, forKey: UserDefaultsKey.Auditoriums.key)
             if model.currentState == .auditoriums { needToUpdateUI = true }
+            
         case .Group:
             model.groups = records
             ListData.saveToStorage(model.groups, forKey: UserDefaultsKey.Groups.key)
             if model.currentState == .groups { needToUpdateUI = true }
+            
         case .Teacher:
             model.teachers = records
             ListData.saveToStorage(model.teachers, forKey: UserDefaultsKey.Teachers.key)
@@ -500,7 +456,9 @@ extension SearchViewController: ParserDataListDelegate {
         if UIApplication.shared.isNetworkActivityIndicatorVisible {
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
         }
-        if needToUpdateUI { reloadCurrentContent() }
+        if needToUpdateUI {
+            updateContent()
+        }
     }
     
     func requestError(_ parser: Parser, localizedError error: String?) {
@@ -525,13 +483,18 @@ extension SearchViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return model.currentData[section].records.count
+        if model.currentData.count > 0 {
+            return model.currentData[section].records.count
+        }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as! SearchTableViewCell
         
-        cell.update(with: model.currentData[indexPath.section].records[indexPath.row], search: model.searchMode, searchingText: model.searchText)
+        if model.currentData.count > 0 {
+            cell.update(with: model.currentData[indexPath.section].records[indexPath.row], search: model.searchMode, searchingText: model.searchText)
+        }
         return cell
     }
 }
@@ -550,7 +513,9 @@ extension SearchViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
-        headerView.dateLabel.text = String(model.currentData[section].letter)
+        if model.currentData.count > 0 {
+            headerView.dateLabel.text = String(model.currentData[section].letter)
+        }
         return headerView
     }
     
