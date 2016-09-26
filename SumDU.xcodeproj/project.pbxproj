@@ -412,7 +412,7 @@
 				TargetAttributes = {
 					7D181E271C006D96000C04B5 = {
 						CreatedOnToolsVersion = 7.1.1;
-						DevelopmentTeam = M2BF9ZE9NW;
+						DevelopmentTeam = CBGX48BZ8F;
 						LastSwiftMigration = 0800;
 					};
 					7D181E3B1C006D96000C04B5 = {
@@ -731,11 +731,11 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = M2BF9ZE9NW;
+				DEVELOPMENT_TEAM = CBGX48BZ8F;
 				INFOPLIST_FILE = "$(SRCROOT)/SumDU/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Yura.Voevodin.SumDU;
+				PRODUCT_BUNDLE_IDENTIFIER = Maksym.Skliarov.SumDU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -751,11 +751,11 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = M2BF9ZE9NW;
+				DEVELOPMENT_TEAM = CBGX48BZ8F;
 				INFOPLIST_FILE = "$(SRCROOT)/SumDU/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Yura.Voevodin.SumDU;
+				PRODUCT_BUNDLE_IDENTIFIER = Maksym.Skliarov.SumDU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";

@@ -359,16 +359,17 @@ extension SearchViewController: UICollectionViewDelegate {
         guard model.currentState != newState else {
             return
         }
+        
+        // Scroll to the top of table
+        contentTableView.setContentOffset(CGPoint.zero, animated: false)
+        
         // Update state
         model.currentState = newState
+        updateContent()
         
         // Update menu
         updateMenuScrollIndicator()
         UIView.animate(withDuration: 0.3, animations: view.layoutIfNeeded)
-        
-        // Scroll to the top of table
-        contentTableView.setContentOffset(CGPoint.zero, animated: false)
-        updateContent()
     }
 }
 
