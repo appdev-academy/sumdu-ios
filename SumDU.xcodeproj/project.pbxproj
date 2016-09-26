@@ -19,7 +19,6 @@
 		B4E40A7B1C5CEC9B0057E53D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4E40A7D1C5CEC9B0057E53D /* Localizable.strings */; };
 		B4E40A801C5CEC9B0057E53D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4E40A821C5CEC9B0057E53D /* InfoPlist.strings */; };
 		BA3CA06247A057C315C84B37 /* Pods_SumDU_App_SumDU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79F29838E0D4D78D6E332C18 /* Pods_SumDU_App_SumDU.framework */; };
-		DE2953BB1D338B8C00304901 /* ContentCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2953B71D338B8C00304901 /* ContentCollectionViewCell.swift */; };
 		DE2953BC1D338B8C00304901 /* MenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2953B81D338B8C00304901 /* MenuCollectionViewCell.swift */; };
 		DE2953BD1D338B8C00304901 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2953B91D338B8C00304901 /* SearchBarView.swift */; };
 		DE2953BE1D338B8C00304901 /* SearchTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2953BA1D338B8C00304901 /* SearchTextField.swift */; };
@@ -30,10 +29,10 @@
 		DE4CF0821D368E9A000F9199 /* ShareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF0811D368E9A000F9199 /* ShareButton.swift */; };
 		DE4CF0841D368EC0000F9199 /* RefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF0831D368EC0000F9199 /* RefreshButton.swift */; };
 		DE4E1DEE1D38E79A00FF2EC0 /* SearchViewController + Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */; };
-		DE4F83451D3E2BBB00926328 /* EmptyHistoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4F83441D3E2BBB00926328 /* EmptyHistoryCollectionViewCell.swift */; };
 		DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5533E31D3393EA0016AC67 /* SearchViewController.swift */; };
 		DE65F6371D3786470040A00D /* ScheduleSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */; };
 		DE8517C81D956C98001942B2 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8517C71D956C98001942B2 /* Date.swift */; };
+		DEA86AAE1D9947CF002653AE /* EmptyHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA86AAD1D9947CF002653AE /* EmptyHistoryView.swift */; };
 		E17F12291C2F1C09001AB284 /* ScheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17F12281C2F1C09001AB284 /* ScheduleTableViewCell.swift */; };
 		E19526A31C3E5C3B008AD541 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19526A21C3E5C3B008AD541 /* Section.swift */; };
 		E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD3B491C5CB88D0028B9A0 /* ScheduleCoder.swift */; };
@@ -86,7 +85,6 @@
 		B4E40A851C5CECD40057E53D /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B4E40A861C5CECD40057E53D /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D1DD90AC92C58F9DD5331ED4 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DE2953B71D338B8C00304901 /* ContentCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentCollectionViewCell.swift; sourceTree = "<group>"; };
 		DE2953B81D338B8C00304901 /* MenuCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCollectionViewCell.swift; sourceTree = "<group>"; };
 		DE2953B91D338B8C00304901 /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		DE2953BA1D338B8C00304901 /* SearchTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTextField.swift; sourceTree = "<group>"; };
@@ -97,7 +95,6 @@
 		DE4CF0811D368E9A000F9199 /* ShareButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareButton.swift; sourceTree = "<group>"; };
 		DE4CF0831D368EC0000F9199 /* RefreshButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshButton.swift; sourceTree = "<group>"; };
 		DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SearchViewController + Model.swift"; sourceTree = "<group>"; };
-		DE4F83441D3E2BBB00926328 /* EmptyHistoryCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyHistoryCollectionViewCell.swift; sourceTree = "<group>"; };
 		DE5533E31D3393EA0016AC67 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleSectionHeaderView.swift; sourceTree = "<group>"; };
 		DE769A4C1D81B40D00B07A6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -105,6 +102,7 @@
 		DE769A4E1D81B4BB00B07A6C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DE769A4F1D81B4D700B07A6C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DE8517C71D956C98001942B2 /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		DEA86AAD1D9947CF002653AE /* EmptyHistoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyHistoryView.swift; sourceTree = "<group>"; };
 		E17F12281C2F1C09001AB284 /* ScheduleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewCell.swift; sourceTree = "<group>"; };
 		E19526A21C3E5C3B008AD541 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		E1CD3B491C5CB88D0028B9A0 /* ScheduleCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleCoder.swift; sourceTree = "<group>"; };
@@ -270,9 +268,10 @@
 		DE2953B51D338ADE00304901 /* Search */ = {
 			isa = PBXGroup;
 			children = (
+				DEA86AAD1D9947CF002653AE /* EmptyHistoryView.swift */,
+				E45B9D2B1CDE7B3200B4467B /* SearchTableViewCell.swift */,
 				DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */,
 				DE5533E31D3393EA0016AC67 /* SearchViewController.swift */,
-				DE4F83431D3E2B1900926328 /* Content */,
 				DE351DCE1D3D350600E35443 /* Menu */,
 				DE4E1DEC1D38E6D300FF2EC0 /* Search Bar */,
 			);
@@ -323,16 +322,6 @@
 				DE2953BA1D338B8C00304901 /* SearchTextField.swift */,
 			);
 			name = "Search Bar";
-			sourceTree = "<group>";
-		};
-		DE4F83431D3E2B1900926328 /* Content */ = {
-			isa = PBXGroup;
-			children = (
-				DE2953B71D338B8C00304901 /* ContentCollectionViewCell.swift */,
-				DE4F83441D3E2BBB00926328 /* EmptyHistoryCollectionViewCell.swift */,
-				E45B9D2B1CDE7B3200B4467B /* SearchTableViewCell.swift */,
-			);
-			name = Content;
 			sourceTree = "<group>";
 		};
 		DE8517C61D956C98001942B2 /* Extensions */ = {
@@ -515,7 +504,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		EDFF230668C7A30079EA826A /* [CP] Copy Pods Resources */ = {
@@ -549,8 +538,8 @@
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
 				E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */,
 				DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */,
-				DE2953BB1D338B8C00304901 /* ContentCollectionViewCell.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
+				DEA86AAE1D9947CF002653AE /* EmptyHistoryView.swift in Sources */,
 				DE4E1DEE1D38E79A00FF2EC0 /* SearchViewController + Model.swift in Sources */,
 				E19526A31C3E5C3B008AD541 /* Section.swift in Sources */,
 				DE2953BE1D338B8C00304901 /* SearchTextField.swift in Sources */,
@@ -558,7 +547,6 @@
 				E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */,
 				DE4CF07E1D3684C1000F9199 /* FontManager.swift in Sources */,
 				DE2953BC1D338B8C00304901 /* MenuCollectionViewCell.swift in Sources */,
-				DE4F83451D3E2BBB00926328 /* EmptyHistoryCollectionViewCell.swift in Sources */,
 				E4583E951C25495F0031F164 /* Keys.swift in Sources */,
 				DE351DD01D3D354A00E35443 /* MenuImageCollectionViewCell.swift in Sources */,
 				E17F12291C2F1C09001AB284 /* ScheduleTableViewCell.swift in Sources */,

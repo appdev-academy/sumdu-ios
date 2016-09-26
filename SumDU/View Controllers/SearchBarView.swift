@@ -56,6 +56,7 @@ class SearchBarView: UIView {
                 cancelButton.isHidden = true
                 refreshButton.isHidden = false
                 refreshButton.alpha = 0.0
+                
             }
             UIView.animate(withDuration: 0.5, animations: {
                 if self.isEditingMode {
@@ -151,7 +152,6 @@ class SearchBarView: UIView {
     func cancelButtonPressed() {
         isEditingMode = false
         textField.text = ""
-        delegate?.searchBarView(searchBarView: self, searchWithText: nil)
         textField.resignFirstResponder()
     }
     
@@ -171,7 +171,7 @@ extension SearchBarView: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField.text?.characters.count > 0 {
             isEditingMode = true
-        } else {
+        } else if isEditingMode {
             isEditingMode = false
         }
     }
