@@ -109,7 +109,7 @@ class ScheduleViewController: UIViewController {
             shareButton.width == ShareButton.buttonSize.width
         }
         // Title
-        titleLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 26.0)
+        titleLabel.font = Font.named(.helveticaNeueMedium, size: 26.0)
         titleLabel.textColor = Color.textBlack
         titleLabel.numberOfLines = 0
         view.addSubview(titleLabel)
@@ -140,7 +140,7 @@ class ScheduleViewController: UIViewController {
         
         // Information
         informationLabel.text = NSLocalizedString("Sorry. There are no results for your request.", comment: "")
-        informationLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 20.0)
+        informationLabel.font = Font.named(.helveticaNeueMedium, size: 20.0)
         informationLabel.textColor = Color.textNormal
         informationLabel.textAlignment = .center
         informationLabel.adjustsFontSizeToFitWidth = true

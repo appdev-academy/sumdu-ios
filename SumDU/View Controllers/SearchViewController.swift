@@ -34,17 +34,17 @@ class SearchViewController: UIViewController {
                 // Hide table and show empty history
                 contentTableView.isHidden = true
                 emptyHistoryView.isHidden = false
-                notFoudLabel.isHidden = true
+                notFoundLabel.isHidden = true
             case .showContent:
                 // Hide empty history and show table
                 emptyHistoryView.isHidden = true
                 contentTableView.isHidden = false
-                notFoudLabel.isHidden = true
+                notFoundLabel.isHidden = true
             case .emptySearch:
                 // Hide table and show "not found" label
                 contentTableView.isHidden = true
                 emptyHistoryView.isHidden = true
-                notFoudLabel.isHidden = false
+                notFoundLabel.isHidden = false
             }
         }
     }
@@ -61,7 +61,7 @@ class SearchViewController: UIViewController {
     fileprivate var menuCollectionView: UICollectionView!
     fileprivate let scrollLineView = UIView()
     fileprivate let scrollingIndicatorView = UIView()
-    fileprivate let notFoudLabel = UILabel()
+    fileprivate let notFoundLabel = UILabel()
     fileprivate let contentTableView = UITableView()
     fileprivate let emptyHistoryView = EmptyHistoryView()
     
@@ -203,18 +203,18 @@ class SearchViewController: UIViewController {
             contentTableView.bottom == superview.bottom
         }
         // Not found
-        notFoudLabel.isHidden = true
-        notFoudLabel.text = NSLocalizedString("No data found", comment: "")
-        notFoudLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 20)
-        notFoudLabel.textColor = Color.textNormal
-        notFoudLabel.textAlignment = .center
-        view.addSubview(notFoudLabel)
-        constrain(notFoudLabel, scrollLineView, view) {
-            notFoudLabel, scrollLineView, superview in
+        notFoundLabel.isHidden = true
+        notFoundLabel.text = NSLocalizedString("No data found", comment: "")
+        notFoundLabel.font = Font.named(.helveticaNeueMedium, size: 20.0)
+        notFoundLabel.textColor = Color.textNormal
+        notFoundLabel.textAlignment = .center
+        view.addSubview(notFoundLabel)
+        constrain(notFoundLabel, scrollLineView, view) {
+            notFoundLabel, scrollLineView, superview in
             
-            notFoudLabel.top == scrollLineView.top + 66.0
-            notFoudLabel.leading == superview.leading + 14.0
-            notFoudLabel.trailing == superview.trailing - 14.0
+            notFoundLabel.top == scrollLineView.top + 66.0
+            notFoundLabel.leading == superview.leading + 14.0
+            notFoundLabel.trailing == superview.trailing - 14.0
         }
         // Empty history
         emptyHistoryView.isHidden = true
@@ -228,7 +228,7 @@ class SearchViewController: UIViewController {
     
     fileprivate func labelWidth(_ text: String) -> CGFloat {
         let size = CGSize(width: CGFloat.greatestFiniteMagnitude, height: MenuCollectionViewCell.cellHeight)
-        let attributes = [NSFontAttributeName: FontManager.getFont(name: FontName.helveticaNeueMedium, size: 17.0)]
+        let attributes = [NSFontAttributeName: Font.named(.helveticaNeueMedium, size: 17.0)]
         return text.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil).size.width
     }
     

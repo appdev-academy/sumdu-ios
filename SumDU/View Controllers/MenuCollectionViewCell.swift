@@ -40,11 +40,13 @@ class MenuCollectionViewCell: UICollectionViewCell {
         backgroundColor = UIColor.white
         
         // Title
-        textLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 17.0)
+        textLabel.font = Font.named(.helveticaNeueMedium, size: 17.0)
         textLabel.textColor = Color.textLight
         textLabel.textAlignment = .center
         contentView.addSubview(textLabel)
-        constrain(textLabel, contentView) { textLabel, superview in
+        constrain(textLabel, contentView) {
+            textLabel, superview in
+            
             textLabel.edges == superview.edges
         }
     }

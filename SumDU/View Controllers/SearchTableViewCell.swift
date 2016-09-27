@@ -41,7 +41,7 @@ class SearchTableViewCell: UITableViewCell {
         }
         // Text label
         label.textColor = Color.textNormal
-        label.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 20.0)
+        label.font = Font.named(.helveticaNeueMedium, size: 20.0)
         contentView.addSubview(label)
         constrain(label, separatorLine, contentView) {
             label, separatorLine, superview in

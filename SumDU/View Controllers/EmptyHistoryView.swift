@@ -39,7 +39,7 @@ class EmptyHistoryView: UIView {
         
         // Label
         emptyHistoryLabel.text = NSLocalizedString("History is empty", comment: "")
-        emptyHistoryLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 20)
+        emptyHistoryLabel.font = Font.named(.helveticaNeueMedium, size: 20)
         emptyHistoryLabel.textColor = Color.textNormal
         emptyHistoryLabel.textAlignment = .center
         addSubview(emptyHistoryLabel)

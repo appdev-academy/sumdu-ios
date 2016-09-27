@@ -45,7 +45,7 @@ class ScheduleTableViewCell: UITableViewCell {
         let itemSpacing: CGFloat = 6.0
         selectionStyle = .none
         // Name
-        nameLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 20.0)
+        nameLabel.font = Font.named(.helveticaNeueMedium, size: 20.0)
         nameLabel.textColor = Color.textBlack
         nameLabel.textAlignment = .left
         nameLabel.adjustsFontSizeToFitWidth = true
@@ -61,7 +61,7 @@ class ScheduleTableViewCell: UITableViewCell {
             nameLabel.height == 48.0
         }
         // Time
-        timeLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 17.0)
+        timeLabel.font = Font.named(.helveticaNeueMedium, size: 17.0)
         timeLabel.textColor = Color.textNormal
         timeLabel.textAlignment = .left
         contentView.addSubview(timeLabel)
@@ -86,7 +86,7 @@ class ScheduleTableViewCell: UITableViewCell {
             dotImageView.width == 6.0
         }
         // Auditorium
-        auditoriumLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 17.0)
+        auditoriumLabel.font = Font.named(.helveticaNeueMedium, size: 17.0)
         auditoriumLabel.textColor = Color.textNormal
         auditoriumLabel.textAlignment = .left
         contentView.addSubview(auditoriumLabel)
@@ -109,7 +109,7 @@ class ScheduleTableViewCell: UITableViewCell {
             separatorView.height == 1.0
         }
         // Teacher
-        teacherLabel.font = FontManager.getFont(name: FontName.helveticaNeueMedium, size: 15.0)
+        teacherLabel.font = Font.named(.helveticaNeueMedium, size: 15.0)
         teacherLabel.textColor = Color.textLight
         teacherLabel.textAlignment = .left
         contentView.addSubview(teacherLabel)
