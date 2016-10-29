@@ -1,3 +1,3 @@
-# Schedule App #
+# Sumy State University iOS application with schedule #
 
-This is awesome schedule application for SumDU!
+Check it out: https://itunes.apple.com/app/sumdu/id698235283
