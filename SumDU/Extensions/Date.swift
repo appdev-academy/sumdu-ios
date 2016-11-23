@@ -9,16 +9,16 @@
 import Foundation
 
 extension Date {
-    
-    func dateByAddingDays(_ days: Int) -> Date {
-        let timeInterval = TimeInterval(days*24*60*60)
-        let newDate = self.addingTimeInterval(timeInterval)
-        return newDate
-    }
-    
-    func dateBySubtractingDays(_ days: Int) -> Date {
-        let timeInterval = TimeInterval(-days*24*60*60)
-        let newDate = self.addingTimeInterval(timeInterval)
-        return newDate
-    }
+  
+  func dateByAddingDays(_ days: Int) -> Date {
+    let timeInterval = TimeInterval(days*24*60*60)
+    let newDate = self.addingTimeInterval(timeInterval)
+    return newDate
+  }
+  
+  func dateBySubtractingDays(_ days: Int) -> Date {
+    let timeInterval = TimeInterval(-days*24*60*60)
+    let newDate = self.addingTimeInterval(timeInterval)
+    return newDate
+  }
 }

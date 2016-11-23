@@ -1,34 +1,21 @@
 PODS:
-  - Alamofire (4.0.0)
-  - Cartography (0.5.0)
-  - SwiftyJSON (2.3.2)
+  - Alamofire (4.2.0)
+  - Cartography (1.0.1)
+  - Fuzi (1.0.1)
+  - SwiftyJSON (3.1.3)
 
 DEPENDENCIES:
-  - Alamofire (~> 4.0)
-  - Cartography (from `https://github.com/robb/Cartography.git`, branch `orta-swift3`)
-  - SwiftyJSON (from `https://github.com/BaiduHiDeviOS/SwiftyJSON.git`, branch `swift3`)
-
-EXTERNAL SOURCES:
-  Cartography:
-    :branch: orta-swift3
-    :git: https://github.com/robb/Cartography.git
-  SwiftyJSON:
-    :branch: swift3
-    :git: https://github.com/BaiduHiDeviOS/SwiftyJSON.git
-
-CHECKOUT OPTIONS:
-  Cartography:
-    :commit: 037b966331d883d39eb1d1da5b518c84fac7dda4
-    :git: https://github.com/robb/Cartography.git
-  SwiftyJSON:
-    :commit: de5dc3b1b421805769590d331178551bbb0e5733
-    :git: https://github.com/BaiduHiDeviOS/SwiftyJSON.git
+  - Alamofire (= 4.2.0)
+  - Cartography
+  - Fuzi
+  - SwiftyJSON
 
 SPEC CHECKSUMS:
-  Alamofire: fef59f00388f267e52d9b432aa5d93dc97190f14
-  Cartography: de3e85d2fc2d7288a2e7c89e1ac6cad08599d75e
-  SwiftyJSON: 6118fb49d7519c4d31a0c1f3d5af936e9047b556
+  Alamofire: aa2e09d871c9160ac53c90e83c68064a94e3dfbe
+  Cartography: c1460e99395b824d9d75360b0382faeb0b33dcd7
+  Fuzi: 851403654bac55675aaeed815d0c8a1d3e3d3e8b
+  SwiftyJSON: 38a8ea2006779c0fc4c310cb2ee8195327740faf
 
-PODFILE CHECKSUM: e8124e9cb77fec49763659e7c0424a8e9411d44b
+PODFILE CHECKSUM: 7e39aa102357ed6354580ae0fdbf1fbee57caf24
 
-COCOAPODS: 1.1.0.rc.2
+COCOAPODS: 1.1.1
