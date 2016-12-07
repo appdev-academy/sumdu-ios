@@ -29,6 +29,11 @@
 		DE4CF0821D368E9A000F9199 /* ShareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF0811D368E9A000F9199 /* ShareButton.swift */; };
 		DE4CF0841D368EC0000F9199 /* RefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF0831D368EC0000F9199 /* RefreshButton.swift */; };
 		DE4E1DEE1D38E79A00FF2EC0 /* SearchViewController + Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */; };
+		DE54FD791DF80E3500E8FEDE /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DE54FD771DF80E3500E8FEDE /* Model.xcdatamodeld */; };
+		DE54FD8B1DF8127A00E8FEDE /* Auditorium.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE54FD8A1DF8127A00E8FEDE /* Auditorium.swift */; };
+		DE54FD8D1DF812C200E8FEDE /* Teacher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE54FD8C1DF812C200E8FEDE /* Teacher.swift */; };
+		DE54FD8F1DF812FF00E8FEDE /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE54FD8E1DF812FF00E8FEDE /* Group.swift */; };
+		DE54FD911DF8133400E8FEDE /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE54FD901DF8133400E8FEDE /* Record.swift */; };
 		DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5533E31D3393EA0016AC67 /* SearchViewController.swift */; };
 		DE65F6371D3786470040A00D /* ScheduleSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */; };
 		DE8517C81D956C98001942B2 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8517C71D956C98001942B2 /* Date.swift */; };
@@ -95,6 +100,11 @@
 		DE4CF0811D368E9A000F9199 /* ShareButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareButton.swift; sourceTree = "<group>"; };
 		DE4CF0831D368EC0000F9199 /* RefreshButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshButton.swift; sourceTree = "<group>"; };
 		DE4E1DED1D38E79A00FF2EC0 /* SearchViewController + Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SearchViewController + Model.swift"; sourceTree = "<group>"; };
+		DE54FD781DF80E3500E8FEDE /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		DE54FD8A1DF8127A00E8FEDE /* Auditorium.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Auditorium.swift; sourceTree = "<group>"; };
+		DE54FD8C1DF812C200E8FEDE /* Teacher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Teacher.swift; sourceTree = "<group>"; };
+		DE54FD8E1DF812FF00E8FEDE /* Group.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		DE54FD901DF8133400E8FEDE /* Record.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		DE5533E31D3393EA0016AC67 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleSectionHeaderView.swift; sourceTree = "<group>"; };
 		DE769A4C1D81B40D00B07A6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -219,6 +229,7 @@
 				7D07F8161C099C56007DF3FD /* App Delegate */,
 				DE4CF0791D367E9F000F9199 /* Components */,
 				E4583E931C25494A0031F164 /* Constants */,
+				DE54FD761DF80E0000E8FEDE /* Core Data */,
 				DE8517C61D956C98001942B2 /* Extensions */,
 				B4EEB8231C5A153800879965 /* Helpers */,
 				7D07F8211C099CAF007DF3FD /* Models */,
@@ -322,6 +333,18 @@
 				DE2953BA1D338B8C00304901 /* SearchTextField.swift */,
 			);
 			name = "Search Bar";
+			sourceTree = "<group>";
+		};
+		DE54FD761DF80E0000E8FEDE /* Core Data */ = {
+			isa = PBXGroup;
+			children = (
+				DE54FD8A1DF8127A00E8FEDE /* Auditorium.swift */,
+				DE54FD8E1DF812FF00E8FEDE /* Group.swift */,
+				DE54FD771DF80E3500E8FEDE /* Model.xcdatamodeld */,
+				DE54FD901DF8133400E8FEDE /* Record.swift */,
+				DE54FD8C1DF812C200E8FEDE /* Teacher.swift */,
+			);
+			path = "Core Data";
 			sourceTree = "<group>";
 		};
 		DE8517C61D956C98001942B2 /* Extensions */ = {
@@ -530,12 +553,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				DE2953BD1D338B8C00304901 /* SearchBarView.swift in Sources */,
+				DE54FD8F1DF812FF00E8FEDE /* Group.swift in Sources */,
 				DE4CF0801D36855F000F9199 /* Colors.swift in Sources */,
 				DE4CF07C1D367EB8000F9199 /* BackButton.swift in Sources */,
 				DE4CF0821D368E9A000F9199 /* ShareButton.swift in Sources */,
 				DE65F6371D3786470040A00D /* ScheduleSectionHeaderView.swift in Sources */,
+				DE54FD791DF80E3500E8FEDE /* Model.xcdatamodeld in Sources */,
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
+				DE54FD8B1DF8127A00E8FEDE /* Auditorium.swift in Sources */,
 				E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */,
 				DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
@@ -543,12 +569,14 @@
 				DE4E1DEE1D38E79A00FF2EC0 /* SearchViewController + Model.swift in Sources */,
 				E19526A31C3E5C3B008AD541 /* Section.swift in Sources */,
 				DE2953BE1D338B8C00304901 /* SearchTextField.swift in Sources */,
+				DE54FD911DF8133400E8FEDE /* Record.swift in Sources */,
 				E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */,
 				E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */,
 				DE4CF07E1D3684C1000F9199 /* Font.swift in Sources */,
 				DE2953BC1D338B8C00304901 /* MenuCollectionViewCell.swift in Sources */,
 				E4583E951C25495F0031F164 /* Keys.swift in Sources */,
 				DE351DD01D3D354A00E35443 /* MenuImageCollectionViewCell.swift in Sources */,
+				DE54FD8D1DF812C200E8FEDE /* Teacher.swift in Sources */,
 				E17F12291C2F1C09001AB284 /* ScheduleTableViewCell.swift in Sources */,
 				7D07F81D1C099C56007DF3FD /* AppDelegate.swift in Sources */,
 				DE4CF0841D368EC0000F9199 /* RefreshButton.swift in Sources */,
@@ -855,6 +883,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		DE54FD771DF80E3500E8FEDE /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				DE54FD781DF80E3500E8FEDE /* Model.xcdatamodel */,
+			);
+			currentVersion = DE54FD781DF80E3500E8FEDE /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 7D181E201C006D96000C04B5 /* Project object */;
 }
