@@ -6,6 +6,7 @@
 //  Copyright © 2015 AppDevAcademy. All rights reserved.
 //
 
+import CoreDuck
 import UIKit
 
 @UIApplicationMain
@@ -14,6 +15,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    
+    // Initialize CoreData stack
+    let _ = CoreDuck.quack
+    CoreDuck.printErrors = true
     
     self.window = UIWindow(frame: UIScreen.main.bounds)
     

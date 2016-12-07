@@ -6,8 +6,8 @@
 //  Copyright © 2016 App Dev Academy. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(Auditorium)
 public class Auditorium: NSManagedObject {
@@ -16,6 +16,14 @@ public class Auditorium: NSManagedObject {
   
   @NSManaged public var id: Int64
   @NSManaged public var name: String
+  
+  // MARK: - Constants
+  
+  /// Array of mapped attributes between NSManagedObject and JSON
+  static let mappedAttributes: [AttributeMapper] = [
+    AttributeMapper(name: "id", jsonName: "id", isOptional: false, dataType: DataType.integer64),
+    AttributeMapper(name: "name", jsonName: "name", isOptional: false, dataType: DataType.string)
+    ]
   
   // MARK: - Helpers
   
