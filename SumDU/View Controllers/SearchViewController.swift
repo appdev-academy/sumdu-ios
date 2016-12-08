@@ -138,107 +138,6 @@ class SearchViewController: UIViewController {
   
   // MARK: - Helpers
   
-  func fetchData() {
-    auditoriums = ListObject.fetch(search: searchText, type: .auditoriums, delegate: self)
-    teachers = ListObject.fetch(search: searchText, type: .teachers, delegate: self)
-    groups = ListObject.fetch(search: searchText, type: .groups, delegate: self)
-    history = ListObject.fetch(search: searchText, type: .history, delegate: self)
-  }
-  
-  /// Show matching pattern
-  fileprivate func highlightSearchResults(_ searchString: String, resultString: String) -> NSMutableAttributedString {
-    
-    let attributedString: NSMutableAttributedString = NSMutableAttributedString(string: resultString)
-    let pattern = searchString
-    let range: NSRange = NSMakeRange(0, resultString.characters.count)
-    
-    let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
-    
-    regex?.enumerateMatches(in: resultString, options: NSRegularExpression.MatchingOptions(), range: range) {
-      (textCheckingResult, matchingFlags, stop) -> Void in
-      
-      if let subRange = textCheckingResult?.range {
-        attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textNormal, range: subRange)
-      }
-    }
-    return attributedString
-  }
-  
-  /// Populate cell from the NSManagedObject instance
-  ///
-  /// - Parameters:
-  ///   - cell: UITableViewCell object from table
-  ///   - indexPath: IndexPath
-  fileprivate func configureCell(_ cell: UITableViewCell, indexPath: IndexPath) {
-    guard let cell = cell as? SearchTableViewCell else { return }
-    
-    let name: String
-    switch contentType {
-    case .auditoriums:
-      name = auditoriums.object(at: indexPath).name
-    case .history:
-      name = history.object(at: indexPath).name
-    case .groups:
-      name = groups.object(at: indexPath).name
-    case .teachers:
-      name = teachers.object(at: indexPath).name
-    }
-    
-    if isSearching {
-      // Higlight search results
-      cell.label.textColor = Color.textLight
-      if let searchingText = searchText {
-        cell.label.attributedText = highlightSearchResults(searchingText, resultString: name)
-      } else {
-        cell.label.text = name
-      }
-    } else {
-      // Show normal text
-      cell.label.text = name
-      cell.label.textColor = Color.textNormal
-    }
-  }
-  
-  /// Populate header with data
-  ///
-  /// - Parameters:
-  ///   - headerView: UITableViewHeaderFooterView for section
-  ///   - section: index of section
-  fileprivate func configureHeader(_ headerView: UITableViewHeaderFooterView?, section: Int) {
-    guard let header = headerView as? SectionHeaderView else { return }
-    
-    let text: String
-    switch contentType {
-    case .auditoriums:
-      text = auditoriums.sections?[section].name ?? ""
-    case .history:
-      text = history.sections?[section].name ?? ""
-    case .groups:
-      text = groups.sections?[section].name ?? ""
-    case .teachers:
-      text = teachers.sections?[section].name ?? ""
-    }
-    
-    header.dateLabel.text = text
-  }
-  
-  /// Display right UI depending of content
-  fileprivate func updateUI() {
-    // Update state of UI
-    switch contentType {
-    case .auditoriums:
-      stateOfUI = auditoriums.fetchedObjects?.count == 0 ? .emptySearch : .showContent
-    case .history:
-      stateOfUI = history.fetchedObjects?.count == 0 ? .emptyHistory : .showContent
-    case .groups:
-      stateOfUI = groups.fetchedObjects?.count == 0 ? .emptySearch : .showContent
-    case .teachers:
-      stateOfUI = teachers.fetchedObjects?.count == 0 ? .emptySearch : .showContent
-    }
-    contentTableView.reloadData()
-    updateTableContentInset()
-  }
-  
   /// Add UI objects and set constraints
   fileprivate func initialSetup() {
     // Background
@@ -339,6 +238,107 @@ class SearchViewController: UIViewController {
       
       emptyHistoryView.edges == contentTableView.edges
     }
+  }
+  
+  func fetchData() {
+    auditoriums = ListObject.fetch(search: searchText, type: .auditoriums, delegate: self)
+    teachers = ListObject.fetch(search: searchText, type: .teachers, delegate: self)
+    groups = ListObject.fetch(search: searchText, type: .groups, delegate: self)
+    history = ListObject.fetch(search: searchText, type: .history, delegate: self)
+  }
+  
+  /// Show matching pattern
+  fileprivate func highlightSearchResults(_ searchString: String, resultString: String) -> NSMutableAttributedString {
+    
+    let attributedString: NSMutableAttributedString = NSMutableAttributedString(string: resultString)
+    let pattern = searchString
+    let range: NSRange = NSMakeRange(0, resultString.characters.count)
+    
+    let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+    
+    regex?.enumerateMatches(in: resultString, options: NSRegularExpression.MatchingOptions(), range: range) {
+      (textCheckingResult, matchingFlags, stop) -> Void in
+      
+      if let subRange = textCheckingResult?.range {
+        attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textNormal, range: subRange)
+      }
+    }
+    return attributedString
+  }
+  
+  /// Populate cell from the NSManagedObject instance
+  ///
+  /// - Parameters:
+  ///   - cell: UITableViewCell object from table
+  ///   - indexPath: IndexPath
+  fileprivate func configureCell(_ cell: UITableViewCell, indexPath: IndexPath) {
+    guard let cell = cell as? SearchTableViewCell else { return }
+    
+    let name: String
+    switch contentType {
+    case .auditoriums:
+      name = auditoriums.object(at: indexPath).name
+    case .history:
+      name = history.object(at: indexPath).name
+    case .groups:
+      name = groups.object(at: indexPath).name
+    case .teachers:
+      name = teachers.object(at: indexPath).name
+    }
+    
+    if isSearching {
+      // Higlight search results
+      cell.label.textColor = Color.textLight
+      if let searchingText = searchText {
+        cell.label.attributedText = highlightSearchResults(searchingText, resultString: name)
+      } else {
+        cell.label.text = name
+      }
+    } else {
+      // Show normal text
+      cell.label.text = name
+      cell.label.textColor = Color.textNormal
+    }
+  }
+  
+  /// Populate header with data
+  ///
+  /// - Parameters:
+  ///   - headerView: UITableViewHeaderFooterView for section
+  ///   - section: index of section
+  fileprivate func configureHeader(_ headerView: UITableViewHeaderFooterView?, section: Int) {
+    guard let header = headerView as? SectionHeaderView else { return }
+    
+    let text: String
+    switch contentType {
+    case .auditoriums:
+      text = auditoriums.sections?[section].name ?? ""
+    case .history:
+      text = history.sections?[section].name ?? ""
+    case .groups:
+      text = groups.sections?[section].name ?? ""
+    case .teachers:
+      text = teachers.sections?[section].name ?? ""
+    }
+    
+    header.dateLabel.text = text
+  }
+  
+  /// Display right UI depending of content
+  fileprivate func updateUI() {
+    // Update state of UI
+    switch contentType {
+    case .auditoriums:
+      stateOfUI = auditoriums.fetchedObjects?.count == 0 ? .emptySearch : .showContent
+    case .history:
+      stateOfUI = history.fetchedObjects?.count == 0 ? .emptyHistory : .showContent
+    case .groups:
+      stateOfUI = groups.fetchedObjects?.count == 0 ? .emptySearch : .showContent
+    case .teachers:
+      stateOfUI = teachers.fetchedObjects?.count == 0 ? .emptySearch : .showContent
+    }
+    contentTableView.reloadData()
+    updateTableContentInset()
   }
   
   fileprivate func labelWidth(_ text: String) -> CGFloat {
@@ -583,39 +583,23 @@ extension SearchViewController: UITableViewDelegate {
     return headerView
   }
   
-//  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//    
-//    let dataItem = model.currentData[indexPath.section].records[indexPath.row]
-//    
-//    // For iPad
-//    if UIDevice.current.userInterfaceIdiom == .pad {
-//      // Get Schedule controller
-//      if let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
-//        // Update data
-//        if model.currentState == .favorites {
-//          scheduleViewController.updateFromStorage(withItem: dataItem)
-//        } else {
-//          scheduleViewController.updateFromServer(withItem: dataItem)
-//        }
-//      }
-//      
-//      // For iPhone
-//    } else if UIDevice.current.userInterfaceIdiom == .phone {
-//      let scheduleViewController = ScheduleViewController()
-//      if model.currentState == .favorites {
-//        scheduleViewController.updateFromStorage(withItem: dataItem)
-//      } else {
-//        scheduleViewController.updateFromServer(withItem: dataItem)
-//      }
-//      navigationController?.pushViewController(scheduleViewController, animated: true)
-//    }
-//    
-//    // Remember selected item
-//    while model.history.count > 50 { model.history.removeFirst() }
-//    let historyItems = model.history.filter { $0.name == dataItem.name }
-//    if historyItems.count == 0 { model.history.append(dataItem) }
-//    ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
-//  }
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+    // For iPad
+    if UIDevice.current.userInterfaceIdiom == .pad {
+      // Get Schedule controller
+      if let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
+        // Update data
+        
+        // TODO: UPdate data for iPad
+      }
+
+      // For iPhone
+    } else if UIDevice.current.userInterfaceIdiom == .phone {
+      let scheduleViewController = ScheduleViewController()
+      navigationController?.pushViewController(scheduleViewController, animated: true)
+    }
+  }
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
