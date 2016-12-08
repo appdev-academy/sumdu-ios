@@ -27,11 +27,10 @@
 		DE73E92C1DF95FB500513AEE /* MenuImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E92A1DF95FB500513AEE /* MenuImageCollectionViewCell.swift */; };
 		DE73E9301DF9611C00513AEE /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E92E1DF9611C00513AEE /* SearchBarView.swift */; };
 		DE73E9311DF9611C00513AEE /* SearchTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E92F1DF9611C00513AEE /* SearchTextField.swift */; };
-		DE73E9541DF9619B00513AEE /* ScheduleSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E94E1DF9619B00513AEE /* ScheduleSectionHeaderView.swift */; };
-		DE73E9551DF9619B00513AEE /* ScheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E94F1DF9619B00513AEE /* ScheduleTableViewCell.swift */; };
-		DE73E9561DF9619B00513AEE /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E9501DF9619B00513AEE /* ScheduleViewController.swift */; };
-		DE73E9571DF9619B00513AEE /* SearchViewController + Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E9521DF9619B00513AEE /* SearchViewController + Model.swift */; };
-		DE73E9581DF9619B00513AEE /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E9531DF9619B00513AEE /* SearchViewController.swift */; };
+		DE901E851DF9A058006A0CB9 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE901E841DF9A058006A0CB9 /* SearchViewController.swift */; };
+		DE901E871DF9A0BC006A0CB9 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE901E861DF9A0BC006A0CB9 /* ScheduleViewController.swift */; };
+		DE901E891DF9A0D3006A0CB9 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE901E881DF9A0D3006A0CB9 /* SectionHeaderView.swift */; };
+		DE901E8B1DF9A0DD006A0CB9 /* ScheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE901E8A1DF9A0DD006A0CB9 /* ScheduleTableViewCell.swift */; };
 		DEA431BD1DF997180024C75B /* CoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DEA431BB1DF997180024C75B /* CoreData.xcdatamodeld */; };
 		DEA431C21DF997880024C75B /* ListObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA431BE1DF997880024C75B /* ListObject.swift */; };
 		DEA431C41DF997880024C75B /* ScheduleRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA431C01DF997880024C75B /* ScheduleRecord.swift */; };
@@ -102,15 +101,14 @@
 		DE73E92A1DF95FB500513AEE /* MenuImageCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		DE73E92E1DF9611C00513AEE /* SearchBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		DE73E92F1DF9611C00513AEE /* SearchTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTextField.swift; sourceTree = "<group>"; };
-		DE73E94E1DF9619B00513AEE /* ScheduleSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleSectionHeaderView.swift; sourceTree = "<group>"; };
-		DE73E94F1DF9619B00513AEE /* ScheduleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewCell.swift; sourceTree = "<group>"; };
-		DE73E9501DF9619B00513AEE /* ScheduleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
-		DE73E9521DF9619B00513AEE /* SearchViewController + Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SearchViewController + Model.swift"; sourceTree = "<group>"; };
-		DE73E9531DF9619B00513AEE /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		DE769A4C1D81B40D00B07A6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DE769A4D1D81B4B900B07A6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DE769A4E1D81B4BB00B07A6C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DE769A4F1D81B4D700B07A6C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DE901E841DF9A058006A0CB9 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		DE901E861DF9A0BC006A0CB9 /* ScheduleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
+		DE901E881DF9A0D3006A0CB9 /* SectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
+		DE901E8A1DF9A0DD006A0CB9 /* ScheduleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewCell.swift; sourceTree = "<group>"; };
 		DEA431BC1DF997180024C75B /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
 		DEA431BE1DF997880024C75B /* ListObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListObject.swift; sourceTree = "<group>"; };
 		DEA431C01DF997880024C75B /* ScheduleRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleRecord.swift; sourceTree = "<group>"; };
@@ -299,6 +297,7 @@
 		DE73E9241DF95F3900513AEE /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				DE901E8A1DF9A0DD006A0CB9 /* ScheduleTableViewCell.swift */,
 				DE73E9251DF95F3900513AEE /* SearchTableViewCell.swift */,
 			);
 			path = Cells;
@@ -334,29 +333,10 @@
 		DE73E94C1DF9619B00513AEE /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				DE73E94D1DF9619B00513AEE /* Schedule */,
-				DE73E9511DF9619B00513AEE /* Search */,
+				DE901E861DF9A0BC006A0CB9 /* ScheduleViewController.swift */,
+				DE901E841DF9A058006A0CB9 /* SearchViewController.swift */,
 			);
 			path = "View Controllers";
-			sourceTree = "<group>";
-		};
-		DE73E94D1DF9619B00513AEE /* Schedule */ = {
-			isa = PBXGroup;
-			children = (
-				DE73E94E1DF9619B00513AEE /* ScheduleSectionHeaderView.swift */,
-				DE73E94F1DF9619B00513AEE /* ScheduleTableViewCell.swift */,
-				DE73E9501DF9619B00513AEE /* ScheduleViewController.swift */,
-			);
-			path = Schedule;
-			sourceTree = "<group>";
-		};
-		DE73E9511DF9619B00513AEE /* Search */ = {
-			isa = PBXGroup;
-			children = (
-				DE73E9521DF9619B00513AEE /* SearchViewController + Model.swift */,
-				DE73E9531DF9619B00513AEE /* SearchViewController.swift */,
-			);
-			path = Search;
 			sourceTree = "<group>";
 		};
 		DEB4AE2B1DF819D200CD8FF2 /* UI Subclasses */ = {
@@ -383,6 +363,7 @@
 			isa = PBXGroup;
 			children = (
 				DEB4AE341DF81A0E00CD8FF2 /* EmptyHistoryView.swift */,
+				DE901E881DF9A0D3006A0CB9 /* SectionHeaderView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -615,7 +596,7 @@
 				DE4CF0801D36855F000F9199 /* Colors.swift in Sources */,
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
-				DE73E9561DF9619B00513AEE /* ScheduleViewController.swift in Sources */,
+				DE901E871DF9A0BC006A0CB9 /* ScheduleViewController.swift in Sources */,
 				DEB4AE351DF81A0E00CD8FF2 /* EmptyHistoryView.swift in Sources */,
 				DE73E92C1DF95FB500513AEE /* MenuImageCollectionViewCell.swift in Sources */,
 				DEF0ACDE1DF86251009AA9B8 /* ImportManager.swift in Sources */,
@@ -623,7 +604,6 @@
 				DE73E92B1DF95FB500513AEE /* MenuCollectionViewCell.swift in Sources */,
 				DE73E9231DF9571100513AEE /* UIAlertController.swift in Sources */,
 				DEB4AE321DF819D200CD8FF2 /* ShareButton.swift in Sources */,
-				DE73E9571DF9619B00513AEE /* SearchViewController + Model.swift in Sources */,
 				DEE4A50A1DF83F1A002BAF5F /* NSManagedObject.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
 				DEE4A5081DF83F1A002BAF5F /* AttributeMapper.swift in Sources */,
@@ -633,20 +613,20 @@
 				DEB4AE3F1DF82B3D00CD8FF2 /* NetworkingManager.swift in Sources */,
 				E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */,
 				E1CD3B4A1C5CB88D0028B9A0 /* ScheduleCoder.swift in Sources */,
+				DE901E851DF9A058006A0CB9 /* SearchViewController.swift in Sources */,
 				DEE4A5091DF83F1A002BAF5F /* Converter.swift in Sources */,
-				DE73E9581DF9619B00513AEE /* SearchViewController.swift in Sources */,
+				DE901E891DF9A0D3006A0CB9 /* SectionHeaderView.swift in Sources */,
 				DEB4AE311DF819D200CD8FF2 /* RefreshButton.swift in Sources */,
 				DEA431C41DF997880024C75B /* ScheduleRecord.swift in Sources */,
 				DE73E9301DF9611C00513AEE /* SearchBarView.swift in Sources */,
 				DE4CF07E1D3684C1000F9199 /* Font.swift in Sources */,
 				DEA431C21DF997880024C75B /* ListObject.swift in Sources */,
+				DE901E8B1DF9A0DD006A0CB9 /* ScheduleTableViewCell.swift in Sources */,
 				E4583E951C25495F0031F164 /* Keys.swift in Sources */,
-				DE73E9551DF9619B00513AEE /* ScheduleTableViewCell.swift in Sources */,
 				DEA431BD1DF997180024C75B /* CoreData.xcdatamodeld in Sources */,
 				7D07F81D1C099C56007DF3FD /* AppDelegate.swift in Sources */,
 				DE73E9261DF95F3900513AEE /* SearchTableViewCell.swift in Sources */,
 				E4B3E0FA1C68F7C2005B8103 /* SectionCoder.swift in Sources */,
-				DE73E9541DF9619B00513AEE /* ScheduleSectionHeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,28 +12,7 @@ import DuckDate
 import UIKit
 import SwiftyJSON
 
-/// Type of content to display
-enum ContentType: Int {
-  
-  case history = 0
-  case groups = 1
-  case teachers = 2
-  case auditoriums = 3
-  
-  var name: String {
-    switch self {
-    case .history:
-      return ""
-    case .groups:
-      return NSLocalizedString("Group", comment: "")
-    case .teachers:
-      return NSLocalizedString("Teacher", comment: "")
-    case .auditoriums:
-      return NSLocalizedString("Auditorium", comment: "")
-    }
-  }
-}
-
+/// Main controller with search and table
 class SearchViewController: UIViewController {
   
   // MARK: - Properties
@@ -169,7 +148,7 @@ class SearchViewController: UIViewController {
   ///   - headerView: UITableViewHeaderFooterView for section
   ///   - section: index of section
   fileprivate func configureHeader(_ headerView: UITableViewHeaderFooterView?, section: Int) {
-    guard let header = headerView as? ScheduleSectionHeaderView else { return }
+    guard let header = headerView as? SectionHeaderView else { return }
     
     let text: String
     switch contentType {
@@ -271,7 +250,7 @@ class SearchViewController: UIViewController {
     // Content table
     contentTableView.delegate = self
     contentTableView.dataSource = self
-    contentTableView.register(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
+    contentTableView.register(SectionHeaderView.self, forHeaderFooterViewReuseIdentifier: SectionHeaderView.reuseIdentifier)
     contentTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
     contentTableView.separatorStyle = .none
     view.addSubview(contentTableView)
@@ -550,11 +529,11 @@ extension SearchViewController: UITableViewDelegate {
   }
   
   func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-    return ScheduleSectionHeaderView.viewHeight
+    return SectionHeaderView.viewHeight
   }
 
   func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-    let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
+    let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SectionHeaderView.reuseIdentifier)
     
     configureHeader(headerView, section: section)
     

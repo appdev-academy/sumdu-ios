@@ -11,6 +11,28 @@ import CoreDuck
 import Foundation
 import Fuzi
 
+/// Type of content to display
+enum ContentType: Int {
+  
+  case history = 0
+  case groups = 1
+  case teachers = 2
+  case auditoriums = 3
+  
+  var name: String {
+    switch self {
+    case .history:
+      return ""
+    case .groups:
+      return NSLocalizedString("Group", comment: "")
+    case .teachers:
+      return NSLocalizedString("Teacher", comment: "")
+    case .auditoriums:
+      return NSLocalizedString("Auditorium", comment: "")
+    }
+  }
+}
+
 /// For network requests
 struct NetworkingManager {
   

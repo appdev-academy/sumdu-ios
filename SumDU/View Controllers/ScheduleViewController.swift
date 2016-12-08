@@ -121,7 +121,7 @@ class ScheduleViewController: UIViewController {
       titleLabel.trailing == superview.trailing - trailingMargin
     }
     // Schedule table
-    scheduleTableView.register(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
+    scheduleTableView.register(SectionHeaderView.self, forHeaderFooterViewReuseIdentifier: SectionHeaderView.reuseIdentifier)
     scheduleTableView.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.reuseIdentifier)
     scheduleTableView.delegate = self
     scheduleTableView.dataSource = self
@@ -239,7 +239,7 @@ extension ScheduleViewController: UITableViewDelegate {
   }
   
   func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-    let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
+    let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SectionHeaderView.reuseIdentifier) as! SectionHeaderView
     // Set data
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "dd MMMM"
@@ -250,7 +250,7 @@ extension ScheduleViewController: UITableViewDelegate {
   }
   
   func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-    return ScheduleSectionHeaderView.viewHeight
+    return SectionHeaderView.viewHeight
   }
 }
 
