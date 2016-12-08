@@ -70,6 +70,28 @@ class SearchViewController: UIViewController {
     }
   }
   
+  /// State of search
+  fileprivate var isSearching = false {
+    didSet {
+      if isSearching {
+        // Higlight
+        updateUI()
+      } else {
+         // Clear search text if canceled
+        searchText = nil
+      }
+    }
+  }
+  
+  /// Text from search field
+  fileprivate var searchText: String? = nil {
+    didSet {
+      // Make search
+      fetchData()
+      updateUI()
+    }
+  }
+  
   // MARK: - UI objects
   
   fileprivate let searchBarView = SearchBarView()
@@ -90,6 +112,9 @@ class SearchViewController: UIViewController {
     initialSetup()
     
     if UIDevice.current.userInterfaceIdiom == .pad {
+      
+      // TODO: Check on iPad
+      
 //      if let firstItem = model.history.first, let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
         //        scheduleViewController.updateFromStorage(withItem: firstItem)
 //      }
@@ -115,10 +140,29 @@ class SearchViewController: UIViewController {
   // MARK: - Helpers
   
   func fetchData() {
-    auditoriums = ListObject.fetch(search: nil, type: .auditoriums, delegate: self)
-    teachers = ListObject.fetch(search: nil, type: .teachers, delegate: self)
-    groups = ListObject.fetch(search: nil, type: .groups, delegate: self)
-    history = ListObject.fetch(search: nil, type: .history, delegate: self)
+    auditoriums = ListObject.fetch(search: searchText, type: .auditoriums, delegate: self)
+    teachers = ListObject.fetch(search: searchText, type: .teachers, delegate: self)
+    groups = ListObject.fetch(search: searchText, type: .groups, delegate: self)
+    history = ListObject.fetch(search: searchText, type: .history, delegate: self)
+  }
+  
+  /// Show matching pattern
+  fileprivate func highlightSearchResults(_ searchString: String, resultString: String) -> NSMutableAttributedString {
+    
+    let attributedString: NSMutableAttributedString = NSMutableAttributedString(string: resultString)
+    let pattern = searchString
+    let range: NSRange = NSMakeRange(0, resultString.characters.count)
+    
+    let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+    
+    regex?.enumerateMatches(in: resultString, options: NSRegularExpression.MatchingOptions(), range: range) {
+      (textCheckingResult, matchingFlags, stop) -> Void in
+      
+      if let subRange = textCheckingResult?.range {
+        attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textNormal, range: subRange)
+      }
+    }
+    return attributedString
   }
   
   /// Populate cell from the NSManagedObject instance
@@ -128,6 +172,7 @@ class SearchViewController: UIViewController {
   ///   - indexPath: IndexPath
   fileprivate func configureCell(_ cell: UITableViewCell, indexPath: IndexPath) {
     guard let cell = cell as? SearchTableViewCell else { return }
+    
     let name: String
     switch contentType {
     case .auditoriums:
@@ -139,7 +184,20 @@ class SearchViewController: UIViewController {
     case .teachers:
       name = teachers.object(at: indexPath).name
     }
-    cell.label.text = name
+    
+    if isSearching {
+      // Higlight search results
+      cell.label.textColor = Color.textLight
+      if let searchingText = searchText {
+        cell.label.attributedText = highlightSearchResults(searchingText, resultString: name)
+      } else {
+        cell.label.text = name
+      }
+    } else {
+      // Show normal text
+      cell.label.text = name
+      cell.label.textColor = Color.textNormal
+    }
   }
   
   /// Populate header with data
@@ -167,22 +225,32 @@ class SearchViewController: UIViewController {
   
   /// Display right UI depending of content
   fileprivate func updateUI() {
+    
+    /// Reload data in table if displayed
+    func reloadTable() {
+      if stateOfUI == .showContent {
+        contentTableView.reloadData()
+        updateTableContentInset()
+      }
+    }
+    
     // Update state of UI
     switch contentType {
     case .auditoriums:
       stateOfUI = auditoriums.fetchedObjects?.count == 0 ? .emptySearch : .showContent
+      reloadTable()
+      
     case .history:
       stateOfUI = history.fetchedObjects?.count == 0 ? .emptyHistory : .showContent
+      reloadTable()
+      
     case .groups:
       stateOfUI = groups.fetchedObjects?.count == 0 ? .emptySearch : .showContent
+      reloadTable()
+      
     case .teachers:
       stateOfUI = teachers.fetchedObjects?.count == 0 ? .emptySearch : .showContent
-    }
-    
-    // Reload table
-    if stateOfUI == .showContent {
-      contentTableView.reloadData()
-      updateTableContentInset()
+      reloadTable()
     }
   }
   
@@ -380,25 +448,13 @@ extension SearchViewController: SearchBarViewDelegate {
   
   func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
     
-//    if model.searchMode {
-//      // Update search text
-//      model.searchText = text
-//      updateUI()
-//    }
+    searchText = text
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
-    
-    // Clear search text if canceled
-//    if !searchMode {
-//      model.searchText = nil
-//    }
-//    
-//    if searchMode != model.searchMode {
-//      // Update search mode
-//      model.searchMode = searchMode
-//      updateUI()
-//    }
+    if searchMode != isSearching {
+      isSearching = searchMode
+    }
   }
 }
 
@@ -407,14 +463,13 @@ extension SearchViewController: SearchBarViewDelegate {
 extension SearchViewController: UICollectionViewDelegate {
   
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    
     // Get new type
     guard let newType = ContentType(rawValue: indexPath.row) else { return }
     
     // If user select other state
     guard contentType != newType else { return }
     
-    // Scroll to the top of table
+    // Stop scroll of table
     contentTableView.setContentOffset(CGPoint.zero, animated: false)
     
     // Update type
@@ -580,9 +635,6 @@ extension SearchViewController: UITableViewDelegate {
 extension SearchViewController: NSFetchedResultsControllerDelegate {
   
   func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-    guard stateOfUI == .showContent else { return }
-    
-    contentTableView.reloadData()
-    updateTableContentInset()
+    updateUI()
   }
 }
