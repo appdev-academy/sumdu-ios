@@ -8,22 +8,6 @@
 
 import Foundation
 
-enum State: Int {
-  case favorites
-  case groups
-  case teachers
-  case auditoriums
-  
-  var name: String {
-    switch self {
-    case .favorites: return ""
-    case .groups: return NSLocalizedString("Group", comment: "")
-    case .teachers: return NSLocalizedString("Teacher", comment: "")
-    case .auditoriums: return NSLocalizedString("Auditorium", comment: "")
-    }
-  }
-}
-
 /// Section for content table
 struct DataSection {
   var letter: Character
@@ -49,7 +33,7 @@ struct DataModel {
   }
   
   /// Current model state
-  var currentState: State = .favorites {
+  var currentState: ContentType = .favorites {
     didSet {
       if searchMode && searchText != nil {
         sortData()

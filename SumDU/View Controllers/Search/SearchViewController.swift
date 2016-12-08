@@ -12,11 +12,37 @@ import DuckDate
 import UIKit
 import SwiftyJSON
 
+/// Type of content to display
+enum ContentType: Int {
+  case favorites
+  case groups
+  case teachers
+  case auditoriums
+  
+  var name: String {
+    switch self {
+    case .favorites:
+      return ""
+    case .groups:
+      return NSLocalizedString("Group", comment: "")
+    case .teachers:
+      return NSLocalizedString("Teacher", comment: "")
+    case .auditoriums:
+      return NSLocalizedString("Auditorium", comment: "")
+    }
+  }
+}
+
 class SearchViewController: UIViewController {
   
   // MARK: - Properties
   
-  enum ContentState {
+  /// State of UI
+  ///
+  /// - showContent: Display content
+  /// - emptySearch: Search with empty results
+  /// - emptyHistory: Empty hisotry
+  enum UIState {
     case showContent
     case emptySearch
     case emptyHistory
@@ -28,10 +54,14 @@ class SearchViewController: UIViewController {
   
   // MARK: - Variables
   
+  fileprivate var auditoriums: NSFetchedResultsController<Auditorium>!
+  fileprivate var teachers: NSFetchedResultsController<Teacher>!
+  fileprivate var groups: NSFetchedResultsController<Group>!
+  
   fileprivate var tableViewContentInset = UIEdgeInsets.zero
-  fileprivate var contentState: ContentState = .showContent {
+  fileprivate var stateOfUI: UIState = .showContent {
     didSet {
-      switch contentState {
+      switch stateOfUI {
       case .emptyHistory:
         // Hide table and show empty history
         contentTableView.isHidden = true
@@ -48,6 +78,13 @@ class SearchViewController: UIViewController {
         emptyHistoryView.isHidden = true
         notFoundLabel.isHidden = false
       }
+    }
+  }
+  
+  /// Save type of displayed content
+  fileprivate var contentType: ContentType = .favorites {
+    didSet {
+      updateUI()
     }
   }
   
@@ -74,26 +111,22 @@ class SearchViewController: UIViewController {
     
     registerForNotifications()
     
-    // UI
     initialSetup()
     
-    // Data
-    parser.dataListDelegate = self
-    model.updateFromStorage()
-    
     if UIDevice.current.userInterfaceIdiom == .pad {
-      if let firstItem = model.history.first, let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
-        scheduleViewController.updateFromStorage(withItem: firstItem)
-      }
+//      if let firstItem = model.history.first, let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
+        //        scheduleViewController.updateFromStorage(withItem: firstItem)
+//      }
     }
     
-    updateContent()
+    updateUI()
   }
   
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     
     updateMenuScrollIndicator()
+    
     // Select menu item
     let indexPath = IndexPath(item: model.currentState.rawValue, section: 0)
     menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition())
@@ -105,17 +138,49 @@ class SearchViewController: UIViewController {
   
   // MARK: - Helpers
   
-  fileprivate func updateContent() {
-    if model.currentData.count == 0 && model.searchMode {
-      contentState = .emptySearch
-    } else if model.currentData.count == 0 && model.currentState == .favorites {
-      contentState = .emptyHistory
-    } else {
-      contentState = .showContent
+  func fetchData() {
+    auditoriums = Auditorium.fetchAll(sortedBy: "name", ascending: true, delegate: self)
+    teachers = Teacher.fetchAll(sortedBy: "name", ascending: true, delegate: self)
+    groups = Group.fetchAll(sortedBy: "name", ascending: true, delegate: self)
+  }
+  
+  /// Populate cell from the NSManagedObject instance
+  ///
+  /// - Parameters:
+  ///   - cell: UITableViewCell object from table
+  ///   - indexPath: IndexPath
+  fileprivate func configureCell(_ cell: UITableViewCell, indexPath: IndexPath) {
+    guard let cell = cell as? SearchTableViewCell else { return }
+    let name: String
+    switch contentType {
+    case .auditoriums:
+      name = auditoriums.object(at: indexPath).name
+    case .favorites:
+      name = ""
+    case .groups:
+      name = groups.object(at: indexPath).name
+    case .teachers:
+      name = teachers.object(at: indexPath).name
+    }
+    cell.label.text = name
+  }
+  
+  /// Display right UI depending of content
+  fileprivate func updateUI() {
+    // Update state of UI
+    switch contentType {
+    case .auditoriums:
+      stateOfUI = auditoriums.fetchedObjects?.count == 0 ? .emptySearch : .showContent
+    case .favorites:
+      stateOfUI = .emptyHistory
+    case .groups:
+      stateOfUI = groups.fetchedObjects?.count == 0 ? .emptySearch : .showContent
+    case .teachers:
+      stateOfUI = teachers.fetchedObjects?.count == 0 ? .emptySearch : .showContent
     }
     
     // Reload table
-    if contentState == .showContent {
+    if stateOfUI == .showContent {
       contentTableView.reloadData()
       updateTableContentInset()
     }
@@ -234,9 +299,9 @@ class SearchViewController: UIViewController {
     let screenWidth = view.bounds.width
     var spacing = screenWidth
     spacing -= MenuImageCollectionViewCell.historyImageSize.width
-    spacing -= labelWidth(State.teachers.name)
-    spacing -= labelWidth(State.auditoriums.name)
-    spacing -= labelWidth(State.groups.name)
+    spacing -= labelWidth(ContentType.teachers.name)
+    spacing -= labelWidth(ContentType.auditoriums.name)
+    spacing -= labelWidth(ContentType.groups.name)
     return spacing/4.0
   }
   
@@ -244,9 +309,9 @@ class SearchViewController: UIViewController {
   fileprivate func updateMenuScrollIndicator() {
     let spacing = interItemSpacing()
     var leading: CGFloat = 0.0
-    var width: CGFloat = labelWidth(model.currentState.name)
+    var width: CGFloat = labelWidth(contentType.name)
     let historyImageWidth = MenuImageCollectionViewCell.historyImageSize.width
-    switch model.currentState {
+    switch contentType {
       
     case .favorites:
       leading = spacing/2
@@ -259,13 +324,13 @@ class SearchViewController: UIViewController {
     case .teachers:
       leading = spacing*2 + spacing/2
       leading += historyImageWidth
-      leading += labelWidth(State.groups.name)
+      leading += labelWidth(ContentType.groups.name)
       
     case .auditoriums:
       leading = spacing*3 + spacing/2
       leading += historyImageWidth
-      leading += labelWidth(State.teachers.name)
-      leading += labelWidth(State.groups.name)
+      leading += labelWidth(ContentType.teachers.name)
+      leading += labelWidth(ContentType.groups.name)
     }
     constrain(scrollingIndicatorView, view, replace: scrollConstraintGroup) { scrollingIndicatorView, superview in
       scrollingIndicatorView.leading == superview.leading + leading
@@ -320,7 +385,7 @@ extension SearchViewController: SearchBarViewDelegate {
     if model.searchMode {
       // Update search text
       model.searchText = text
-      updateContent()
+      updateUI()
     }
   }
   
@@ -336,7 +401,7 @@ extension SearchViewController: SearchBarViewDelegate {
     if searchMode != model.searchMode {
       // Update search mode
       model.searchMode = searchMode
-      updateContent()
+      updateUI()
     }
   }
 }
@@ -347,22 +412,17 @@ extension SearchViewController: UICollectionViewDelegate {
   
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     
-    // Get new state
-    guard let newState = State(rawValue: indexPath.row) else {
-      return
-    }
+    // Get new type
+    guard let newType = ContentType(rawValue: indexPath.row) else { return }
     
     // If user select other state
-    guard model.currentState != newState else {
-      return
-    }
+    guard contentType != newType else { return }
     
     // Scroll to the top of table
     contentTableView.setContentOffset(CGPoint.zero, animated: false)
     
-    // Update state
-    model.currentState = newState
-    updateContent()
+    // Update type
+    contentType = newType
     
     // Update menu
     updateMenuScrollIndicator()
@@ -380,7 +440,7 @@ extension SearchViewController: UICollectionViewDataSource {
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     
-    if indexPath.row != 0, let segment = State(rawValue: indexPath.row) {
+    if indexPath.row != 0, let segment = ContentType(rawValue: indexPath.row) {
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCollectionViewCell.reuseIdentifier, for: indexPath) as! MenuCollectionViewCell
       cell.update(withTitle: segment.name)
       return cell
@@ -405,7 +465,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
   
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     
-    guard let type = State(rawValue: indexPath.row) else {
+    guard let type = ContentType(rawValue: indexPath.row) else {
       return CGSize(width: 0.0, height: 0.0)
     }
     
@@ -421,61 +481,34 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
   }
 }
 
-// MARK: - ParserDataListDelegate
-
-extension SearchViewController: ParserDataListDelegate {
-  internal func requesSuccess(auditoriums: [ListData], groups: [ListData], teachers: [ListData]) {
-    
-    // Update Auditoriums
-    model.auditoriums = auditoriums
-    ListData.saveToStorage(model.auditoriums, forKey: UserDefaultsKey.Auditoriums.key)
-    
-    // Update Groups
-    model.groups = groups
-    ListData.saveToStorage(model.groups, forKey: UserDefaultsKey.Groups.key)
-    
-    // Update Teachers
-    model.teachers = teachers
-    ListData.saveToStorage(model.teachers, forKey: UserDefaultsKey.Teachers.key)
-    
-    updateContent()
-  }
-  
-  func requestError(_ parser: Parser, localizedError error: String?) {
-    if UIApplication.shared.isNetworkActivityIndicatorVisible {
-      UIApplication.shared.isNetworkActivityIndicatorVisible = false
-    }
-    
-    // Create alert
-    let alertController = UIAlertController(title: NSLocalizedString("Error", comment: ""), message: error, preferredStyle: .alert)
-    alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK button title in alerts"), style: .default, handler: nil))
-    
-    // Present alert
-    present(alertController, animated: true, completion: nil)
-  }
-}
-
 // MARK: - UITableViewDataSource
 
 extension SearchViewController: UITableViewDataSource {
   
-  func numberOfSections(in tableView: UITableView) -> Int {
-    return model.currentData.count
-  }
+  //  func numberOfSections(in tableView: UITableView) -> Int {
+  //    return model.currentData.count
+  //  }
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    if model.currentData.count > 0 {
-      return model.currentData[section].records.count
+    let numberOfRows: Int
+    switch contentType {
+    case .auditoriums:
+      numberOfRows = auditoriums.sections?[section].numberOfObjects ?? 0
+    case .favorites:
+      numberOfRows = 0
+    case .groups:
+      numberOfRows = groups.sections?[section].numberOfObjects ?? 0
+    case .teachers:
+      numberOfRows = teachers.sections?[section].numberOfObjects ?? 0
     }
-    return 0
+    return numberOfRows
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as! SearchTableViewCell
+    let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath)
     
-    if model.currentData.count > 0 {
-      cell.update(with: model.currentData[indexPath.section].records[indexPath.row], search: model.searchMode, searchingText: model.searchText)
-    }
+    configureCell(cell, indexPath: indexPath)
+    
     return cell
   }
 }
@@ -488,49 +521,62 @@ extension SearchViewController: UITableViewDelegate {
     return SearchTableViewCell.cellHeight
   }
   
-  func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-    return ScheduleSectionHeaderView.viewHeight
-  }
+//  func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//    return ScheduleSectionHeaderView.viewHeight
+//  }
+//  
+//  func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//    let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
+//    if model.currentData.count > 0 {
+//      headerView.dateLabel.text = String(model.currentData[section].letter)
+//    }
+//    return headerView
+//  }
   
-  func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-    let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
-    if model.currentData.count > 0 {
-      headerView.dateLabel.text = String(model.currentData[section].letter)
-    }
-    return headerView
-  }
+//  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//    
+//    let dataItem = model.currentData[indexPath.section].records[indexPath.row]
+//    
+//    // For iPad
+//    if UIDevice.current.userInterfaceIdiom == .pad {
+//      // Get Schedule controller
+//      if let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
+//        // Update data
+//        if model.currentState == .favorites {
+//          scheduleViewController.updateFromStorage(withItem: dataItem)
+//        } else {
+//          scheduleViewController.updateFromServer(withItem: dataItem)
+//        }
+//      }
+//      
+//      // For iPhone
+//    } else if UIDevice.current.userInterfaceIdiom == .phone {
+//      let scheduleViewController = ScheduleViewController()
+//      if model.currentState == .favorites {
+//        scheduleViewController.updateFromStorage(withItem: dataItem)
+//      } else {
+//        scheduleViewController.updateFromServer(withItem: dataItem)
+//      }
+//      navigationController?.pushViewController(scheduleViewController, animated: true)
+//    }
+//    
+//    // Remember selected item
+//    while model.history.count > 50 { model.history.removeFirst() }
+//    let historyItems = model.history.filter { $0.name == dataItem.name }
+//    if historyItems.count == 0 { model.history.append(dataItem) }
+//    ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
+//  }
+}
+
+// MARK: - NSFetchedResultsControllerDelegate
+
+extension SearchViewController: NSFetchedResultsControllerDelegate {
   
-  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    
-    let dataItem = model.currentData[indexPath.section].records[indexPath.row]
-    
-    // For iPad
-    if UIDevice.current.userInterfaceIdiom == .pad {
-      // Get Schedule controller
-      if let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
-        // Update data
-        if model.currentState == .favorites {
-          scheduleViewController.updateFromStorage(withItem: dataItem)
-        } else {
-          scheduleViewController.updateFromServer(withItem: dataItem)
-        }
-      }
-      
-      // For iPhone
-    } else if UIDevice.current.userInterfaceIdiom == .phone {
-      let scheduleViewController = ScheduleViewController()
-      if model.currentState == .favorites {
-        scheduleViewController.updateFromStorage(withItem: dataItem)
-      } else {
-        scheduleViewController.updateFromServer(withItem: dataItem)
-      }
-      navigationController?.pushViewController(scheduleViewController, animated: true)
+  func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    // Reload table
+    if stateOfUI == .showContent {
+      contentTableView.reloadData()
+      updateTableContentInset()
     }
-    
-    // Remember selected item
-    while model.history.count > 50 { model.history.removeFirst() }
-    let historyItems = model.history.filter { $0.name == dataItem.name }
-    if historyItems.count == 0 { model.history.append(dataItem) }
-    ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
   }
 }

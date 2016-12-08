@@ -18,7 +18,7 @@ class SearchTableViewCell: UITableViewCell {
   
   // MARK: - UIObjects
   
-  fileprivate let label = UILabel()
+  let label = UILabel()
   fileprivate let separatorLine = UIView()
   
   // MARK: - Initialization

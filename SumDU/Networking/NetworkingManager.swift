@@ -69,7 +69,7 @@ struct NetworkingManager {
         
         // Import Teachers
         let teachersImportManager = ImportManager<Teacher>()
-        teachersImportManager.fromJSON(groups, mappedAttributes: Teacher.mappedAttributes)
+        teachersImportManager.fromJSON(teachers, mappedAttributes: Teacher.mappedAttributes)
         
         // Save date of last update
         UserDefaults.standard.set(Date(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)

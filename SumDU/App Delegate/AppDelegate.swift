@@ -24,6 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     if UIDevice.current.userInterfaceIdiom == .pad, let window = self.window {
       let searchViewController = SearchViewController()
+      searchViewController.fetchData()
+      
       let scheduleViewController = ScheduleViewController()
       let splitViewController = UISplitViewController()
       splitViewController.viewControllers = [searchViewController, scheduleViewController]
@@ -35,6 +37,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     if UIDevice.current.userInterfaceIdiom == .phone, let window = self.window  {
       let searchViewController = SearchViewController()
+      searchViewController.fetchData()
+      
       let navigationController = UINavigationController(rootViewController: searchViewController)
       navigationController.isNavigationBarHidden = true
       window.rootViewController = navigationController
