@@ -27,16 +27,13 @@ struct NetworkingManager {
       
       do {
         let htmlDocument = try HTMLDocument(string: htmlString, encoding: String.Encoding.windowsCP1251)
-        
-        var auditoriums: [Any] = []
-        var groups: [Any] = []
-        var teachers: [Any] = []
+        var data: [Any] = []
         
         // Auditoriums
         if let auditoriumsSelect = htmlDocument.firstChild(css: "#auditorium") {
           for option in auditoriumsSelect.children {
             if let idString = option.attr("value"), let id = Int(idString), option.stringValue.characters.count > 1 {
-              auditoriums.append(["name" : option.stringValue, "id" : id])
+              data.append(["name" : option.stringValue, "id" : id, "type": ContentType.auditoriums.rawValue])
             }
           }
         }
@@ -45,7 +42,7 @@ struct NetworkingManager {
         if let groupsSelect = htmlDocument.firstChild(css: "#group") {
           for option in groupsSelect.children {
             if let idString = option.attr("value"), let id = Int(idString), option.stringValue.characters.count > 1 {
-              groups.append(["name" : option.stringValue, "id" : id])
+              data.append(["name" : option.stringValue, "id" : id, "type": ContentType.groups.rawValue])
             }
           }
         }
@@ -54,22 +51,14 @@ struct NetworkingManager {
         if let teachersSelect = htmlDocument.firstChild(css: "#teacher") {
           for option in teachersSelect.children {
             if let idString = option.attr("value"), let id = Int(idString), option.stringValue.characters.count > 1 {
-              teachers.append(["name" : option.stringValue, "id" : id])
+              data.append(["name" : option.stringValue, "id" : id, "type": ContentType.teachers.rawValue])
             }
           }
         }
         
-        // Import Auditoriums
-        let auditoriumsImportManager = ImportManager<Auditorium>()
-        auditoriumsImportManager.fromJSON(auditoriums, mappedAttributes: Auditorium.mappedAttributes)
-        
-        // Import Groups
-        let groupsImportManager = ImportManager<Group>()
-        groupsImportManager.fromJSON(groups, mappedAttributes: Group.mappedAttributes)
-        
-        // Import Teachers
-        let teachersImportManager = ImportManager<Teacher>()
-        teachersImportManager.fromJSON(teachers, mappedAttributes: Teacher.mappedAttributes)
+        // Import Auditoriums, Groups and Teachers
+        let auditoriumsImportManager = ImportManager<ListObject>()
+        auditoriumsImportManager.fromJSON(data, mappedAttributes: ListObject.mappedAttributes)
         
         // Save date of last update
         UserDefaults.standard.set(Date(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)

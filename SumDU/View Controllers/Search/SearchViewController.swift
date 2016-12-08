@@ -14,14 +14,15 @@ import SwiftyJSON
 
 /// Type of content to display
 enum ContentType: Int {
-  case favorites
-  case groups
-  case teachers
-  case auditoriums
+  
+  case history = 0
+  case groups = 1
+  case teachers = 2
+  case auditoriums = 3
   
   var name: String {
     switch self {
-    case .favorites:
+    case .history:
       return ""
     case .groups:
       return NSLocalizedString("Group", comment: "")
@@ -41,7 +42,7 @@ class SearchViewController: UIViewController {
   ///
   /// - showContent: Display content
   /// - emptySearch: Search with empty results
-  /// - emptyHistory: Empty hisotry
+  /// - emptyHistory: Empty history
   enum UIState {
     case showContent
     case emptySearch
@@ -54,9 +55,11 @@ class SearchViewController: UIViewController {
   
   // MARK: - Variables
   
-  fileprivate var auditoriums: NSFetchedResultsController<Auditorium>!
-  fileprivate var teachers: NSFetchedResultsController<Teacher>!
-  fileprivate var groups: NSFetchedResultsController<Group>!
+  fileprivate var auditoriums: NSFetchedResultsController<ListObject>!
+  fileprivate var teachers: NSFetchedResultsController<ListObject>!
+  fileprivate var groups: NSFetchedResultsController<ListObject>!
+  fileprivate var history: NSFetchedResultsController<ListObject>!
+  
   
   fileprivate var tableViewContentInset = UIEdgeInsets.zero
   fileprivate var stateOfUI: UIState = .showContent {
@@ -82,17 +85,11 @@ class SearchViewController: UIViewController {
   }
   
   /// Save type of displayed content
-  fileprivate var contentType: ContentType = .favorites {
+  fileprivate var contentType: ContentType = .history {
     didSet {
       updateUI()
     }
   }
-  
-  /// Parser for working with server
-  fileprivate var parser = Parser()
-  
-  /// Data model
-  fileprivate var model = DataModel()
   
   // MARK: - UI objects
   
@@ -128,8 +125,8 @@ class SearchViewController: UIViewController {
     updateMenuScrollIndicator()
     
     // Select menu item
-    let indexPath = IndexPath(item: model.currentState.rawValue, section: 0)
-    menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition())
+    let indexPath = IndexPath(item: contentType.rawValue, section: 0)
+    menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition.centeredVertically)
   }
   
   deinit {
@@ -139,9 +136,10 @@ class SearchViewController: UIViewController {
   // MARK: - Helpers
   
   func fetchData() {
-    auditoriums = Auditorium.fetchAll(sortedBy: "name", ascending: true, delegate: self)
-    teachers = Teacher.fetchAll(sortedBy: "name", ascending: true, delegate: self)
-    groups = Group.fetchAll(sortedBy: "name", ascending: true, delegate: self)
+    auditoriums = ListObject.fetch(search: nil, type: .auditoriums, delegate: self)
+    teachers = ListObject.fetch(search: nil, type: .teachers, delegate: self)
+    groups = ListObject.fetch(search: nil, type: .groups, delegate: self)
+    history = ListObject.fetch(search: nil, type: .history, delegate: self)
   }
   
   /// Populate cell from the NSManagedObject instance
@@ -155,8 +153,8 @@ class SearchViewController: UIViewController {
     switch contentType {
     case .auditoriums:
       name = auditoriums.object(at: indexPath).name
-    case .favorites:
-      name = ""
+    case .history:
+      name = history.object(at: indexPath).name
     case .groups:
       name = groups.object(at: indexPath).name
     case .teachers:
@@ -165,14 +163,37 @@ class SearchViewController: UIViewController {
     cell.label.text = name
   }
   
+  /// Populate header with data
+  ///
+  /// - Parameters:
+  ///   - headerView: UITableViewHeaderFooterView for section
+  ///   - section: index of section
+  fileprivate func configureHeader(_ headerView: UITableViewHeaderFooterView?, section: Int) {
+    guard let header = headerView as? ScheduleSectionHeaderView else { return }
+    
+    let text: String
+    switch contentType {
+    case .auditoriums:
+      text = auditoriums.sections?[section].name ?? ""
+    case .history:
+      text = history.sections?[section].name ?? ""
+    case .groups:
+      text = groups.sections?[section].name ?? ""
+    case .teachers:
+      text = teachers.sections?[section].name ?? ""
+    }
+    
+    header.dateLabel.text = text
+  }
+  
   /// Display right UI depending of content
   fileprivate func updateUI() {
     // Update state of UI
     switch contentType {
     case .auditoriums:
       stateOfUI = auditoriums.fetchedObjects?.count == 0 ? .emptySearch : .showContent
-    case .favorites:
-      stateOfUI = .emptyHistory
+    case .history:
+      stateOfUI = history.fetchedObjects?.count == 0 ? .emptyHistory : .showContent
     case .groups:
       stateOfUI = groups.fetchedObjects?.count == 0 ? .emptySearch : .showContent
     case .teachers:
@@ -313,7 +334,7 @@ class SearchViewController: UIViewController {
     let historyImageWidth = MenuImageCollectionViewCell.historyImageSize.width
     switch contentType {
       
-    case .favorites:
+    case .history:
       leading = spacing/2
       width = historyImageWidth
       
@@ -379,30 +400,26 @@ extension SearchViewController: SearchBarViewDelegate {
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
-    // Stop scroll of table
-    contentTableView.setContentOffset(CGPoint.zero, animated: false)
     
-    if model.searchMode {
-      // Update search text
-      model.searchText = text
-      updateUI()
-    }
+//    if model.searchMode {
+//      // Update search text
+//      model.searchText = text
+//      updateUI()
+//    }
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
-    // Stop scroll of table
-    contentTableView.setContentOffset(CGPoint.zero, animated: false)
     
     // Clear search text if canceled
-    if !searchMode {
-      model.searchText = nil
-    }
-    
-    if searchMode != model.searchMode {
-      // Update search mode
-      model.searchMode = searchMode
-      updateUI()
-    }
+//    if !searchMode {
+//      model.searchText = nil
+//    }
+//    
+//    if searchMode != model.searchMode {
+//      // Update search mode
+//      model.searchMode = searchMode
+//      updateUI()
+//    }
   }
 }
 
@@ -473,7 +490,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
     let spacing = interItemSpacing()
     let cellHeight = MenuCollectionViewCell.cellHeight
     switch type {
-    case .favorites:
+    case .history:
       return CGSize(width: MenuImageCollectionViewCell.historyImageSize.width + spacing, height: cellHeight)
     case .auditoriums, .groups, .teachers:
       return CGSize(width: labelWidth(type.name) + spacing, height: cellHeight)
@@ -485,17 +502,28 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
 
 extension SearchViewController: UITableViewDataSource {
   
-  //  func numberOfSections(in tableView: UITableView) -> Int {
-  //    return model.currentData.count
-  //  }
+    func numberOfSections(in tableView: UITableView) -> Int {
+      let numberOfSections: Int
+      switch contentType {
+      case .auditoriums:
+        numberOfSections = auditoriums.sections?.count ?? 0
+      case .history:
+        numberOfSections = history.sections?.count ?? 0
+      case .groups:
+        numberOfSections = groups.sections?.count ?? 0
+      case .teachers:
+        numberOfSections = teachers.sections?.count ?? 0
+      }
+      return numberOfSections
+    }
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     let numberOfRows: Int
     switch contentType {
     case .auditoriums:
       numberOfRows = auditoriums.sections?[section].numberOfObjects ?? 0
-    case .favorites:
-      numberOfRows = 0
+    case .history:
+      numberOfRows = history.sections?[section].numberOfObjects ?? 0
     case .groups:
       numberOfRows = groups.sections?[section].numberOfObjects ?? 0
     case .teachers:
@@ -521,17 +549,17 @@ extension SearchViewController: UITableViewDelegate {
     return SearchTableViewCell.cellHeight
   }
   
-//  func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//    return ScheduleSectionHeaderView.viewHeight
-//  }
-//  
-//  func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//    let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
-//    if model.currentData.count > 0 {
-//      headerView.dateLabel.text = String(model.currentData[section].letter)
-//    }
-//    return headerView
-//  }
+  func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    return ScheduleSectionHeaderView.viewHeight
+  }
+
+  func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
+    
+    configureHeader(headerView, section: section)
+    
+    return headerView
+  }
   
 //  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //    
@@ -573,10 +601,9 @@ extension SearchViewController: UITableViewDelegate {
 extension SearchViewController: NSFetchedResultsControllerDelegate {
   
   func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-    // Reload table
-    if stateOfUI == .showContent {
-      contentTableView.reloadData()
-      updateTableContentInset()
-    }
+    guard stateOfUI == .showContent else { return }
+    
+    contentTableView.reloadData()
+    updateTableContentInset()
   }
 }

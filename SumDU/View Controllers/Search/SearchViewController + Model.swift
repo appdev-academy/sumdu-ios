@@ -33,7 +33,7 @@ struct DataModel {
   }
   
   /// Current model state
-  var currentState: ContentType = .favorites {
+  var currentState: ContentType = .history {
     didSet {
       if searchMode && searchText != nil {
         sortData()
@@ -65,7 +65,7 @@ struct DataModel {
     var data: [ListData] = []
     switch currentState {
     case .auditoriums: data = auditoriums
-    case .favorites: data = history
+    case .history: data = history
     case .groups: data = groups
     case .teachers: data = teachers
     }
@@ -96,7 +96,7 @@ struct DataModel {
       } else {
         sortData()
       }
-    case .favorites:
+    case .history:
       sortData()
     }
   }
@@ -134,7 +134,7 @@ struct DataModel {
       switch currentState {
       case .auditoriums:
         auditoriumsSorted = currentData
-      case .favorites:
+      case .history:
         historySorted = currentData
       case .groups:
         groupSorted = currentData
