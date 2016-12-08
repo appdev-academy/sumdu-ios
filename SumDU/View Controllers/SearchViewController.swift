@@ -39,7 +39,6 @@ class SearchViewController: UIViewController {
   fileprivate var groups: NSFetchedResultsController<ListObject>!
   fileprivate var history: NSFetchedResultsController<ListObject>!
   
-  
   fileprivate var tableViewContentInset = UIEdgeInsets.zero
   fileprivate var stateOfUI: UIState = .showContent {
     didSet {
@@ -225,33 +224,19 @@ class SearchViewController: UIViewController {
   
   /// Display right UI depending of content
   fileprivate func updateUI() {
-    
-    /// Reload data in table if displayed
-    func reloadTable() {
-      if stateOfUI == .showContent {
-        contentTableView.reloadData()
-        updateTableContentInset()
-      }
-    }
-    
     // Update state of UI
     switch contentType {
     case .auditoriums:
       stateOfUI = auditoriums.fetchedObjects?.count == 0 ? .emptySearch : .showContent
-      reloadTable()
-      
     case .history:
       stateOfUI = history.fetchedObjects?.count == 0 ? .emptyHistory : .showContent
-      reloadTable()
-      
     case .groups:
       stateOfUI = groups.fetchedObjects?.count == 0 ? .emptySearch : .showContent
-      reloadTable()
-      
     case .teachers:
       stateOfUI = teachers.fetchedObjects?.count == 0 ? .emptySearch : .showContent
-      reloadTable()
     }
+    contentTableView.reloadData()
+    updateTableContentInset()
   }
   
   /// Add UI objects and set constraints
@@ -447,11 +432,14 @@ extension SearchViewController: SearchBarViewDelegate {
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
+    contentTableView.setContentOffset(CGPoint.zero, animated: false)
     
     searchText = text
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
+    contentTableView.setContentOffset(CGPoint.zero, animated: false)
+    
     if searchMode != isSearching {
       isSearching = searchMode
     }
