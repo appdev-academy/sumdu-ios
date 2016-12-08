@@ -168,9 +168,4 @@ struct DataModel {
     teachers = ListData.loadFromStorage(UserDefaultsKey.Teachers.key)
     sortData()
   }
-  
-  /// Send request to server for update model data (asynchronously)
-  func updateFromServer(with parser: Parser) {
-    parser.updateListsOfAuditoriumsGroupsAndTeachers()
-  }
 }

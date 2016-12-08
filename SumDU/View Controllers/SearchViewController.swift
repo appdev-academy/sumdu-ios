@@ -88,31 +88,6 @@ class SearchViewController: UIViewController {
     }
     
     updateContent()
-    
-    let networkingManager = NetworkingManager()
-    networkingManager.updateListsOfAuditoriumsGroupsAndTeachers()
-  }
-  
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    
-    // Check if lists of Teachers, Groups and Auditoriums was updated more than 3 days ago
-    let lastUpdated = UserDefaults.standard.object(forKey: UserDefaultsKey.LastUpdatedAtDate.key) as? Date
-    
-    guard let updatedDate = lastUpdated else {
-      
-      // TODO: Use NetworkingManager
-      
-      model.updateFromServer(with: parser)
-      return
-    }
-    
-    if updatedDate.isLessThanDate(Date().minusDays(3)) {
-      
-      // TODO: Use NetworkingManager
-      
-      model.updateFromServer(with: parser)
-    }
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -335,16 +310,7 @@ class SearchViewController: UIViewController {
 extension SearchViewController: SearchBarViewDelegate {
   
   func refreshContent(searchBarView view: SearchBarView) {
-    model.updateFromServer(with: parser)
-    
-    let context = CoreDuck.quack.mainContext
-    let auditoriumsCount = Auditorium.findAll(inContext: context).count
-    let groupsCount = Group.findAll(inContext: context).count
-    let teachersCount = Teacher.findAll(inContext: context).count
-    
-    print("Auditorium.count = ", auditoriumsCount)
-    print("Group.count = ", groupsCount)
-    print("Teacher.count = ", teachersCount)
+    NetworkingManager.updateListsOfAuditoriumsGroupsAndTeachers()
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {

@@ -12,13 +12,16 @@ import Foundation
 import Fuzi
 
 /// For network requests
-class NetworkingManager {
+struct NetworkingManager {
   
   /// Update and save Auditoriums, Groups and Teachers from server
-  func updateListsOfAuditoriumsGroupsAndTeachers() {
+  static func updateListsOfAuditoriumsGroupsAndTeachers() {
+    UIApplication.shared.isNetworkActivityIndicatorVisible = true
     
     Alamofire.request(Router.updateListsOfAuditoriumsGroupsTeachers).responseString {
       response in
+      
+      UIApplication.shared.isNetworkActivityIndicatorVisible = false
       
       let htmlString = response.description
       
@@ -58,39 +61,33 @@ class NetworkingManager {
         
         // Import Auditoriums
         let auditoriumsImportManager = ImportManager<Auditorium>()
-        auditoriumsImportManager.delegate = self
         auditoriumsImportManager.fromJSON(auditoriums, mappedAttributes: Auditorium.mappedAttributes)
         
         // Import Groups
         let groupsImportManager = ImportManager<Group>()
-        groupsImportManager.delegate = self
         groupsImportManager.fromJSON(groups, mappedAttributes: Group.mappedAttributes)
         
         // Import Teachers
         let teachersImportManager = ImportManager<Teacher>()
-        teachersImportManager.delegate = self
         teachersImportManager.fromJSON(groups, mappedAttributes: Teacher.mappedAttributes)
+        
+        // Save date of last update
+        UserDefaults.standard.set(Date(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
         
       } catch {
         
-        // TODO: Show error
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        
+        let title = NSLocalizedString("Update error", comment: "Alert title")
+        let message = NSLocalizedString("Error while importing Auditoriums, Groups and Teachers", comment: "Alert message")
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addOkButton()
+        
+        // Present alert
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        appDelegate.window?.rootViewController?.present(alert, animated: true, completion: nil)
       }
     }
   }
   
-}
-
-
-// MARK: - ImportManagerDelegate
-
-extension NetworkingManager: ImportManagerDelegate {
-  
-  func didFailImport() {
-    // TODO: Show error
-    // TODO: Check error
-  }
-  
-  func didFinishImport() {
-    
-  }
 }

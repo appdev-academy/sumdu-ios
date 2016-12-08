@@ -39,8 +39,6 @@ class ImportManager<Type: NSManagedObject> {
         }
       }
       
-      // TODO: Check logic of deletion objects
-      
       // Loop through all records in context and remove the ones without match of entityID in array of entity IDs from JSON
       let persistedObjects = Type.findAll(inContext: localContext)
       for persistedObject in persistedObjects {
@@ -78,8 +76,6 @@ extension NSManagedObject {
     // Getting id
     guard let id = json[idMappedAttribute.jsonName] else { return nil }
     guard let objectID = Converter.convertToInt64(id, attribute: idMappedAttribute) else { return nil }
-    
-    // TODO: Print errors
     
     // Find existing
     if let persistedObject = self.findFirst(byAttribute: idMappedAttribute.name, withInt64Value: objectID, inContext: context) {

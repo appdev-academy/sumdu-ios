@@ -33,6 +33,7 @@
 		DE54FD911DF8133400E8FEDE /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE54FD901DF8133400E8FEDE /* Record.swift */; };
 		DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5533E31D3393EA0016AC67 /* SearchViewController.swift */; };
 		DE65F6371D3786470040A00D /* ScheduleSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */; };
+		DE73E9231DF9571100513AEE /* UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E9221DF9571100513AEE /* UIAlertController.swift */; };
 		DEB4AE301DF819D200CD8FF2 /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEB4AE2D1DF819D200CD8FF2 /* BackButton.swift */; };
 		DEB4AE311DF819D200CD8FF2 /* RefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEB4AE2E1DF819D200CD8FF2 /* RefreshButton.swift */; };
 		DEB4AE321DF819D200CD8FF2 /* ShareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEB4AE2F1DF819D200CD8FF2 /* ShareButton.swift */; };
@@ -109,6 +110,7 @@
 		DE54FD901DF8133400E8FEDE /* Record.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		DE5533E31D3393EA0016AC67 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		DE65F6361D3786470040A00D /* ScheduleSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleSectionHeaderView.swift; sourceTree = "<group>"; };
+		DE73E9221DF9571100513AEE /* UIAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertController.swift; sourceTree = "<group>"; };
 		DE769A4C1D81B40D00B07A6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DE769A4D1D81B4B900B07A6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DE769A4E1D81B4BB00B07A6C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 				7D07F8161C099C56007DF3FD /* App Delegate */,
 				E4583E931C25494A0031F164 /* Constants */,
 				DE54FD761DF80E0000E8FEDE /* Core Data */,
+				DE73E9211DF956FF00513AEE /* Extensions */,
 				B4EEB8231C5A153800879965 /* Helpers */,
 				DEE4A5031DF83F1A002BAF5F /* Libraries */,
 				7D07F8211C099CAF007DF3FD /* Models */,
@@ -337,6 +340,14 @@
 				DE54FD8C1DF812C200E8FEDE /* Teacher.swift */,
 			);
 			path = "Core Data";
+			sourceTree = "<group>";
+		};
+		DE73E9211DF956FF00513AEE /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DE73E9221DF9571100513AEE /* UIAlertController.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		DEB4AE2B1DF819D200CD8FF2 /* UI Subclasses */ = {
@@ -603,6 +614,7 @@
 				DEB4AE401DF82B3D00CD8FF2 /* Router.swift in Sources */,
 				DE54FD8B1DF8127A00E8FEDE /* Auditorium.swift in Sources */,
 				E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */,
+				DE73E9231DF9571100513AEE /* UIAlertController.swift in Sources */,
 				DEB4AE321DF819D200CD8FF2 /* ShareButton.swift in Sources */,
 				DEE4A50A1DF83F1A002BAF5F /* NSManagedObject.swift in Sources */,
 				DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */,

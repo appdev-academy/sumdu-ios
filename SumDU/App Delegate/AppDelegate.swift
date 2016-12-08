@@ -59,7 +59,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   func applicationDidBecomeActive(_ application: UIApplication) {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
+    // Get date of last update for Teachers, Groups and Auditoriums
+    let lastUpdated = UserDefaults.standard.object(forKey: UserDefaultsKey.LastUpdatedAtDate.key) as? Date
+    
+    // Import first time
+    guard let updatedDate = lastUpdated else {
+      NetworkingManager.updateListsOfAuditoriumsGroupsAndTeachers()
+      return
+    }
+    
+    // Update if it's been more than 3 days ago
+    if updatedDate.isLessThanDate(Date().minusDays(3)) {
+      NetworkingManager.updateListsOfAuditoriumsGroupsAndTeachers()
+    }
   }
   
   func applicationWillTerminate(_ application: UIApplication) {
