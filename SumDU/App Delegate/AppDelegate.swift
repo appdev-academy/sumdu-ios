@@ -27,10 +27,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     self.window = UIWindow(frame: UIScreen.main.bounds)
     
     if UIDevice.current.userInterfaceIdiom == .pad, let window = self.window {
+      // Search
       let searchViewController = SearchViewController()
       searchViewController.fetchData()
       
+      // Schedule
       let scheduleViewController = ScheduleViewController()
+      if let firstHistoryObject = searchViewController.history.fetchedObjects?.first {
+        scheduleViewController.fetchSchedule(for: firstHistoryObject)
+        
+        // Send request
+        let networkingManager = NetworkingManager()
+        networkingManager.delegate = scheduleViewController
+        networkingManager.scheduleRequest(for: firstHistoryObject)
+      }
+      
       let splitViewController = UISplitViewController()
       splitViewController.viewControllers = [searchViewController, scheduleViewController]
       splitViewController.preferredDisplayMode = .allVisible

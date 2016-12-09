@@ -37,7 +37,7 @@ class SearchViewController: UIViewController {
   fileprivate var auditoriums: NSFetchedResultsController<ListObject>!
   fileprivate var teachers: NSFetchedResultsController<ListObject>!
   fileprivate var groups: NSFetchedResultsController<ListObject>!
-  fileprivate var history: NSFetchedResultsController<ListObject>!
+  var history: NSFetchedResultsController<ListObject>!
   
   fileprivate var tableViewContentInset = UIEdgeInsets.zero
   fileprivate var stateOfUI: UIState = .showContent {
@@ -109,15 +109,6 @@ class SearchViewController: UIViewController {
     registerForNotifications()
     
     initialSetup()
-    
-    if UIDevice.current.userInterfaceIdiom == .pad {
-      
-      // TODO: Check on iPad
-      
-      //      if let firstItem = model.history.first, let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
-      //        scheduleViewController.updateFromStorage(withItem: firstItem)
-      //      }
-    }
     
     updateUI()
   }

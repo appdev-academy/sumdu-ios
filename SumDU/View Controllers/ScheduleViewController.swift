@@ -17,8 +17,8 @@ class ScheduleViewController: UIViewController {
   
   /// URL for add schedule events to calendar
   fileprivate var calendarURL: URL?
-  
-  fileprivate var schedule: NSFetchedResultsController<ScheduleRecord>!
+  fileprivate var listObject: ListObject?
+  fileprivate var schedule: NSFetchedResultsController<ScheduleRecord>?
   
   // MARK: - UI objects
   
@@ -30,7 +30,6 @@ class ScheduleViewController: UIViewController {
   // Content
   fileprivate let titleLabel = UILabel()
   fileprivate let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-  fileprivate let informationLabel = UILabel()
   fileprivate let tableView = UITableView()
   
   // MARK: - Life cycle
@@ -107,31 +106,12 @@ class ScheduleViewController: UIViewController {
     tableView.separatorStyle = .none
     view.addSubview(tableView)
     constrain(tableView, titleLabel, view) {
-      scheduleTableView, titleLabel, superview in
+      tableView, titleLabel, superview in
       
-      scheduleTableView.top == titleLabel.bottom + 10.0
-      scheduleTableView.leading == superview.leading
-      scheduleTableView.trailing == superview.trailing
-      scheduleTableView.bottom == superview.bottom
-    }
-    // Remove separators for empty cells
-    tableView.tableFooterView = UIView()
-    
-    // Information
-    informationLabel.isHidden = true
-    informationLabel.text = NSLocalizedString("Sorry. There are no results for your request.", comment: "")
-    informationLabel.font = Font.named(.helveticaNeueMedium, size: 20.0)
-    informationLabel.textColor = Color.textNormal
-    informationLabel.textAlignment = .center
-    informationLabel.adjustsFontSizeToFitWidth = true
-    informationLabel.minimumScaleFactor = 0.7
-    view.addSubview(informationLabel)
-    constrain(informationLabel, view) {
-      informationLabel, superview in
-      
-      informationLabel.leading == superview.leading + 20.0
-      informationLabel.trailing == superview.trailing - 20.0
-      informationLabel.centerY == superview.centerY
+      tableView.top == titleLabel.bottom + 10.0
+      tableView.leading == superview.leading
+      tableView.trailing == superview.trailing
+      tableView.bottom == superview.bottom
     }
     
     // Indicator
@@ -149,7 +129,7 @@ class ScheduleViewController: UIViewController {
   fileprivate func configureHeader(_ headerView: UITableViewHeaderFooterView?, section: Int) {
     guard let header = headerView as? SectionHeaderView else { return }
     
-    header.dateLabel.text = schedule.sections?[section].name ?? ""
+    header.dateLabel.text = schedule?.sections?[section].name ?? ""
   }
   
   /// Populate cell from the NSManagedObject instance
@@ -159,7 +139,7 @@ class ScheduleViewController: UIViewController {
   ///   - indexPath: IndexPath
   fileprivate func configureCell(_ cell: UITableViewCell, indexPath: IndexPath) {
     guard let cell = cell as? ScheduleTableViewCell else { return }
-    let record = schedule.object(at: indexPath)
+    guard let record = schedule?.object(at: indexPath) else { return }
    
     var name = record.name
     if record.type.characters.count > 0 { name += " (" + record.type + ")" }
@@ -170,18 +150,10 @@ class ScheduleViewController: UIViewController {
     cell.teacherLabel.text = record.teacher
   }
   
-  /// Show or hide label depending on count of records
-  fileprivate func updateInformationLabel() {
-    if let count = schedule.fetchedObjects?.count, count > 0 {
-      informationLabel.isHidden = true
-    } else {
-      informationLabel.isHidden = false
-    }
-  }
-  
   // MARK: - Actions
   
   func fetchSchedule(for listObject: ListObject) {
+    self.listObject = listObject
     schedule = ScheduleRecord.fetch(for: listObject, delegate: self)
     tableView.reloadData()
     
@@ -196,18 +168,19 @@ class ScheduleViewController: UIViewController {
   
   /// Refresh schedule table
   func refreshButtonPressed() {
-    // TODO: Make request again
+    guard let listObject = listObject else { return }
+    
+    // Make request again
+    let networkingManager = NetworkingManager()
+    networkingManager.delegate = self
+    networkingManager.scheduleRequest(for: listObject)
   }
   
   /// Share schedule
   func shareButtonPressed() {
-    
-    // TODO: Generate calendar link
-    
-    //      parser.generateCalendarURL(listData)
-    //      if let url = calendarURL {
-    //        UIApplication.shared.openURL(url)
-    //      }
+    if let listObject = listObject, let url = NetworkingManager.calendarRequest(for: listObject) {
+      UIApplication.shared.openURL(url)
+    }
   }
   
 }
@@ -238,11 +211,11 @@ extension ScheduleViewController: UITableViewDelegate {
 extension ScheduleViewController: UITableViewDataSource {
   
   func numberOfSections(in tableView: UITableView) -> Int {
-    return schedule.sections?.count ?? 0
+    return schedule?.sections?.count ?? 0
   }
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return schedule.sections?[section].numberOfObjects ?? 0
+    return schedule?.sections?[section].numberOfObjects ?? 0
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -260,7 +233,6 @@ extension ScheduleViewController: NSFetchedResultsControllerDelegate {
   
   func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
     tableView.reloadData()
-    updateInformationLabel()
   }
 }
 
@@ -269,7 +241,7 @@ extension ScheduleViewController: NSFetchedResultsControllerDelegate {
 extension ScheduleViewController: NetworkingManagerDelegate {
   
   func requestStarted() {
-    if let count = schedule.fetchedObjects?.count, count > 0 {
+    if let count = schedule?.fetchedObjects?.count, count > 0 {
       activityIndicator.stopAnimating()
     } else {
       activityIndicator.startAnimating()
@@ -278,11 +250,9 @@ extension ScheduleViewController: NetworkingManagerDelegate {
   
   func requestFailed() {
     activityIndicator.stopAnimating()
-    updateInformationLabel()
   }
   
   func requestSucceed() {
     activityIndicator.stopAnimating()
-    updateInformationLabel()
   }
 }

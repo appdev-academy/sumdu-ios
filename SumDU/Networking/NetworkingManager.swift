@@ -35,26 +35,26 @@ enum ContentType: Int {
 
 /// Request parameter for schedule
 enum ScheduleRequestParameter: String {
-  case BeginDate = "data[DATE_BEG]"
-  case EndDate = "data[DATE_END]"
-  case GroupId = "data[KOD_GROUP]"
-  case NameId = "data[ID_FIO]"
-  case LectureRoomId = "data[ID_AUD]"
+  case beginDate = "data[DATE_BEG]"
+  case endDate = "data[DATE_END]"
+  case groupId = "data[KOD_GROUP]"
+  case nameId = "data[ID_FIO]"
+  case lectureRoomId = "data[ID_AUD]"
 }
 
 /// Request parameter for calendar
 enum CalendarRequestParameter: String {
-  case BeginDate = "date_beg"
-  case EndDate = "date_end"
-  case GroupId = "id_grp"
-  case NameId = "id_fio"
-  case LectureRoomId = "id_aud"
+  case beginDate = "date_beg"
+  case endDate = "date_end"
+  case groupId = "id_grp"
+  case nameId = "id_fio"
+  case lectureRoomId = "id_aud"
 }
 
 /// Type of request
 enum RequestType: String {
-  case ScheduleRequest = "schedule"
-  case CalendarRequest = "calendar"
+  case scheduleRequest = "schedule"
+  case calendarRequest = "calendar"
 }
 
 /// Notify delegate about result of request
@@ -143,7 +143,7 @@ class NetworkingManager {
     delegate?.requestStarted()
     
     // Get data for request
-    let dataForRequest = self.requestParameters(for: listObject, typeOfRequest: RequestType.ScheduleRequest)
+    let dataForRequest = self.requestParameters(for: listObject, typeOfRequest: RequestType.scheduleRequest)
     
     // Send request
     Alamofire.request(Router.schedule(dataForRequest)).responseJSON {
@@ -168,6 +168,18 @@ class NetworkingManager {
         appDelegate.window?.rootViewController?.present(alert, animated: true, completion: nil)
       }
     }
+  }
+  
+  /// Generating schedule URL for calendar
+  ///
+  /// - Parameter listObject: Object of whom receive calendar
+  static func calendarRequest(for listObject: ListObject) -> URL? {
+    
+    // Get data for request
+    let dataForRequest = NetworkingManager().requestParameters(for: listObject, typeOfRequest: RequestType.calendarRequest)
+    
+    // Generate url
+    return Router.scheduleCalendar(dataForRequest).urlRequest?.url
   }
   
   // MARK: - Helpers
@@ -206,23 +218,23 @@ class NetworkingManager {
     
     switch typeOfRequest {
       
-    case .CalendarRequest:
+    case .calendarRequest:
       // Calendar request parameters
       requestData = [
-        CalendarRequestParameter.BeginDate.rawValue: startDate.serverDateFormat,
-        CalendarRequestParameter.EndDate.rawValue: endDate.serverDateFormat,
-        CalendarRequestParameter.GroupId.rawValue: groupId,
-        CalendarRequestParameter.NameId.rawValue: teacherId,
-        CalendarRequestParameter.LectureRoomId.rawValue: auditoriumId,
+        CalendarRequestParameter.beginDate.rawValue: startDate.serverDateFormat,
+        CalendarRequestParameter.endDate.rawValue: endDate.serverDateFormat,
+        CalendarRequestParameter.groupId.rawValue: groupId,
+        CalendarRequestParameter.nameId.rawValue: teacherId,
+        CalendarRequestParameter.lectureRoomId.rawValue: auditoriumId,
       ]
-    case .ScheduleRequest:
+    case .scheduleRequest:
       // Schedule request parameters
       requestData = [
-        ScheduleRequestParameter.BeginDate.rawValue: startDate.serverDateFormat,
-        ScheduleRequestParameter.EndDate.rawValue: endDate.serverDateFormat,
-        ScheduleRequestParameter.GroupId.rawValue: groupId,
-        ScheduleRequestParameter.NameId.rawValue: teacherId,
-        ScheduleRequestParameter.LectureRoomId.rawValue: auditoriumId,
+        ScheduleRequestParameter.beginDate.rawValue: startDate.serverDateFormat,
+        ScheduleRequestParameter.endDate.rawValue: endDate.serverDateFormat,
+        ScheduleRequestParameter.groupId.rawValue: groupId,
+        ScheduleRequestParameter.nameId.rawValue: teacherId,
+        ScheduleRequestParameter.lectureRoomId.rawValue: auditoriumId,
       ]
     }
     return requestData

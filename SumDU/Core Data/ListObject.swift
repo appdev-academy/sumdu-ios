@@ -80,7 +80,11 @@ public class ListObject: NSManagedObject {
     }
     
     // Type
-    predicates.append(NSPredicate(format: "type = \(type.rawValue)"))
+    if type == .history {
+      predicates.append(NSPredicate(format: "scheduleRecords.@count > 0"))
+    } else {
+      predicates.append(NSPredicate(format: "type = \(type.rawValue)"))
+    }
     
     // Initialize Fetch Request
     let request: NSFetchRequest<ListObject> = fetchRequest()
