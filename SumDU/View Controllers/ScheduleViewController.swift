@@ -130,6 +130,10 @@ class ScheduleViewController: UIViewController {
     guard let header = headerView as? SectionHeaderView else { return }
     
     header.dateLabel.text = schedule?.sections?[section].name ?? ""
+    
+    if let firstObject = schedule?.sections?[section].objects?.first as? ScheduleRecord {
+      header.dayLabel.text = firstObject.dayString
+    }
   }
   
   /// Populate cell from the NSManagedObject instance

@@ -91,8 +91,8 @@ public class ListObject: NSManagedObject {
     request.fetchBatchSize = 20
     
     // Sort
-    let letterDescriptor = NSSortDescriptor(key: "firstSymbol", ascending: true)
-    let nameDescriptor = NSSortDescriptor(key: "name", ascending: true)
+    let letterDescriptor = NSSortDescriptor(key: "firstSymbol", ascending: true, selector: #selector(NSString.localizedStandardCompare))
+    let nameDescriptor = NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedStandardCompare))
     request.sortDescriptors = [letterDescriptor, nameDescriptor]
     
     let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
