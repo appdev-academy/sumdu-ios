@@ -33,8 +33,48 @@ enum ContentType: Int {
   }
 }
 
+/// Request parameter for schedule
+enum ScheduleRequestParameter: String {
+  case BeginDate = "data[DATE_BEG]"
+  case EndDate = "data[DATE_END]"
+  case GroupId = "data[KOD_GROUP]"
+  case NameId = "data[ID_FIO]"
+  case LectureRoomId = "data[ID_AUD]"
+}
+
+/// Request parameter for calendar
+enum CalendarRequestParameter: String {
+  case BeginDate = "date_beg"
+  case EndDate = "date_end"
+  case GroupId = "id_grp"
+  case NameId = "id_fio"
+  case LectureRoomId = "id_aud"
+}
+
+/// Type of request
+enum RequestType: String {
+  case ScheduleRequest = "schedule"
+  case CalendarRequest = "calendar"
+}
+
+/// Notify delegate about result of request
+protocol NetworkingManagerDelegate {
+  
+  func requestStarted()
+  
+  func requestSucceed()
+  
+  func requestFailed()
+}
+
 /// For network requests
-struct NetworkingManager {
+class NetworkingManager {
+  
+  // MARK: - Variables
+  
+  var delegate: NetworkingManagerDelegate?
+  
+  // MARK: - Public interface
   
   /// Update Auditoriums, Groups and Teachers from server
   static func updateListsOfAuditoriumsGroupsAndTeachers() {
@@ -94,6 +134,98 @@ struct NetworkingManager {
         appDelegate.window?.rootViewController?.present(alert, animated: true, completion: nil)
       }
     }
+  }
+  
+  /// Send schedule request
+  ///
+  /// - Parameter listObject: Object of whom receive schedule
+  func scheduleRequest(for listObject: ListObject) {
+    delegate?.requestStarted()
+    
+    // Get data for request
+    let dataForRequest = self.requestParameters(for: listObject, typeOfRequest: RequestType.ScheduleRequest)
+    
+    // Send request
+    Alamofire.request(Router.schedule(dataForRequest)).responseJSON {
+      response in
+      
+      switch response.result {
+      case .success(let value):
+        if let data = value as? [Any] {
+          ScheduleImportManager().fromJSON(data, for: listObject)
+        }
+        self.delegate?.requestSucceed()
+        
+      case .failure(let error):
+        self.delegate?.requestFailed()
+        
+        let title = NSLocalizedString("Request error", comment: "Alert title")
+        let alert = UIAlertController(title: title, message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addOkButton()
+        
+        // Present alert
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        appDelegate.window?.rootViewController?.present(alert, animated: true, completion: nil)
+      }
+    }
+  }
+  
+  // MARK: - Helpers
+  
+  /// Generating request parameter for schedule or calendar requests
+  ///
+  /// - Parameters:
+  ///   - listObject: The object is to generate request
+  ///   - typeOfRequest: Type of request - schedule or calendar
+  /// - Returns: array of parameters
+  fileprivate func requestParameters(for listObject: ListObject, typeOfRequest: RequestType) -> [String: String] {
+    var requestData: [String : String]
+    
+    var groupId = "0"
+    var teacherId = "0"
+    var auditoriumId = "0"
+    
+    // Request type
+    guard let type = ContentType(rawValue: Int(listObject.type)) else { return [:] }
+    let id = String(listObject.id)
+    
+    switch type {
+    case .auditoriums:
+      auditoriumId = id
+    case .groups:
+      groupId = id
+    case .teachers:
+      teacherId = id
+    case .history:
+      break
+    }
+    
+    // Start and end dates
+    let startDate = Date()
+    let endDate = startDate.plusOneMonth
+    
+    switch typeOfRequest {
+      
+    case .CalendarRequest:
+      // Calendar request parameters
+      requestData = [
+        CalendarRequestParameter.BeginDate.rawValue: startDate.serverDateFormat,
+        CalendarRequestParameter.EndDate.rawValue: endDate.serverDateFormat,
+        CalendarRequestParameter.GroupId.rawValue: groupId,
+        CalendarRequestParameter.NameId.rawValue: teacherId,
+        CalendarRequestParameter.LectureRoomId.rawValue: auditoriumId,
+      ]
+    case .ScheduleRequest:
+      // Schedule request parameters
+      requestData = [
+        ScheduleRequestParameter.BeginDate.rawValue: startDate.serverDateFormat,
+        ScheduleRequestParameter.EndDate.rawValue: endDate.serverDateFormat,
+        ScheduleRequestParameter.GroupId.rawValue: groupId,
+        ScheduleRequestParameter.NameId.rawValue: teacherId,
+        ScheduleRequestParameter.LectureRoomId.rawValue: auditoriumId,
+      ]
+    }
+    return requestData
   }
   
 }

@@ -18,11 +18,11 @@ class ScheduleTableViewCell: UITableViewCell {
   
   // MARK: - UI objects
   
-  fileprivate let nameLabel = UILabel()
-  fileprivate let timeLabel = UILabel()
+  let nameLabel = UILabel()
+  let timeLabel = UILabel()
   fileprivate let dotImageView = UIImageView()
-  fileprivate let auditoriumLabel = UILabel()
-  fileprivate let teacherLabel = UILabel()
+  let auditoriumLabel = UILabel()
+  let teacherLabel = UILabel()
   fileprivate let separatorView = UIView()
   
   // MARK: - Lifecycle
@@ -123,19 +123,4 @@ class ScheduleTableViewCell: UITableViewCell {
     }
   }
   
-  // MARK: - Public interface
-  
-  /** Update cell data */
-  func update(withSchedule schedule: Schedule) {
-    // Name
-    var name = schedule.pairName
-    if schedule.pairType.characters.count > 0 { name += " (" + schedule.pairType + ")" }
-    nameLabel.text = name
-    // Time
-    timeLabel.text = schedule.pairTime
-    // Auditorium
-    auditoriumLabel.text = schedule.auditoriumName
-    // Teacher
-    teacherLabel.text = schedule.teacherName
-  }
 }

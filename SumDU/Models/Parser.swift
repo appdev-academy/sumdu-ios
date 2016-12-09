@@ -11,29 +11,6 @@ import Foundation
 import Fuzi
 import SwiftyJSON
 
-/// Request parameter for schedule
-enum ScheduleRequestParameter: String {
-  case BeginDate = "data[DATE_BEG]"
-  case EndDate = "data[DATE_END]"
-  case GroupId = "data[KOD_GROUP]"
-  case NameId = "data[ID_FIO]"
-  case LectureRoomId = "data[ID_AUD]"
-}
-
-/// Request parameter for calendar
-enum CalendarRequestParameter: String {
-  case BeginDate = "date_beg"
-  case EndDate = "date_end"
-  case GroupId = "id_grp"
-  case NameId = "id_fio"
-  case LectureRoomId = "id_aud"
-}
-
-/// Type of request
-enum RequestType: String {
-  case ScheduleRequest = "schedule"
-  case CalendarRequest = "calendar"
-}
 
 /// Type of ListData entity or request type: Auditorium, Group, Teacher or Unknown
 enum ListDataType: String {

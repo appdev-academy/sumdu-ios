@@ -21,6 +21,8 @@
 		BA3CA06247A057C315C84B37 /* Pods_SumDU_App_SumDU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79F29838E0D4D78D6E332C18 /* Pods_SumDU_App_SumDU.framework */; };
 		DE4CF07E1D3684C1000F9199 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF07D1D3684C0000F9199 /* Font.swift */; };
 		DE4CF0801D36855F000F9199 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4CF07F1D36855F000F9199 /* Colors.swift */; };
+		DE666E921DFAB74B00AB82D7 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE666E911DFAB74B00AB82D7 /* Date.swift */; };
+		DE666E941DFABF5E00AB82D7 /* ScheduleImportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE666E931DFABF5E00AB82D7 /* ScheduleImportManager.swift */; };
 		DE73E9231DF9571100513AEE /* UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E9221DF9571100513AEE /* UIAlertController.swift */; };
 		DE73E9261DF95F3900513AEE /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E9251DF95F3900513AEE /* SearchTableViewCell.swift */; };
 		DE73E92B1DF95FB500513AEE /* MenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE73E9291DF95FB500513AEE /* MenuCollectionViewCell.swift */; };
@@ -95,6 +97,8 @@
 		D1DD90AC92C58F9DD5331ED4 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE4CF07D1D3684C0000F9199 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		DE4CF07F1D36855F000F9199 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		DE666E911DFAB74B00AB82D7 /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		DE666E931DFABF5E00AB82D7 /* ScheduleImportManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleImportManager.swift; sourceTree = "<group>"; };
 		DE73E9221DF9571100513AEE /* UIAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAlertController.swift; sourceTree = "<group>"; };
 		DE73E9251DF95F3900513AEE /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
 		DE73E9291DF95FB500513AEE /* MenuCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -263,6 +267,7 @@
 			isa = PBXGroup;
 			children = (
 				DE4CF07D1D3684C0000F9199 /* Font.swift */,
+				DE666E931DFABF5E00AB82D7 /* ScheduleImportManager.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -290,6 +295,7 @@
 			isa = PBXGroup;
 			children = (
 				DE73E9221DF9571100513AEE /* UIAlertController.swift */,
+				DE666E911DFAB74B00AB82D7 /* Date.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -609,6 +615,7 @@
 				DEE4A5081DF83F1A002BAF5F /* AttributeMapper.swift in Sources */,
 				DE73E9311DF9611C00513AEE /* SearchTextField.swift in Sources */,
 				DEB4AE301DF819D200CD8FF2 /* BackButton.swift in Sources */,
+				DE666E921DFAB74B00AB82D7 /* Date.swift in Sources */,
 				E19526A31C3E5C3B008AD541 /* Section.swift in Sources */,
 				DEB4AE3F1DF82B3D00CD8FF2 /* NetworkingManager.swift in Sources */,
 				E43B299E1C1B7B10007DB3B0 /* ListDataCoder.swift in Sources */,
@@ -621,6 +628,7 @@
 				DE73E9301DF9611C00513AEE /* SearchBarView.swift in Sources */,
 				DE4CF07E1D3684C1000F9199 /* Font.swift in Sources */,
 				DEA431C21DF997880024C75B /* ListObject.swift in Sources */,
+				DE666E941DFABF5E00AB82D7 /* ScheduleImportManager.swift in Sources */,
 				DE901E8B1DF9A0DD006A0CB9 /* ScheduleTableViewCell.swift in Sources */,
 				E4583E951C25495F0031F164 /* Keys.swift in Sources */,
 				DEA431BD1DF997180024C75B /* CoreData.xcdatamodeld in Sources */,

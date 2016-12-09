@@ -76,7 +76,7 @@ class SearchViewController: UIViewController {
         // Higlight
         updateUI()
       } else {
-         // Clear search text if canceled
+        // Clear search text if canceled
         searchText = nil
       }
     }
@@ -114,9 +114,9 @@ class SearchViewController: UIViewController {
       
       // TODO: Check on iPad
       
-//      if let firstItem = model.history.first, let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
-        //        scheduleViewController.updateFromStorage(withItem: firstItem)
-//      }
+      //      if let firstItem = model.history.first, let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
+      //        scheduleViewController.updateFromStorage(withItem: firstItem)
+      //      }
     }
     
     updateUI()
@@ -524,20 +524,20 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
 
 extension SearchViewController: UITableViewDataSource {
   
-    func numberOfSections(in tableView: UITableView) -> Int {
-      let numberOfSections: Int
-      switch contentType {
-      case .auditoriums:
-        numberOfSections = auditoriums.sections?.count ?? 0
-      case .history:
-        numberOfSections = history.sections?.count ?? 0
-      case .groups:
-        numberOfSections = groups.sections?.count ?? 0
-      case .teachers:
-        numberOfSections = teachers.sections?.count ?? 0
-      }
-      return numberOfSections
+  func numberOfSections(in tableView: UITableView) -> Int {
+    let numberOfSections: Int
+    switch contentType {
+    case .auditoriums:
+      numberOfSections = auditoriums.sections?.count ?? 0
+    case .history:
+      numberOfSections = history.sections?.count ?? 0
+    case .groups:
+      numberOfSections = groups.sections?.count ?? 0
+    case .teachers:
+      numberOfSections = teachers.sections?.count ?? 0
     }
+    return numberOfSections
+  }
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     let numberOfRows: Int
@@ -574,7 +574,7 @@ extension SearchViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
     return SectionHeaderView.viewHeight
   }
-
+  
   func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
     let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SectionHeaderView.reuseIdentifier)
     
@@ -584,19 +584,41 @@ extension SearchViewController: UITableViewDelegate {
   }
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let listObject: ListObject
+    switch contentType {
+    case .auditoriums:
+      listObject = auditoriums.object(at: indexPath)
+    case .groups:
+      listObject = groups.object(at: indexPath)
+    case .history:
+      listObject = history.object(at: indexPath)
+    case .teachers:
+      listObject = teachers.object(at: indexPath)
+    }
 
     // For iPad
     if UIDevice.current.userInterfaceIdiom == .pad {
       // Get Schedule controller
       if let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
-        // Update data
+        scheduleViewController.fetchSchedule(for: listObject)
         
-        // TODO: UPdate data for iPad
+        // Send request
+        let networkingManager = NetworkingManager()
+        networkingManager.delegate = scheduleViewController
+        networkingManager.scheduleRequest(for: listObject)
       }
-
+      
       // For iPhone
     } else if UIDevice.current.userInterfaceIdiom == .phone {
       let scheduleViewController = ScheduleViewController()
+      scheduleViewController.fetchSchedule(for: listObject)
+      
+      // Send request
+      let networkingManager = NetworkingManager()
+      networkingManager.delegate = scheduleViewController
+      networkingManager.scheduleRequest(for: listObject)
+      
+      // Push controller
       navigationController?.pushViewController(scheduleViewController, animated: true)
     }
   }

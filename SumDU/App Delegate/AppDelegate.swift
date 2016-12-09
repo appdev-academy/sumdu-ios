@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
     
     NetworkActivityIndicatorManager.shared.isEnabled = true
+    NetworkActivityIndicatorManager.shared.startDelay = 0.0
     
     // Initialize CoreData stack
     let _ = CoreDuck.quack
