@@ -10,7 +10,9 @@
     <entity name="ScheduleRecord" representedClassName="ScheduleRecord" syncable="YES">
         <attribute name="auditorium" attributeType="String" syncable="YES"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="dateString" attributeType="String" syncable="YES"/>
         <attribute name="dayOfWeek" attributeType="String" syncable="YES"/>
+        <attribute name="dayString" attributeType="String" syncable="YES"/>
         <attribute name="group" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="order" attributeType="String" syncable="YES"/>
@@ -20,7 +22,7 @@
         <relationship name="listObject" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ListObject" inverseName="scheduleRecords" inverseEntity="ListObject" syncable="YES"/>
     </entity>
     <elements>
-        <element name="ScheduleRecord" positionX="-18" positionY="45" width="128" height="195"/>
         <element name="ListObject" positionX="-36" positionY="81" width="128" height="120"/>
+        <element name="ScheduleRecord" positionX="-18" positionY="45" width="128" height="225"/>
     </elements>
 </model>

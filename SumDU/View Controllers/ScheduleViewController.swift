@@ -7,6 +7,7 @@
 //
 
 import Cartography
+import CoreDuck
 import UIKit
 import SwiftyJSON
 
@@ -30,6 +31,8 @@ class ScheduleViewController: UIViewController {
   /// URL for add schedule events to calendar
   fileprivate var calendarURL: URL?
   
+  fileprivate var schedule: NSFetchedResultsController<ScheduleRecord>!
+  
   // MARK: - UI objects
   
   // Navigation bar
@@ -42,20 +45,6 @@ class ScheduleViewController: UIViewController {
   fileprivate let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
   fileprivate let informationLabel = UILabel()
   fileprivate let scheduleTableView = UITableView()
-  
-  // MARK: - Initialization
-  
-  init() {
-    super.init(nibName: nil, bundle: nil)
-  }
-  
-  override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-    super.init(nibName: nil, bundle: nil)
-  }
-  
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-  }
   
   // MARK: - Lifecycle
   
@@ -170,6 +159,10 @@ class ScheduleViewController: UIViewController {
   }
   
   // MARK: - Actions
+  
+  func fetchSchedule() {
+    
+  }
   
   /**
    Update data and UI in controller from storage

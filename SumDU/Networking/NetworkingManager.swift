@@ -36,14 +36,11 @@ enum ContentType: Int {
 /// For network requests
 struct NetworkingManager {
   
-  /// Update and save Auditoriums, Groups and Teachers from server
+  /// Update Auditoriums, Groups and Teachers from server
   static func updateListsOfAuditoriumsGroupsAndTeachers() {
-    UIApplication.shared.isNetworkActivityIndicatorVisible = true
     
     Alamofire.request(Router.updateListsOfAuditoriumsGroupsTeachers).responseString {
       response in
-      
-      UIApplication.shared.isNetworkActivityIndicatorVisible = false
       
       let htmlString = response.description
       
@@ -86,8 +83,6 @@ struct NetworkingManager {
         UserDefaults.standard.set(Date(), forKey: UserDefaultsKey.LastUpdatedAtDate.key)
         
       } catch {
-        
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
         
         let title = NSLocalizedString("Update error", comment: "Alert title")
         let message = NSLocalizedString("Error while importing Auditoriums, Groups and Teachers", comment: "Alert message")

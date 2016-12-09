@@ -18,18 +18,10 @@ public class ListObject: NSManagedObject {
   @NSManaged public var id: Int64
   @NSManaged public var name: String
   @NSManaged public var type: Int64
+  
+  // MARK: Relationships
+  
   @NSManaged public var scheduleRecords: NSSet
-  
-  @nonobjc public class func fetchRequest() -> NSFetchRequest<ListObject> {
-    return NSFetchRequest<ListObject>(entityName: "ListObject");
-  }
-  
-  /// Array of mapped attributes between NSManagedObject and JSON
-  static let mappedAttributes: [AttributeMapper] = [
-    AttributeMapper(name: "id", jsonName: "id", isOptional: false, dataType: DataType.integer64),
-    AttributeMapper(name: "name", jsonName: "name", isOptional: false, dataType: DataType.string),
-    AttributeMapper(name: "type", jsonName: "type", isOptional: false, dataType: DataType.integer64)
-  ]
   
   // MARK: Overrides
   
@@ -44,6 +36,17 @@ public class ListObject: NSManagedObject {
       }
     }
   }
+  
+  @nonobjc public class func fetchRequest() -> NSFetchRequest<ListObject> {
+    return NSFetchRequest<ListObject>(entityName: "ListObject");
+  }
+  
+  /// Array of mapped attributes between NSManagedObject and JSON
+  static let mappedAttributes: [AttributeMapper] = [
+    AttributeMapper(name: "id", jsonName: "id", isOptional: false, dataType: DataType.integer64),
+    AttributeMapper(name: "name", jsonName: "name", isOptional: false, dataType: DataType.string),
+    AttributeMapper(name: "type", jsonName: "type", isOptional: false, dataType: DataType.integer64)
+  ]
   
   // MARK: Generated accessors for scheduleRecords
   
