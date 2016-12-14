@@ -35,6 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       let scheduleViewController = ScheduleViewController()
       if let firstHistoryObject = searchViewController.history.fetchedObjects?.first {
         scheduleViewController.fetchSchedule(for: firstHistoryObject)
+        searchViewController.selectedObjectID = firstHistoryObject.id
         
         // Send request
         let networkingManager = NetworkingManager()

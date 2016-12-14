@@ -91,7 +91,7 @@ class SearchViewController: UIViewController {
     }
   }
   
-  fileprivate var selectedObjectID: Int64?
+  var selectedObjectID: Int64?
   
   // MARK: - UI objects
   
