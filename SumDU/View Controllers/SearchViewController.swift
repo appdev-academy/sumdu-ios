@@ -387,6 +387,10 @@ class SearchViewController: UIViewController {
     contentTableView.scrollIndicatorInsets = tableViewContentInset
   }
   
+  fileprivate func delete(_ listObject: ListObject) {
+    NSManagedObjectContext.save
+  }
+  
   // MARK: - Notifications
   
   fileprivate func registerForNotifications() {
@@ -551,6 +555,21 @@ extension SearchViewController: UITableViewDataSource {
     configureCell(cell, indexPath: indexPath)
     
     return cell
+  }
+  
+  func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    switch contentType {
+    case .auditoriums, .groups, .teachers:
+      return false
+    case .history:
+      return true
+    }
+  }
+  
+  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      
+    }
   }
 }
 
