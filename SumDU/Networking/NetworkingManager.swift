@@ -159,7 +159,7 @@ class NetworkingManager {
       case .failure(let error):
         self.delegate?.requestFailed()
         
-        let title = NSLocalizedString("Request error", comment: "Alert title")
+        let title = NSLocalizedString("Request failed", comment: "Alert title")
         let alert = UIAlertController(title: title, message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
         alert.addOkButton()
         

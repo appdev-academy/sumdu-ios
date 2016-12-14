@@ -1,8 +1,14 @@
 /* No comment provided by engineer. */
 "Auditorium" = "Аудиторія";
 
-/* No comment provided by engineer. */
+/* Alert title */
+"Deleting error" = "Помилка при видаленні";
+
+/* (No Commment) */
 "Error" = "Помилка";
+
+/* Alert message */
+"Error while importing Auditoriums, Groups and Teachers" = "Помилка при імпорті Аудиторій, Груп і Вчителів";
 
 /* No comment provided by engineer. */
 "Group" = "Група";
@@ -13,15 +19,21 @@
 /* No comment provided by engineer. */
 "No data found" = "Даних не знайдено";
 
+/* Alert button title */
+"OK" = "ОК";
+
+/* Alert title */
+"Request failed" = "Збій запиту";
+
 /* No comment provided by engineer. */
 "Search" = "Пошук";
 
-/* No comment provided by engineer. */
+/* (No Commment) */
 "Sorry. There are no results for your request." = "Вибачте. За вашим запитом нічого не знайдено.";
 
 /* No comment provided by engineer. */
-"Swipe the screen left and right to navigate between the main sections and the search schedule" = "Гортайте вліво та вправо щоб переміщатися між основними розділами та шукати розклад";
-
-/* No comment provided by engineer. */
 "Teacher" = "Викладач";
+
+/* Alert title */
+"Update error" = "Помилка оновлення";
 

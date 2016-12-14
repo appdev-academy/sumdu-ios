@@ -12,7 +12,7 @@ extension UIAlertController {
   
   /// Add default ok button
   func addOkButton() {
-    let buttonTitle = NSLocalizedString("Ok", comment: "Alert button title")
+    let buttonTitle = NSLocalizedString("OK", comment: "Alert button title")
     let action = UIAlertAction(title: buttonTitle, style: .default, handler: nil)
     self.addAction(action)
   }

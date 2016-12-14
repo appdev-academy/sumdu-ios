@@ -1,8 +1,14 @@
 /* No comment provided by engineer. */
 "Auditorium" = "Аудитория";
 
-/* No comment provided by engineer. */
+/* Alert title */
+"Deleting error" = "Ошибка при удалении";
+
+/* (No Commment) */
 "Error" = "Ошибка";
+
+/* Alert message */
+"Error while importing Auditoriums, Groups and Teachers" = "Ошибка при импорте Аудиторий, Групп и Учителей";
 
 /* No comment provided by engineer. */
 "Group" = "Группа";
@@ -13,15 +19,21 @@
 /* No comment provided by engineer. */
 "No data found" = "Данные не найдены";
 
+/* Alert button title */
+"OK" = "ОК";
+
+/* Alert title */
+"Request failed" = "Сбой запроса";
+
 /* No comment provided by engineer. */
 "Search" = "Поиск";
 
-/* No comment provided by engineer. */
+/* (No Commment) */
 "Sorry. There are no results for your request." = "Извините. По вашему запросу ничего не найдено.";
 
 /* No comment provided by engineer. */
-"Swipe the screen left and right to navigate between the main sections and the search schedule" = "Листайте влево и вправо для перемещения между основными разделами и поиска расписания";
-
-/* No comment provided by engineer. */
 "Teacher" = "Преподаватель";
+
+/* Alert title */
+"Update error" = "Ошибка обновления";
 
