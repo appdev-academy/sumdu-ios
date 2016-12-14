@@ -11,7 +11,6 @@ import CoreDuck
 import DuckDate
 import UIKit
 import Quack
-import SwiftyJSON
 
 /// Main controller with search and table
 class SearchViewController: UIViewController {
@@ -652,8 +651,10 @@ extension SearchViewController: UITableViewDelegate {
     case .teachers:
       listObject = teachers.object(at: indexPath)
     }
-    // Check if this row already selected
-    guard selectedObjectID != listObject.id else { return }
+    // Check if this row already selected (only for iPad)
+    if UIDevice.current.userInterfaceIdiom == .pad {
+      guard selectedObjectID != listObject.id else { return }
+    }
     
     selectedObjectID = listObject.id
 

@@ -9,7 +9,6 @@
 import Cartography
 import CoreDuck
 import UIKit
-import SwiftyJSON
 
 class ScheduleViewController: UIViewController {
   
