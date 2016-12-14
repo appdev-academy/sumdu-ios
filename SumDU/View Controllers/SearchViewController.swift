@@ -10,6 +10,7 @@ import Cartography
 import CoreDuck
 import DuckDate
 import UIKit
+import Quack
 import SwiftyJSON
 
 /// Main controller with search and table
@@ -73,7 +74,7 @@ class SearchViewController: UIViewController {
   fileprivate var isSearching = false {
     didSet {
       if isSearching {
-        // Higlight
+        // Highlight
         updateUI()
       } else {
         // Clear search text if canceled
@@ -278,7 +279,7 @@ class SearchViewController: UIViewController {
     }
     
     if isSearching {
-      // Higlight search results
+      // Highlight search results
       cell.label.textColor = Color.textLight
       if let searchingText = searchText {
         cell.label.attributedText = highlightSearchResults(searchingText, resultString: name)
@@ -387,8 +388,28 @@ class SearchViewController: UIViewController {
     contentTableView.scrollIndicatorInsets = tableViewContentInset
   }
   
+  /// Delete related to the listObject records
+  ///
+  /// - Parameter listObject: ListObject
   fileprivate func delete(_ listObject: ListObject) {
-    NSManagedObjectContext.save
+    NSManagedObjectContext.saveWithBlock({
+      localContext in
+      
+      if let object = listObject.inContext(localContext) as? ListObject {
+        for scheduleRecords in object.scheduleRecords {
+          if let record = scheduleRecords as? ScheduleRecord {
+            localContext.delete(record)
+          }
+        }
+      }
+
+    }, completion: {
+      success in
+      
+      if !success {
+       self.showAlert(title: NSLocalizedString("Deleting error", comment: "Alert title"), message: nil)
+      }
+    })
   }
   
   // MARK: - Notifications
@@ -568,7 +589,13 @@ extension SearchViewController: UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
     if editingStyle == .delete {
-      
+      switch contentType {
+      case .history:
+        let listObject = history.object(at: indexPath)
+        delete(listObject)
+      case .auditoriums, .groups, .teachers:
+        break
+      }
     }
   }
 }

@@ -7,6 +7,7 @@ abstract_target 'SumDU App' do
   pod 'Cartography'
   pod 'CoreDuck'
   pod 'DuckDate'
+  pod 'Quack'
   pod 'SwiftyJSON'
   pod 'Fuzi'
   target 'SumDU'
