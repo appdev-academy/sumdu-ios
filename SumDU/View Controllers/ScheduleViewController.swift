@@ -10,7 +10,7 @@ import Cartography
 import CoreDuck
 import UIKit
 
-class ScheduleViewController: UIViewController {
+class ScheduleViewController: UIViewController, UIGestureRecognizerDelegate {
   
   // MARK: - Variables
   
@@ -35,6 +35,8 @@ class ScheduleViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    navigationController?.interactivePopGestureRecognizer?.delegate = self
     
     initialSetup()
   }
