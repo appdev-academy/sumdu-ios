@@ -18,7 +18,7 @@ class SearchTableViewCell: UITableViewCell {
   
   // MARK: - UIObjects
   
-  fileprivate let label = UILabel()
+  let label = UILabel()
   fileprivate let separatorLine = UIView()
   
   // MARK: - Initialization
@@ -53,38 +53,4 @@ class SearchTableViewCell: UITableViewCell {
     }
   }
   
-  // MARK: - Helpers
-  
-  /// Show matching pattern
-  fileprivate func highlightSearchResults(_ searchString: String, resultString: String) -> NSMutableAttributedString {
-    
-    let attributedString: NSMutableAttributedString = NSMutableAttributedString(string: resultString)
-    let pattern = searchString
-    let range: NSRange = NSMakeRange(0, resultString.characters.count)
-    
-    let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
-    
-    regex?.enumerateMatches(in: resultString, options: NSRegularExpression.MatchingOptions(), range: range) {
-      (textCheckingResult, matchingFlags, stop) -> Void in
-      
-      if let subRange = textCheckingResult?.range {
-        attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textNormal, range: subRange)
-      }
-    }
-    return attributedString
-  }
-  
-  // MARK: - Interface
-  
-  func update(with object: ListData, search: Bool, searchingText: String?) {
-    label.text = object.name
-    if search {
-      label.textColor = Color.textLight
-      if let searchingText = searchingText {
-        label.attributedText = highlightSearchResults(searchingText, resultString: object.name)
-      }
-    } else {
-      label.textColor = Color.textNormal
-    }
-  }
 }

@@ -7,14 +7,22 @@
 //
 
 import Cartography
+import CoreDuck
+import DuckDate
 import UIKit
-import SwiftyJSON
+import Quack
 
+/// Main controller with search and table
 class SearchViewController: UIViewController {
   
   // MARK: - Properties
   
-  enum ContentState {
+  /// State of UI
+  ///
+  /// - showContent: Display content
+  /// - emptySearch: Search with empty results
+  /// - emptyHistory: Empty history
+  enum UIState {
     case showContent
     case emptySearch
     case emptyHistory
@@ -26,34 +34,64 @@ class SearchViewController: UIViewController {
   
   // MARK: - Variables
   
+  fileprivate var auditoriums: NSFetchedResultsController<ListObject>!
+  fileprivate var teachers: NSFetchedResultsController<ListObject>!
+  fileprivate var groups: NSFetchedResultsController<ListObject>!
+  var history: NSFetchedResultsController<ListObject>!
+  
   fileprivate var tableViewContentInset = UIEdgeInsets.zero
-  fileprivate var contentState: ContentState = .showContent {
+  fileprivate var stateOfUI: UIState = .showContent {
     didSet {
-      switch contentState {
+      switch stateOfUI {
       case .emptyHistory:
         // Hide table and show empty history
-        contentTableView.isHidden = true
+        tableView.isHidden = true
         emptyHistoryView.isHidden = false
         notFoundLabel.isHidden = true
       case .showContent:
         // Hide empty history and show table
         emptyHistoryView.isHidden = true
-        contentTableView.isHidden = false
+        tableView.isHidden = false
         notFoundLabel.isHidden = true
       case .emptySearch:
         // Hide table and show "not found" label
-        contentTableView.isHidden = true
+        tableView.isHidden = true
         emptyHistoryView.isHidden = true
         notFoundLabel.isHidden = false
       }
     }
   }
   
-  /// Parser for working with server
-  fileprivate var parser = Parser()
+  /// Save type of displayed content
+  fileprivate var contentType: ContentType = .history {
+    didSet {
+      updateUI()
+    }
+  }
   
-  /// Data model
-  fileprivate var model = DataModel()
+  /// State of search
+  fileprivate var isSearching = false {
+    didSet {
+      if isSearching {
+        // Highlight
+        updateUI()
+      } else {
+        // Clear search text if canceled
+        searchText = nil
+      }
+    }
+  }
+  
+  /// Text from search field
+  fileprivate var searchText: String? = nil {
+    didSet {
+      // Make search
+      fetchData()
+      updateUI()
+    }
+  }
+  
+  var selectedObjectID: Int64?
   
   // MARK: - UI objects
   
@@ -62,7 +100,7 @@ class SearchViewController: UIViewController {
   fileprivate let scrollLineView = UIView()
   fileprivate let scrollingIndicatorView = UIView()
   fileprivate let notFoundLabel = UILabel()
-  fileprivate let contentTableView = UITableView()
+  fileprivate let tableView = UITableView()
   fileprivate let emptyHistoryView = EmptyHistoryView()
   
   // MARK: - Lifecycle
@@ -72,39 +110,19 @@ class SearchViewController: UIViewController {
     
     registerForNotifications()
     
-    // UI
     initialSetup()
     
-    // Data
-    parser.dataListDelegate = self
-    model.updateFromStorage()
-    
-    if UIDevice.current.userInterfaceIdiom == .pad {
-      if let firstItem = model.history.first, let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
-        scheduleViewController.updateFromStorage(withItem: firstItem)
-      }
-    }
-    
-    updateContent()
-  }
-  
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    
-    // Check if lists of Teachers, Groups and Auditoriums was updated more than 3 days ago
-    let lastUpdatedDate = UserDefaults.standard.object(forKey: UserDefaultsKey.LastUpdatedAtDate.key) as? Date
-    if (lastUpdatedDate == nil) || (lastUpdatedDate != nil && lastUpdatedDate!.compare(Date().dateBySubtractingDays(3)) == .orderedAscending) {
-      model.updateFromServer(with: parser)
-    }
+    updateUI()
   }
   
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     
     updateMenuScrollIndicator()
+    
     // Select menu item
-    let indexPath = IndexPath(item: model.currentState.rawValue, section: 0)
-    menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition())
+    let indexPath = IndexPath(item: contentType.rawValue, section: 0)
+    menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition.centeredVertically)
   }
   
   deinit {
@@ -112,22 +130,6 @@ class SearchViewController: UIViewController {
   }
   
   // MARK: - Helpers
-  
-  fileprivate func updateContent() {
-    if model.currentData.count == 0 && model.searchMode {
-      contentState = .emptySearch
-    } else if model.currentData.count == 0 && model.currentState == .favorites {
-      contentState = .emptyHistory
-    } else {
-      contentState = .showContent
-    }
-    
-    // Reload table
-    if contentState == .showContent {
-      contentTableView.reloadData()
-      updateTableContentInset()
-    }
-  }
   
   /// Add UI objects and set constraints
   fileprivate func initialSetup() {
@@ -191,13 +193,13 @@ class SearchViewController: UIViewController {
     }
     
     // Content table
-    contentTableView.delegate = self
-    contentTableView.dataSource = self
-    contentTableView.register(ScheduleSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: ScheduleSectionHeaderView.reuseIdentifier)
-    contentTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
-    contentTableView.separatorStyle = .none
-    view.addSubview(contentTableView)
-    constrain(contentTableView, scrollLineView, view) {
+    tableView.delegate = self
+    tableView.dataSource = self
+    tableView.register(SectionHeaderView.self, forHeaderFooterViewReuseIdentifier: SectionHeaderView.reuseIdentifier)
+    tableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
+    tableView.separatorStyle = .none
+    view.addSubview(tableView)
+    constrain(tableView, scrollLineView, view) {
       contentTableView, scrollLineView, superview in
       
       contentTableView.top == scrollLineView.bottom
@@ -224,11 +226,122 @@ class SearchViewController: UIViewController {
     // Empty history
     emptyHistoryView.isHidden = true
     view.addSubview(emptyHistoryView)
-    constrain(contentTableView, emptyHistoryView) {
+    constrain(tableView, emptyHistoryView) {
       contentTableView, emptyHistoryView in
       
       emptyHistoryView.edges == contentTableView.edges
     }
+  }
+  
+  func fetchData() {
+    auditoriums = ListObject.fetch(search: searchText, type: .auditoriums, delegate: self)
+    teachers = ListObject.fetch(search: searchText, type: .teachers, delegate: self)
+    groups = ListObject.fetch(search: searchText, type: .groups, delegate: self)
+    history = ListObject.fetch(search: searchText, type: .history, delegate: self)
+  }
+  
+  /// Show matching pattern
+  fileprivate func highlightSearchResults(_ searchString: String, resultString: String) -> NSMutableAttributedString {
+    
+    let attributedString: NSMutableAttributedString = NSMutableAttributedString(string: resultString)
+    let pattern = searchString
+    let range: NSRange = NSMakeRange(0, resultString.characters.count)
+    
+    let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+    
+    regex?.enumerateMatches(in: resultString, options: NSRegularExpression.MatchingOptions(), range: range) {
+      (textCheckingResult, matchingFlags, stop) -> Void in
+      
+      if let subRange = textCheckingResult?.range {
+        attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textNormal, range: subRange)
+      }
+    }
+    return attributedString
+  }
+  
+  /// Populate cell from the NSManagedObject instance
+  ///
+  /// - Parameters:
+  ///   - cell: UITableViewCell object from table
+  ///   - indexPath: IndexPath
+  fileprivate func configureCell(_ cell: UITableViewCell, indexPath: IndexPath) {
+    guard let cell = cell as? SearchTableViewCell else { return }
+    
+    let name: String
+    let object: ListObject
+    switch contentType {
+    case .auditoriums:
+      object = auditoriums.object(at: indexPath)
+      name = object.name
+    case .history:
+      object = history.object(at: indexPath)
+      name = object.name
+    case .groups:
+      object = groups.object(at: indexPath)
+      name = object.name
+    case .teachers:
+      object = teachers.object(at: indexPath)
+      name = object.name
+    }
+    
+    if isSearching {
+      // Highlight search results
+      cell.label.textColor = Color.textLight
+      if let searchingText = searchText {
+        cell.label.attributedText = highlightSearchResults(searchingText, resultString: name)
+      } else {
+        cell.label.text = name
+      }
+    } else {
+      // Show normal text
+      cell.label.text = name
+      cell.label.textColor = Color.textNormal
+    }
+    
+    // Select row
+    if let selectedID = selectedObjectID, object.id == selectedID {
+      tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+    }
+  }
+  
+  /// Populate header with data
+  ///
+  /// - Parameters:
+  ///   - headerView: UITableViewHeaderFooterView for section
+  ///   - section: index of section
+  fileprivate func configureHeader(_ headerView: UITableViewHeaderFooterView?, section: Int) {
+    guard let header = headerView as? SectionHeaderView else { return }
+    
+    let text: String
+    switch contentType {
+    case .auditoriums:
+      text = auditoriums.sections?[section].name ?? ""
+    case .history:
+      text = history.sections?[section].name ?? ""
+    case .groups:
+      text = groups.sections?[section].name ?? ""
+    case .teachers:
+      text = teachers.sections?[section].name ?? ""
+    }
+    
+    header.dateLabel.text = text
+  }
+  
+  /// Display right UI depending of content
+  fileprivate func updateUI() {
+    // Update state of UI
+    switch contentType {
+    case .auditoriums:
+      stateOfUI = auditoriums.fetchedObjects?.count == 0 ? .emptySearch : .showContent
+    case .history:
+      stateOfUI = history.fetchedObjects?.count == 0 ? .emptyHistory : .showContent
+    case .groups:
+      stateOfUI = groups.fetchedObjects?.count == 0 ? .emptySearch : .showContent
+    case .teachers:
+      stateOfUI = teachers.fetchedObjects?.count == 0 ? .emptySearch : .showContent
+    }
+    tableView.reloadData()
+    updateTableContentInset()
   }
   
   fileprivate func labelWidth(_ text: String) -> CGFloat {
@@ -242,9 +355,9 @@ class SearchViewController: UIViewController {
     let screenWidth = view.bounds.width
     var spacing = screenWidth
     spacing -= MenuImageCollectionViewCell.historyImageSize.width
-    spacing -= labelWidth(State.teachers.name)
-    spacing -= labelWidth(State.auditoriums.name)
-    spacing -= labelWidth(State.groups.name)
+    spacing -= labelWidth(ContentType.teachers.name)
+    spacing -= labelWidth(ContentType.auditoriums.name)
+    spacing -= labelWidth(ContentType.groups.name)
     return spacing/4.0
   }
   
@@ -252,11 +365,11 @@ class SearchViewController: UIViewController {
   fileprivate func updateMenuScrollIndicator() {
     let spacing = interItemSpacing()
     var leading: CGFloat = 0.0
-    var width: CGFloat = labelWidth(model.currentState.name)
+    var width: CGFloat = labelWidth(contentType.name)
     let historyImageWidth = MenuImageCollectionViewCell.historyImageSize.width
-    switch model.currentState {
+    switch contentType {
       
-    case .favorites:
+    case .history:
       leading = spacing/2
       width = historyImageWidth
       
@@ -267,13 +380,13 @@ class SearchViewController: UIViewController {
     case .teachers:
       leading = spacing*2 + spacing/2
       leading += historyImageWidth
-      leading += labelWidth(State.groups.name)
+      leading += labelWidth(ContentType.groups.name)
       
     case .auditoriums:
       leading = spacing*3 + spacing/2
       leading += historyImageWidth
-      leading += labelWidth(State.teachers.name)
-      leading += labelWidth(State.groups.name)
+      leading += labelWidth(ContentType.teachers.name)
+      leading += labelWidth(ContentType.groups.name)
     }
     constrain(scrollingIndicatorView, view, replace: scrollConstraintGroup) { scrollingIndicatorView, superview in
       scrollingIndicatorView.leading == superview.leading + leading
@@ -282,8 +395,40 @@ class SearchViewController: UIViewController {
   }
   
   fileprivate func updateTableContentInset() {
-    contentTableView.contentInset = tableViewContentInset
-    contentTableView.scrollIndicatorInsets = tableViewContentInset
+    tableView.contentInset = tableViewContentInset
+    tableView.scrollIndicatorInsets = tableViewContentInset
+  }
+  
+  /// Delete related to the listObject records
+  ///
+  /// - Parameter listObject: ListObject
+  fileprivate func delete(_ listObject: ListObject) {
+    NSManagedObjectContext.saveWithBlock({
+      localContext in
+      
+      if let object = listObject.inContext(localContext) as? ListObject {
+        for scheduleRecords in object.scheduleRecords {
+          if let record = scheduleRecords as? ScheduleRecord {
+            localContext.delete(record)
+          }
+        }
+      }
+
+    }, completion: {
+      success in
+      
+      if success {
+        // Clear ScheduleViewController if deleted row is selected
+        if UIDevice.current.userInterfaceIdiom == .pad, self.selectedObjectID == listObject.id {
+          self.selectedObjectID = nil
+          if let scheduleViewController = self.splitViewController?.viewControllers.last as? ScheduleViewController {
+            scheduleViewController.clearSchedule()
+          }
+        }
+      } else {
+        self.showAlert(title: NSLocalizedString("Deleting error", comment: "Alert title"), message: nil)
+      }
+    })
   }
   
   // MARK: - Notifications
@@ -318,33 +463,20 @@ class SearchViewController: UIViewController {
 extension SearchViewController: SearchBarViewDelegate {
   
   func refreshContent(searchBarView view: SearchBarView) {
-    model.updateFromServer(with: parser)
+    NetworkingManager.updateListsOfAuditoriumsGroupsAndTeachers()
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
-    // Stop scroll of table
-    contentTableView.setContentOffset(CGPoint.zero, animated: false)
+    tableView.setContentOffset(CGPoint.zero, animated: false)
     
-    if model.searchMode {
-      // Update search text
-      model.searchText = text
-      updateContent()
-    }
+    searchText = text
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
-    // Stop scroll of table
-    contentTableView.setContentOffset(CGPoint.zero, animated: false)
+    tableView.setContentOffset(CGPoint.zero, animated: false)
     
-    // Clear search text if canceled
-    if !searchMode {
-      model.searchText = nil
-    }
-    
-    if searchMode != model.searchMode {
-      // Update search mode
-      model.searchMode = searchMode
-      updateContent()
+    if searchMode != isSearching {
+      isSearching = searchMode
     }
   }
 }
@@ -354,23 +486,17 @@ extension SearchViewController: SearchBarViewDelegate {
 extension SearchViewController: UICollectionViewDelegate {
   
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    
-    // Get new state
-    guard let newState = State(rawValue: indexPath.row) else {
-      return
-    }
+    // Get new type
+    guard let newType = ContentType(rawValue: indexPath.row) else { return }
     
     // If user select other state
-    guard model.currentState != newState else {
-      return
-    }
+    guard contentType != newType else { return }
     
-    // Scroll to the top of table
-    contentTableView.setContentOffset(CGPoint.zero, animated: false)
+    // Stop scroll of table
+    tableView.setContentOffset(CGPoint.zero, animated: false)
     
-    // Update state
-    model.currentState = newState
-    updateContent()
+    // Update type
+    contentType = newType
     
     // Update menu
     updateMenuScrollIndicator()
@@ -388,7 +514,7 @@ extension SearchViewController: UICollectionViewDataSource {
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     
-    if indexPath.row != 0, let segment = State(rawValue: indexPath.row) {
+    if indexPath.row != 0, let segment = ContentType(rawValue: indexPath.row) {
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCollectionViewCell.reuseIdentifier, for: indexPath) as! MenuCollectionViewCell
       cell.update(withTitle: segment.name)
       return cell
@@ -413,7 +539,7 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
   
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     
-    guard let type = State(rawValue: indexPath.row) else {
+    guard let type = ContentType(rawValue: indexPath.row) else {
       return CGSize(width: 0.0, height: 0.0)
     }
     
@@ -421,45 +547,11 @@ extension SearchViewController: UICollectionViewDelegateFlowLayout {
     let spacing = interItemSpacing()
     let cellHeight = MenuCollectionViewCell.cellHeight
     switch type {
-    case .favorites:
+    case .history:
       return CGSize(width: MenuImageCollectionViewCell.historyImageSize.width + spacing, height: cellHeight)
     case .auditoriums, .groups, .teachers:
       return CGSize(width: labelWidth(type.name) + spacing, height: cellHeight)
     }
-  }
-}
-
-// MARK: - ParserDataListDelegate
-
-extension SearchViewController: ParserDataListDelegate {
-  internal func requesSuccess(auditoriums: [ListData], groups: [ListData], teachers: [ListData]) {
-    
-    // Update Auditoriums
-    model.auditoriums = auditoriums
-    ListData.saveToStorage(model.auditoriums, forKey: UserDefaultsKey.Auditoriums.key)
-    
-    // Update Groups
-    model.groups = groups
-    ListData.saveToStorage(model.groups, forKey: UserDefaultsKey.Groups.key)
-    
-    // Update Teachers
-    model.teachers = teachers
-    ListData.saveToStorage(model.teachers, forKey: UserDefaultsKey.Teachers.key)
-    
-    updateContent()
-  }
-  
-  func requestError(_ parser: Parser, localizedError error: String?) {
-    if UIApplication.shared.isNetworkActivityIndicatorVisible {
-      UIApplication.shared.isNetworkActivityIndicatorVisible = false
-    }
-    
-    // Create alert
-    let alertController = UIAlertController(title: NSLocalizedString("Error", comment: ""), message: error, preferredStyle: .alert)
-    alertController.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK button title in alerts"), style: .default, handler: nil))
-    
-    // Present alert
-    present(alertController, animated: true, completion: nil)
   }
 }
 
@@ -468,23 +560,62 @@ extension SearchViewController: ParserDataListDelegate {
 extension SearchViewController: UITableViewDataSource {
   
   func numberOfSections(in tableView: UITableView) -> Int {
-    return model.currentData.count
+    let numberOfSections: Int
+    switch contentType {
+    case .auditoriums:
+      numberOfSections = auditoriums.sections?.count ?? 0
+    case .history:
+      numberOfSections = history.sections?.count ?? 0
+    case .groups:
+      numberOfSections = groups.sections?.count ?? 0
+    case .teachers:
+      numberOfSections = teachers.sections?.count ?? 0
+    }
+    return numberOfSections
   }
   
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    if model.currentData.count > 0 {
-      return model.currentData[section].records.count
+    let numberOfRows: Int
+    switch contentType {
+    case .auditoriums:
+      numberOfRows = auditoriums.sections?[section].numberOfObjects ?? 0
+    case .history:
+      numberOfRows = history.sections?[section].numberOfObjects ?? 0
+    case .groups:
+      numberOfRows = groups.sections?[section].numberOfObjects ?? 0
+    case .teachers:
+      numberOfRows = teachers.sections?[section].numberOfObjects ?? 0
     }
-    return 0
+    return numberOfRows
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath) as! SearchTableViewCell
+    let cell = tableView.dequeueReusableCell(withIdentifier: SearchTableViewCell.reuseIdentifier, for: indexPath)
     
-    if model.currentData.count > 0 {
-      cell.update(with: model.currentData[indexPath.section].records[indexPath.row], search: model.searchMode, searchingText: model.searchText)
-    }
+    configureCell(cell, indexPath: indexPath)
+    
     return cell
+  }
+  
+  func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    switch contentType {
+    case .auditoriums, .groups, .teachers:
+      return false
+    case .history:
+      return true
+    }
+  }
+  
+  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      switch contentType {
+      case .history:
+        let listObject = history.object(at: indexPath)
+        delete(listObject)
+      case .auditoriums, .groups, .teachers:
+        break
+      }
+    }
   }
 }
 
@@ -497,48 +628,69 @@ extension SearchViewController: UITableViewDelegate {
   }
   
   func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-    return ScheduleSectionHeaderView.viewHeight
+    return SectionHeaderView.viewHeight
   }
   
   func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-    let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ScheduleSectionHeaderView.reuseIdentifier) as! ScheduleSectionHeaderView
-    if model.currentData.count > 0 {
-      headerView.dateLabel.text = String(model.currentData[section].letter)
-    }
+    let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SectionHeaderView.reuseIdentifier)
+    
+    configureHeader(headerView, section: section)
+    
     return headerView
   }
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let listObject: ListObject
+    switch contentType {
+    case .auditoriums:
+      listObject = auditoriums.object(at: indexPath)
+    case .groups:
+      listObject = groups.object(at: indexPath)
+    case .history:
+      listObject = history.object(at: indexPath)
+    case .teachers:
+      listObject = teachers.object(at: indexPath)
+    }
+    // Check if this row already selected (only for iPad)
+    if UIDevice.current.userInterfaceIdiom == .pad {
+      guard selectedObjectID != listObject.id else { return }
+    }
     
-    let dataItem = model.currentData[indexPath.section].records[indexPath.row]
-    
+    selectedObjectID = listObject.id
+
     // For iPad
     if UIDevice.current.userInterfaceIdiom == .pad {
       // Get Schedule controller
       if let scheduleViewController = splitViewController?.viewControllers.last as? ScheduleViewController {
-        // Update data
-        if model.currentState == .favorites {
-          scheduleViewController.updateFromStorage(withItem: dataItem)
-        } else {
-          scheduleViewController.updateFromServer(withItem: dataItem)
-        }
+        scheduleViewController.fetchSchedule(for: listObject)
+        
+        // Send request
+        let networkingManager = NetworkingManager()
+        networkingManager.delegate = scheduleViewController
+        networkingManager.scheduleRequest(for: listObject)
       }
       
       // For iPhone
     } else if UIDevice.current.userInterfaceIdiom == .phone {
       let scheduleViewController = ScheduleViewController()
-      if model.currentState == .favorites {
-        scheduleViewController.updateFromStorage(withItem: dataItem)
-      } else {
-        scheduleViewController.updateFromServer(withItem: dataItem)
-      }
+      scheduleViewController.fetchSchedule(for: listObject)
+      
+      // Send request
+      let networkingManager = NetworkingManager()
+      networkingManager.delegate = scheduleViewController
+      networkingManager.scheduleRequest(for: listObject)
+      
+      // Push controller
       navigationController?.pushViewController(scheduleViewController, animated: true)
     }
-    
-    // Remember selected item
-    while model.history.count > 50 { model.history.removeFirst() }
-    let historyItems = model.history.filter { $0.name == dataItem.name }
-    if historyItems.count == 0 { model.history.append(dataItem) }
-    ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
+  }
+}
+
+// MARK: - NSFetchedResultsControllerDelegate
+
+extension SearchViewController: NSFetchedResultsControllerDelegate {
+  
+  func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    updateUI()
   }
 }

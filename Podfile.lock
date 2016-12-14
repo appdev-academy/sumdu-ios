@@ -1,21 +1,31 @@
 PODS:
   - Alamofire (4.2.0)
+  - AlamofireNetworkActivityIndicator (2.1.0):
+    - Alamofire (~> 4.1)
   - Cartography (1.0.1)
+  - CoreDuck (1.0.0)
+  - DuckDate (1.2.0)
   - Fuzi (1.0.1)
   - SwiftyJSON (3.1.3)
 
 DEPENDENCIES:
   - Alamofire (= 4.2.0)
+  - AlamofireNetworkActivityIndicator (~> 2.0)
   - Cartography
+  - CoreDuck
+  - DuckDate
   - Fuzi
   - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: aa2e09d871c9160ac53c90e83c68064a94e3dfbe
+  AlamofireNetworkActivityIndicator: 4716f6554bdfb9c7cf13b1e0e3af21163129690a
   Cartography: c1460e99395b824d9d75360b0382faeb0b33dcd7
+  CoreDuck: cee9aa5aecd8761ff275e8cfac0ec702fe4608ca
+  DuckDate: c4c21d9219cd94e348c62d40891f4196544d9ba4
   Fuzi: 851403654bac55675aaeed815d0c8a1d3e3d3e8b
   SwiftyJSON: 38a8ea2006779c0fc4c310cb2ee8195327740faf
 
-PODFILE CHECKSUM: 7e39aa102357ed6354580ae0fdbf1fbee57caf24
+PODFILE CHECKSUM: 8ca02c3f9b31dc5c72125a7ea9ea1e7aab7f92b1
 
 COCOAPODS: 1.1.1

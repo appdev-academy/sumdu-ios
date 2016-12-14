@@ -1,5 +1,5 @@
 //
-//  ScheduleSectionHeaderView.swift
+//  SectionHeaderView.swift
 //  SumDU
 //
 //  Created by Yura Voevodin on 14.07.16.
@@ -9,11 +9,11 @@
 import Cartography
 import UIKit
 
-class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
+class SectionHeaderView: UITableViewHeaderFooterView {
   
   // MARK: - Constants
   
-  static let reuseIdentifier = "\(ScheduleSectionHeaderView.self)"
+  static let reuseIdentifier = "\(SectionHeaderView.self)"
   static let viewHeight: CGFloat = 30.0
   
   // MARK: - UI objects
@@ -62,4 +62,5 @@ class ScheduleSectionHeaderView: UITableViewHeaderFooterView {
       dayLabel.bottom == superview.bottom
     }
   }
+  
 }

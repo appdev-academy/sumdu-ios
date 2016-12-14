@@ -3,8 +3,11 @@ use_frameworks!
 
 abstract_target 'SumDU App' do
   pod 'Alamofire', '4.2.0'
+  pod 'AlamofireNetworkActivityIndicator', '~> 2.0'
   pod 'Cartography'
-  pod 'SwiftyJSON'
+  pod 'CoreDuck'
+  pod 'DuckDate'
+  pod 'Quack'
   pod 'Fuzi'
   target 'SumDU'
 end

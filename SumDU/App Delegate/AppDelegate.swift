@@ -6,6 +6,8 @@
 //  Copyright © 2015 AppDevAcademy. All rights reserved.
 //
 
+import CoreDuck
+import AlamofireNetworkActivityIndicator
 import UIKit
 
 @UIApplicationMain
@@ -15,11 +17,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
     
+    NetworkActivityIndicatorManager.shared.isEnabled = true
+    NetworkActivityIndicatorManager.shared.startDelay = 0.0
+    
+    // Initialize CoreData stack
+    let _ = CoreDuck.quack
+    CoreDuck.printErrors = true
+    
     self.window = UIWindow(frame: UIScreen.main.bounds)
     
     if UIDevice.current.userInterfaceIdiom == .pad, let window = self.window {
+      // Search
       let searchViewController = SearchViewController()
+      searchViewController.fetchData()
+      
+      // Schedule
       let scheduleViewController = ScheduleViewController()
+      if let firstHistoryObject = searchViewController.history.fetchedObjects?.first {
+        scheduleViewController.fetchSchedule(for: firstHistoryObject)
+        searchViewController.selectedObjectID = firstHistoryObject.id
+        
+        // Send request
+        let networkingManager = NetworkingManager()
+        networkingManager.delegate = scheduleViewController
+        networkingManager.scheduleRequest(for: firstHistoryObject)
+      }
+      
       let splitViewController = UISplitViewController()
       splitViewController.viewControllers = [searchViewController, scheduleViewController]
       splitViewController.preferredDisplayMode = .allVisible
@@ -30,6 +53,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     if UIDevice.current.userInterfaceIdiom == .phone, let window = self.window  {
       let searchViewController = SearchViewController()
+      searchViewController.fetchData()
+      
       let navigationController = UINavigationController(rootViewController: searchViewController)
       navigationController.isNavigationBarHidden = true
       window.rootViewController = navigationController
@@ -54,7 +79,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
   
   func applicationDidBecomeActive(_ application: UIApplication) {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
+    // Get date of last update for Teachers, Groups and Auditoriums
+    let lastUpdated = UserDefaults.standard.object(forKey: UserDefaultsKey.LastUpdatedAtDate.key) as? Date
+    
+    // Import first time
+    guard let updatedDate = lastUpdated else {
+      NetworkingManager.updateListsOfAuditoriumsGroupsAndTeachers()
+      return
+    }
+    
+    // Update if it's been more than 3 days ago
+    if updatedDate.isLessThanDate(Date().minusDays(3)) {
+      NetworkingManager.updateListsOfAuditoriumsGroupsAndTeachers()
+    }
   }
   
   func applicationWillTerminate(_ application: UIApplication) {

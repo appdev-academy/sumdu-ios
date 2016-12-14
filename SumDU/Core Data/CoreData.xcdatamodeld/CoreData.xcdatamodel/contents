@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="11759" systemVersion="16C67" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="ListObject" representedClassName="ListObject" syncable="YES">
+        <attribute name="firstSymbol" attributeType="String" syncable="YES"/>
+        <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="type" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="scheduleRecords" toMany="YES" deletionRule="Nullify" destinationEntity="ScheduleRecord" inverseName="listObject" inverseEntity="ScheduleRecord" syncable="YES"/>
+    </entity>
+    <entity name="ScheduleRecord" representedClassName="ScheduleRecord" syncable="YES">
+        <attribute name="auditorium" attributeType="String" syncable="YES"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="dateString" attributeType="String" syncable="YES"/>
+        <attribute name="dayOfWeek" attributeType="String" syncable="YES"/>
+        <attribute name="dayString" attributeType="String" syncable="YES"/>
+        <attribute name="group" attributeType="String" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="order" attributeType="String" syncable="YES"/>
+        <attribute name="teacher" attributeType="String" syncable="YES"/>
+        <attribute name="time" attributeType="String" syncable="YES"/>
+        <attribute name="type" attributeType="String" syncable="YES"/>
+        <relationship name="listObject" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ListObject" inverseName="scheduleRecords" inverseEntity="ListObject" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="ListObject" positionX="-36" positionY="81" width="128" height="120"/>
+        <element name="ScheduleRecord" positionX="-18" positionY="45" width="128" height="225"/>
+    </elements>
+</model>

@@ -1,8 +1,8 @@
 //
-//  NSDate.swift
+//  Date.swift
 //  SumDU
 //
-//  Created by Oleksandr Kysil on 1/7/16.
+//  Created by Yura Voevodin on 12/9/16.
 //  Copyright © 2016 App Dev Academy. All rights reserved.
 //
 
@@ -10,15 +10,13 @@ import Foundation
 
 extension Date {
   
-  func dateByAddingDays(_ days: Int) -> Date {
-    let timeInterval = TimeInterval(days*24*60*60)
-    let newDate = self.addingTimeInterval(timeInterval)
-    return newDate
+  /// String representation of the date in server format
+  public var serverDateFormat: String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "dd.MM.yyyy"
+    let locale = Locale(identifier: "en_US_POSIX")
+    dateFormatter.locale = locale
+    return dateFormatter.string(from: self)
   }
   
-  func dateBySubtractingDays(_ days: Int) -> Date {
-    let timeInterval = TimeInterval(-days*24*60*60)
-    let newDate = self.addingTimeInterval(timeInterval)
-    return newDate
-  }
 }
