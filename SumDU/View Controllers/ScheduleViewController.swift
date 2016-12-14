@@ -156,6 +156,9 @@ class ScheduleViewController: UIViewController {
   
   // MARK: - Actions
   
+  /// Fetch data about schedule for ListObject
+  ///
+  /// - Parameter listObject: ListObject
   func fetchSchedule(for listObject: ListObject) {
     self.listObject = listObject
     schedule = ScheduleRecord.fetch(for: listObject, delegate: self)
@@ -164,6 +167,15 @@ class ScheduleViewController: UIViewController {
     titleLabel.text = listObject.name
   }
   
+  /// Clear data about schedule
+  func clearSchedule() {
+    listObject = nil
+    schedule = nil
+    tableView.reloadData()
+    titleLabel.text = nil
+  }
+  
+  /// Go back to the SearchViewController
   func backButtonPressed() {
     if UIDevice.current.userInterfaceIdiom == .phone {
       let _ = navigationController?.popViewController(animated: true)

@@ -46,17 +46,17 @@ class SearchViewController: UIViewController {
       switch stateOfUI {
       case .emptyHistory:
         // Hide table and show empty history
-        contentTableView.isHidden = true
+        tableView.isHidden = true
         emptyHistoryView.isHidden = false
         notFoundLabel.isHidden = true
       case .showContent:
         // Hide empty history and show table
         emptyHistoryView.isHidden = true
-        contentTableView.isHidden = false
+        tableView.isHidden = false
         notFoundLabel.isHidden = true
       case .emptySearch:
         // Hide table and show "not found" label
-        contentTableView.isHidden = true
+        tableView.isHidden = true
         emptyHistoryView.isHidden = true
         notFoundLabel.isHidden = false
       }
@@ -92,6 +92,8 @@ class SearchViewController: UIViewController {
     }
   }
   
+  fileprivate var selectedObjectID: Int64?
+  
   // MARK: - UI objects
   
   fileprivate let searchBarView = SearchBarView()
@@ -99,7 +101,7 @@ class SearchViewController: UIViewController {
   fileprivate let scrollLineView = UIView()
   fileprivate let scrollingIndicatorView = UIView()
   fileprivate let notFoundLabel = UILabel()
-  fileprivate let contentTableView = UITableView()
+  fileprivate let tableView = UITableView()
   fileprivate let emptyHistoryView = EmptyHistoryView()
   
   // MARK: - Lifecycle
@@ -192,13 +194,13 @@ class SearchViewController: UIViewController {
     }
     
     // Content table
-    contentTableView.delegate = self
-    contentTableView.dataSource = self
-    contentTableView.register(SectionHeaderView.self, forHeaderFooterViewReuseIdentifier: SectionHeaderView.reuseIdentifier)
-    contentTableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
-    contentTableView.separatorStyle = .none
-    view.addSubview(contentTableView)
-    constrain(contentTableView, scrollLineView, view) {
+    tableView.delegate = self
+    tableView.dataSource = self
+    tableView.register(SectionHeaderView.self, forHeaderFooterViewReuseIdentifier: SectionHeaderView.reuseIdentifier)
+    tableView.register(SearchTableViewCell.self, forCellReuseIdentifier: SearchTableViewCell.reuseIdentifier)
+    tableView.separatorStyle = .none
+    view.addSubview(tableView)
+    constrain(tableView, scrollLineView, view) {
       contentTableView, scrollLineView, superview in
       
       contentTableView.top == scrollLineView.bottom
@@ -225,7 +227,7 @@ class SearchViewController: UIViewController {
     // Empty history
     emptyHistoryView.isHidden = true
     view.addSubview(emptyHistoryView)
-    constrain(contentTableView, emptyHistoryView) {
+    constrain(tableView, emptyHistoryView) {
       contentTableView, emptyHistoryView in
       
       emptyHistoryView.edges == contentTableView.edges
@@ -267,15 +269,20 @@ class SearchViewController: UIViewController {
     guard let cell = cell as? SearchTableViewCell else { return }
     
     let name: String
+    let object: ListObject
     switch contentType {
     case .auditoriums:
-      name = auditoriums.object(at: indexPath).name
+      object = auditoriums.object(at: indexPath)
+      name = object.name
     case .history:
-      name = history.object(at: indexPath).name
+      object = history.object(at: indexPath)
+      name = object.name
     case .groups:
-      name = groups.object(at: indexPath).name
+      object = groups.object(at: indexPath)
+      name = object.name
     case .teachers:
-      name = teachers.object(at: indexPath).name
+      object = teachers.object(at: indexPath)
+      name = object.name
     }
     
     if isSearching {
@@ -290,6 +297,11 @@ class SearchViewController: UIViewController {
       // Show normal text
       cell.label.text = name
       cell.label.textColor = Color.textNormal
+    }
+    
+    // Select row
+    if let selectedID = selectedObjectID, object.id == selectedID {
+      tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
     }
   }
   
@@ -329,7 +341,7 @@ class SearchViewController: UIViewController {
     case .teachers:
       stateOfUI = teachers.fetchedObjects?.count == 0 ? .emptySearch : .showContent
     }
-    contentTableView.reloadData()
+    tableView.reloadData()
     updateTableContentInset()
   }
   
@@ -384,8 +396,8 @@ class SearchViewController: UIViewController {
   }
   
   fileprivate func updateTableContentInset() {
-    contentTableView.contentInset = tableViewContentInset
-    contentTableView.scrollIndicatorInsets = tableViewContentInset
+    tableView.contentInset = tableViewContentInset
+    tableView.scrollIndicatorInsets = tableViewContentInset
   }
   
   /// Delete related to the listObject records
@@ -406,8 +418,16 @@ class SearchViewController: UIViewController {
     }, completion: {
       success in
       
-      if !success {
-       self.showAlert(title: NSLocalizedString("Deleting error", comment: "Alert title"), message: nil)
+      if success {
+        // Clear ScheduleViewController if deleted row is selected
+        if UIDevice.current.userInterfaceIdiom == .pad, self.selectedObjectID == listObject.id {
+          self.selectedObjectID = nil
+          if let scheduleViewController = self.splitViewController?.viewControllers.last as? ScheduleViewController {
+            scheduleViewController.clearSchedule()
+          }
+        }
+      } else {
+        self.showAlert(title: NSLocalizedString("Deleting error", comment: "Alert title"), message: nil)
       }
     })
   }
@@ -448,13 +468,13 @@ extension SearchViewController: SearchBarViewDelegate {
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
-    contentTableView.setContentOffset(CGPoint.zero, animated: false)
+    tableView.setContentOffset(CGPoint.zero, animated: false)
     
     searchText = text
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchMode: Bool) {
-    contentTableView.setContentOffset(CGPoint.zero, animated: false)
+    tableView.setContentOffset(CGPoint.zero, animated: false)
     
     if searchMode != isSearching {
       isSearching = searchMode
@@ -474,7 +494,7 @@ extension SearchViewController: UICollectionViewDelegate {
     guard contentType != newType else { return }
     
     // Stop scroll of table
-    contentTableView.setContentOffset(CGPoint.zero, animated: false)
+    tableView.setContentOffset(CGPoint.zero, animated: false)
     
     // Update type
     contentType = newType
@@ -632,6 +652,10 @@ extension SearchViewController: UITableViewDelegate {
     case .teachers:
       listObject = teachers.object(at: indexPath)
     }
+    // Check if this row already selected
+    guard selectedObjectID != listObject.id else { return }
+    
+    selectedObjectID = listObject.id
 
     // For iPad
     if UIDevice.current.userInterfaceIdiom == .pad {
