@@ -141,7 +141,7 @@ class SearchBarView: UIView {
     // Cancel
     cancelButton.isHidden = true
     cancelButton.addTarget(self, action: #selector(cancelButtonPressed), for: .touchUpInside)
-    cancelButton.setImage(UIImage(named: "cancel_normal"), for: UIControlState())
+    cancelButton.setImage(UIImage(named: "cancel_normal"), for: UIControl.State())
     cancelButton.setImage(UIImage(named: "cancel_pressed"), for: .selected)
     containerForButtons.addSubview(cancelButton)
     constrain(cancelButton, containerForButtons) { cancelBarButton, superview in
@@ -149,13 +149,13 @@ class SearchBarView: UIView {
     }
   }
   
-  func cancelButtonPressed() {
+  @objc func cancelButtonPressed() {
     isEditingMode = false
     textField.text = ""
     textField.resignFirstResponder()
   }
   
-  func refreshButtonPressed() {
+  @objc func refreshButtonPressed() {
     delegate?.refreshContent(searchBarView: self)
   }
 }
@@ -169,7 +169,7 @@ extension SearchBarView: UITextFieldDelegate {
   }
   
   func textFieldDidEndEditing(_ textField: UITextField) {
-    if textField.text?.characters.count > 0 {
+    if let text = textField.text, text.count > 0 {
       isEditingMode = true
     } else if isEditingMode {
       isEditingMode = false

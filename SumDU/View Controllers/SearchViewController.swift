@@ -104,7 +104,7 @@ class SearchViewController: UIViewController {
     updateMenuScrollIndicator()
     // Select menu item
     let indexPath = IndexPath(item: model.currentState.rawValue, section: 0)
-    menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition())
+    menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionView.ScrollPosition())
   }
   
   deinit {
@@ -233,7 +233,7 @@ class SearchViewController: UIViewController {
   
   fileprivate func labelWidth(_ text: String) -> CGFloat {
     let size = CGSize(width: CGFloat.greatestFiniteMagnitude, height: MenuCollectionViewCell.cellHeight)
-    let attributes = [NSFontAttributeName: Font.named(.helveticaNeueMedium, size: 17.0)]
+    let attributes = [NSAttributedString.Key.font: Font.named(.helveticaNeueMedium, size: 17.0)]
     return text.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil).size.width
   }
   
@@ -289,25 +289,25 @@ class SearchViewController: UIViewController {
   // MARK: - Notifications
   
   fileprivate func registerForNotifications() {
-    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
   }
   
   fileprivate func deregisterFromNotifications() {
     NotificationCenter.default.removeObserver(self)
   }
   
-  func keyboardWillShow(_ notification: Notification) {
+  @objc func keyboardWillShow(_ notification: Notification) {
     guard let userInfo: NSDictionary = notification.userInfo as NSDictionary?,
-      let keyboardFrame: NSValue = userInfo.value(forKey: UIKeyboardFrameEndUserInfoKey) as? NSValue else {
+      let keyboardFrame: NSValue = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue else {
         return
     }
     let keyboardHeight = keyboardFrame.cgRectValue.size.height
-    tableViewContentInset = UIEdgeInsetsMake(0.0, 0.0, keyboardHeight,  0.0);
+    tableViewContentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardHeight,  right: 0.0);
     updateTableContentInset()
   }
   
-  func keyboardWillHide(_ notification: Notification) {
+  @objc func keyboardWillHide(_ notification: Notification) {
     tableViewContentInset = UIEdgeInsets.zero
     updateTableContentInset()
   }

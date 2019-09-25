@@ -31,7 +31,7 @@ class ScheduleTableViewCell: UITableViewCell {
     super.init(coder: aDecoder)
   }
   
-  override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+  override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
     
     initialSetup()
@@ -129,7 +129,7 @@ class ScheduleTableViewCell: UITableViewCell {
   func update(withSchedule schedule: Schedule) {
     // Name
     var name = schedule.pairName
-    if schedule.pairType.characters.count > 0 { name += " (" + schedule.pairType + ")" }
+    if schedule.pairType.count > 0 { name += " (" + schedule.pairType + ")" }
     nameLabel.text = name
     // Time
     timeLabel.text = schedule.pairTime

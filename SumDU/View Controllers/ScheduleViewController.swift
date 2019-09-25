@@ -39,7 +39,7 @@ class ScheduleViewController: UIViewController {
   
   // Content
   fileprivate let titleLabel = UILabel()
-  fileprivate let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+  fileprivate let activityIndicatorView = UIActivityIndicatorView(style: .gray)
   fileprivate let informationLabel = UILabel()
   fileprivate let scheduleTableView = UITableView()
   
@@ -83,8 +83,8 @@ class ScheduleViewController: UIViewController {
       backButton.width == BackButton.buttonSize.width
     }
     if UIDevice.current.userInterfaceIdiom == .pad {
-      backButton.setImage(nil, for: UIControlState())
-      backButton.setImage(nil, for: UIControlState.highlighted)
+      backButton.setImage(nil, for: UIControl.State())
+      backButton.setImage(nil, for: UIControl.State.highlighted)
     }
     // Refresh
     refreshButton.addTarget(self, action: #selector(refreshButtonPressed), for: .touchUpInside)
@@ -208,19 +208,19 @@ class ScheduleViewController: UIViewController {
     parser.sendScheduleRequest(listData)
   }
   
-  func backButtonPressed() {
+  @objc func backButtonPressed() {
     if UIDevice.current.userInterfaceIdiom == .phone {
       let _ = navigationController?.popViewController(animated: true)
     }
   }
   
   /// Refresh schedule table
-  func refreshButtonPressed() {
+  @objc func refreshButtonPressed() {
     parser.sendScheduleRequest(listData)
   }
   
   /// Share schedule
-  func shareButtonPressed() {
+  @objc func shareButtonPressed() {
     if recordsBySection.count > 0 {
       parser.generateCalendarURL(listData)
       if let url = calendarURL {

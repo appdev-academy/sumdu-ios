@@ -27,7 +27,7 @@ class SearchTableViewCell: UITableViewCell {
     super.init(coder: aDecoder)
   }
   
-  override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+  override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
     
     // Separator
@@ -60,7 +60,7 @@ class SearchTableViewCell: UITableViewCell {
     
     let attributedString: NSMutableAttributedString = NSMutableAttributedString(string: resultString)
     let pattern = searchString
-    let range: NSRange = NSMakeRange(0, resultString.characters.count)
+    let range: NSRange = NSMakeRange(0, resultString.count)
     
     let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
     
@@ -68,7 +68,7 @@ class SearchTableViewCell: UITableViewCell {
       (textCheckingResult, matchingFlags, stop) -> Void in
       
       if let subRange = textCheckingResult?.range {
-        attributedString.addAttribute(NSForegroundColorAttributeName, value: Color.textNormal, range: subRange)
+        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: Color.textNormal, range: subRange)
       }
     }
     return attributedString

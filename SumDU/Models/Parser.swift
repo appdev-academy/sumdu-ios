@@ -109,7 +109,7 @@ class Parser {
     
     case scheduleRequest([String: String])
     case scheduleCalendarRequest([String: String])
-    case updateListsOfAuditoriumsGroupsTeachers()
+    case updateListsOfAuditoriumsGroupsTeachers
     
     /// Main URL for schedule requests
     static let baseURL = "http://schedule.sumdu.edu.ua"
@@ -151,7 +151,7 @@ class Parser {
         urlRequest = try URLEncoding.default.encode(urlRequest, with: params)
       case .scheduleCalendarRequest(let params):
         urlRequest = try URLEncoding.default.encode(urlRequest, with: params)
-      case .updateListsOfAuditoriumsGroupsTeachers():
+      case .updateListsOfAuditoriumsGroupsTeachers:
         urlRequest = try URLEncoding.default.encode(urlRequest, with: nil)
       }
       
@@ -260,7 +260,7 @@ class Parser {
   /// Update and save Auditoriums, Groups and Teachers from server
   func updateListsOfAuditoriumsGroupsAndTeachers() {
     
-    Alamofire.request(Router.updateListsOfAuditoriumsGroupsTeachers()).responseString {
+    Alamofire.request(Router.updateListsOfAuditoriumsGroupsTeachers).responseString {
       response in
       
       let htmlString = response.description
@@ -275,7 +275,7 @@ class Parser {
         // Auditoriums
         if let auditoriumsSelect = htmlDocument.firstChild(css: "#auditorium") {
           for option in auditoriumsSelect.children {
-            if let idString = option.attr("value"), let id = Int(idString), option.stringValue.characters.count > 1 {
+            if let idString = option.attr("value"), let id = Int(idString), option.stringValue.count > 1 {
               let auditorium = ListData(id: id, name: option.stringValue, type: ListDataType.Auditorium)
               auditoriums.append(auditorium)
             }
@@ -285,7 +285,7 @@ class Parser {
         // Groups
         if let groupsSelect = htmlDocument.firstChild(css: "#group") {
           for option in groupsSelect.children {
-            if let idString = option.attr("value"), let id = Int(idString), option.stringValue.characters.count > 1 {
+            if let idString = option.attr("value"), let id = Int(idString), option.stringValue.count > 1 {
               let group = ListData(id: id, name: option.stringValue, type: ListDataType.Group)
               groups.append(group)
             }
@@ -295,7 +295,7 @@ class Parser {
         // Teachers
         if let teachersSelect = htmlDocument.firstChild(css: "#teacher") {
           for option in teachersSelect.children {
-            if let idString = option.attr("value"), let id = Int(idString), option.stringValue.characters.count > 1 {
+            if let idString = option.attr("value"), let id = Int(idString), option.stringValue.count > 1 {
               let teacher = ListData(id: id, name: option.stringValue, type: ListDataType.Teacher)
               teachers.append(teacher)
             }

@@ -26,7 +26,7 @@ class BackButton: UIButton {
     setImage(#imageLiteral(resourceName: "back_normal"), for: .normal)
     setImage(#imageLiteral(resourceName: "back_pressed"), for: .selected)
     contentMode = .scaleAspectFill
-    imageEdgeInsets = UIEdgeInsetsMake(0.0, -20.0, 0.0, 0.0)
+    imageEdgeInsets = UIEdgeInsets(top: 0.0, left: -20.0, bottom: 0.0, right: 0.0)
     clipsToBounds = true
   }
 }
