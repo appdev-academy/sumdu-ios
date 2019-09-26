@@ -77,7 +77,7 @@ class ScheduleViewController: UIViewController {
     constrain(backButton, view) {
       backButton, superview in
       
-      backButton.top == superview.top + topMargin
+      backButton.top == superview.safeAreaLayoutGuide.top + topMargin
       backButton.leading == superview.leading + leadingMargin
       backButton.height == BackButton.buttonSize.height
       backButton.width == BackButton.buttonSize.width
@@ -92,7 +92,7 @@ class ScheduleViewController: UIViewController {
     constrain(refreshButton, view) {
       refreshButton, superview in
       
-      refreshButton.top == superview.top + topMargin
+      refreshButton.top == superview.safeAreaLayoutGuide.top + topMargin
       refreshButton.trailing == superview.trailing - trailingMargin
       refreshButton.height == RefreshButton.buttonSize.height
       refreshButton.width == RefreshButton.buttonSize.width
@@ -103,7 +103,7 @@ class ScheduleViewController: UIViewController {
     constrain(shareButton, refreshButton, view) {
       shareButton, refreshButton, superview in
       
-      shareButton.top == superview.top + topMargin
+      shareButton.top == superview.safeAreaLayoutGuide.top + topMargin
       shareButton.trailing == refreshButton.leading - 2.0
       shareButton.height == ShareButton.buttonSize.height
       shareButton.width == ShareButton.buttonSize.width
@@ -133,7 +133,7 @@ class ScheduleViewController: UIViewController {
       scheduleTableView.top == titleLabel.bottom + 10.0
       scheduleTableView.leading == superview.leading
       scheduleTableView.trailing == superview.trailing
-      scheduleTableView.bottom == superview.bottom
+      scheduleTableView.bottom == superview.safeAreaLayoutGuide.bottom
     }
     // Remove separators for empty cells
     scheduleTableView.tableFooterView = UIView()
@@ -223,8 +223,8 @@ class ScheduleViewController: UIViewController {
   @objc func shareButtonPressed() {
     if recordsBySection.count > 0 {
       parser.generateCalendarURL(listData)
-      if let url = calendarURL {
-        UIApplication.shared.openURL(url)
+      if let url = calendarURL, UIApplication.shared.canOpenURL(url) {
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
       }
     }
   }

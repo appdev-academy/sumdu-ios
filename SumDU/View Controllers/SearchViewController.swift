@@ -140,7 +140,7 @@ class SearchViewController: UIViewController {
     constrain(searchBarView, view) {
       searchBarView, superview in
       
-      searchBarView.top == superview.top + 30.0
+      searchBarView.top == superview.safeAreaLayoutGuide.top + 30.0
       searchBarView.leading == superview.leading + 14.0
       searchBarView.trailing == superview.trailing
       searchBarView.height == SearchBarView.viewHeight
@@ -203,7 +203,7 @@ class SearchViewController: UIViewController {
       contentTableView.top == scrollLineView.bottom
       contentTableView.leading == superview.leading
       contentTableView.trailing == superview.trailing
-      contentTableView.bottom == superview.bottom
+      contentTableView.bottom == superview.safeAreaLayoutGuide.bottom
     }
     
     // Not found
