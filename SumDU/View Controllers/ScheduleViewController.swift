@@ -64,7 +64,7 @@ class ScheduleViewController: UIViewController {
     
     view.backgroundColor = UIColor.white
     
-    let topMargin: CGFloat = 24.0
+    let topMargin: CGFloat = 10.0
     let leadingMargin: CGFloat = 14.0
     let trailingMargin: CGFloat = 6.0
     
