@@ -27,6 +27,8 @@ class ScheduleViewController: UIViewController {
     }
   }
   
+  fileprivate let refreshControl = UIRefreshControl()
+  
   /// URL for add schedule events to calendar
   fileprivate var calendarURL: URL?
   
@@ -159,6 +161,21 @@ class ScheduleViewController: UIViewController {
     constrain(activityIndicatorView, view) { activityIndicatorView, superview in
       activityIndicatorView.center == superview.center
     }
+    
+    // Pull to refresh
+    setupPullToRefresh()
+  }
+  
+  // MARK: - Pull to refresh
+  
+  private func setupPullToRefresh() {
+    scheduleTableView.refreshControl = refreshControl
+    refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+  }
+  
+  @objc func refreshData() {
+    parser.sendScheduleRequest(listData)
+    refreshControl.endRefreshing()
   }
   
   fileprivate func updateTitleText() {

@@ -49,6 +49,8 @@ class SearchViewController: UIViewController {
     }
   }
   
+  fileprivate let refreshControl = UIRefreshControl()
+  
   /// Parser for working with server
   fileprivate var parser = Parser()
   
@@ -86,6 +88,8 @@ class SearchViewController: UIViewController {
     }
     
     updateContent()
+    
+    setupPullToRefresh()
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -109,6 +113,18 @@ class SearchViewController: UIViewController {
   
   deinit {
     deregisterFromNotifications()
+  }
+  
+  // MARK: - Pull to refresh
+  
+  private func setupPullToRefresh() {
+    contentTableView.refreshControl = refreshControl
+    refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+  }
+  
+  @objc func refreshData() {
+    model.updateFromServer(with: parser)
+    refreshControl.endRefreshing()
   }
   
   // MARK: - Helpers
