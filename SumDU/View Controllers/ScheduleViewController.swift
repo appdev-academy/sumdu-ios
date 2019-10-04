@@ -175,7 +175,6 @@ class ScheduleViewController: UIViewController {
   
   @objc func refreshData() {
     parser.sendScheduleRequest(listData)
-    refreshControl.endRefreshing()
   }
   
   fileprivate func updateTitleText() {
@@ -233,6 +232,7 @@ class ScheduleViewController: UIViewController {
   
   /// Refresh schedule table
   @objc func refreshButtonPressed() {
+    refreshButton.rotate360Degrees(duration: 1.0, completionDelegate: self)
     parser.sendScheduleRequest(listData)
   }
   
@@ -363,6 +363,8 @@ extension ScheduleViewController: ParserScheduleDelegate {
     }
     // Tell refresh control it can stop showing up now
     activityIndicatorView.stopAnimating()
+    refreshControl.endRefreshing()
+    refreshButton.rotate360Degrees(duration: nil)
     UIApplication.shared.isNetworkActivityIndicatorVisible = false
   }
   
@@ -373,6 +375,8 @@ extension ScheduleViewController: ParserScheduleDelegate {
   func scheduleRequestError(_ parser: Parser, localizedError error: String?) {
     UIApplication.shared.isNetworkActivityIndicatorVisible = false
     activityIndicatorView.stopAnimating()
+    refreshControl.endRefreshing()
+    refreshButton.rotate360Degrees(duration: nil)
     
     // Create alert
     let alertController = UIAlertController(title: NSLocalizedString("Error", comment: ""), message: error, preferredStyle: .alert)

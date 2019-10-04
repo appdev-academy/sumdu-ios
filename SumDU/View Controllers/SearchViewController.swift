@@ -66,6 +66,7 @@ class SearchViewController: UIViewController {
   fileprivate let notFoundLabel = UILabel()
   fileprivate let contentTableView = UITableView()
   fileprivate let emptyHistoryView = EmptyHistoryView()
+  fileprivate var refreshButton = RefreshButton()
   
   // MARK: - Lifecycle
   
@@ -124,7 +125,6 @@ class SearchViewController: UIViewController {
   
   @objc func refreshData() {
     model.updateFromServer(with: parser)
-    refreshControl.endRefreshing()
   }
   
   // MARK: - Helpers
@@ -335,6 +335,7 @@ extension SearchViewController: SearchBarViewDelegate {
   
   func refreshContent(searchBarView view: SearchBarView) {
     model.updateFromServer(with: parser)
+    self.refreshButton = view.refreshButton
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
@@ -462,6 +463,9 @@ extension SearchViewController: ParserDataListDelegate {
     model.teachers = teachers
     ListData.saveToStorage(model.teachers, forKey: UserDefaultsKey.Teachers.key)
     
+    refreshControl.endRefreshing()
+    refreshButton.rotate360Degrees(duration: nil)
+    
     updateContent()
   }
   
@@ -469,6 +473,9 @@ extension SearchViewController: ParserDataListDelegate {
     if UIApplication.shared.isNetworkActivityIndicatorVisible {
       UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
+    
+    refreshControl.endRefreshing()
+    refreshButton.rotate360Degrees(duration: nil)
     
     // Create alert
     let alertController = UIAlertController(title: NSLocalizedString("Error", comment: ""), message: error, preferredStyle: .alert)

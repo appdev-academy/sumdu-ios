@@ -77,7 +77,7 @@ class SearchBarView: UIView {
   
   // Right
   fileprivate let containerForButtons = UIView()
-  fileprivate let refreshButton = RefreshButton()
+  let refreshButton = RefreshButton()
   fileprivate let cancelButton = UIButton()
   
   // MARK: - Initialization
@@ -157,6 +157,7 @@ class SearchBarView: UIView {
   
   @objc func refreshButtonPressed() {
     delegate?.refreshContent(searchBarView: self)
+    refreshButton.rotate360Degrees(duration: 1.0, completionDelegate: self)
   }
 }
 

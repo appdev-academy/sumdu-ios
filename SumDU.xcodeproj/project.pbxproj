@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		11EF3E9B2347294F00295807 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11EF3E9A2347294E00295807 /* GoogleService-Info.plist */; };
+		11F0F06B2347775700304455 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F0F06A2347775700304455 /* UIView.swift */; };
 		11F425BA233B646A00B08ED4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11F425B9233B646A00B08ED4 /* LaunchScreen.storyboard */; };
 		7D07F81D1C099C56007DF3FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D07F8171C099C56007DF3FD /* AppDelegate.swift */; };
 		7D07F81E1C099C56007DF3FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D07F8191C099C56007DF3FD /* Assets.xcassets */; };
@@ -64,6 +65,7 @@
 
 /* Begin PBXFileReference section */
 		11EF3E9A2347294E00295807 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		11F0F06A2347775700304455 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		11F425B9233B646A00B08ED4 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		39F26E60412F76F92FD02551 /* Pods-SumDU App-SumDU.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SumDU App-SumDU.release.xcconfig"; path = "Pods/Target Support Files/Pods-SumDU App-SumDU/Pods-SumDU App-SumDU.release.xcconfig"; sourceTree = "<group>"; };
 		79F29838E0D4D78D6E332C18 /* Pods_SumDU_App_SumDU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SumDU_App_SumDU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -334,6 +336,7 @@
 			isa = PBXGroup;
 			children = (
 				DE8517C71D956C98001942B2 /* Date.swift */,
+				11F0F06A2347775700304455 /* UIView.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -565,6 +568,7 @@
 				DE65F6371D3786470040A00D /* ScheduleSectionHeaderView.swift in Sources */,
 				7D2B5D891C19FAEB00C758B8 /* ListData.swift in Sources */,
 				7D9F955D1C160E13008B601F /* Parser.swift in Sources */,
+				11F0F06B2347775700304455 /* UIView.swift in Sources */,
 				E1DA623B1C26A71400584099 /* ScheduleViewController.swift in Sources */,
 				DE5533E41D3393EA0016AC67 /* SearchViewController.swift in Sources */,
 				7D9F955E1C160E13008B601F /* Schedule.swift in Sources */,
