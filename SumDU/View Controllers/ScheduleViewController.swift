@@ -27,6 +27,8 @@ class ScheduleViewController: UIViewController {
     }
   }
   
+  fileprivate let refreshControl = UIRefreshControl()
+  
   /// URL for add schedule events to calendar
   fileprivate var calendarURL: URL?
   
@@ -39,7 +41,7 @@ class ScheduleViewController: UIViewController {
   
   // Content
   fileprivate let titleLabel = UILabel()
-  fileprivate let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+  fileprivate let activityIndicatorView = UIActivityIndicatorView(style: .gray)
   fileprivate let informationLabel = UILabel()
   fileprivate let scheduleTableView = UITableView()
   
@@ -64,7 +66,7 @@ class ScheduleViewController: UIViewController {
     
     view.backgroundColor = UIColor.white
     
-    let topMargin: CGFloat = 24.0
+    let topMargin: CGFloat = 10.0
     let leadingMargin: CGFloat = 14.0
     let trailingMargin: CGFloat = 6.0
     
@@ -77,14 +79,14 @@ class ScheduleViewController: UIViewController {
     constrain(backButton, view) {
       backButton, superview in
       
-      backButton.top == superview.top + topMargin
+      backButton.top == superview.safeAreaLayoutGuide.top + topMargin
       backButton.leading == superview.leading + leadingMargin
       backButton.height == BackButton.buttonSize.height
       backButton.width == BackButton.buttonSize.width
     }
     if UIDevice.current.userInterfaceIdiom == .pad {
-      backButton.setImage(nil, for: UIControlState())
-      backButton.setImage(nil, for: UIControlState.highlighted)
+      backButton.setImage(nil, for: UIControl.State())
+      backButton.setImage(nil, for: UIControl.State.highlighted)
     }
     // Refresh
     refreshButton.addTarget(self, action: #selector(refreshButtonPressed), for: .touchUpInside)
@@ -92,7 +94,7 @@ class ScheduleViewController: UIViewController {
     constrain(refreshButton, view) {
       refreshButton, superview in
       
-      refreshButton.top == superview.top + topMargin
+      refreshButton.top == superview.safeAreaLayoutGuide.top + topMargin
       refreshButton.trailing == superview.trailing - trailingMargin
       refreshButton.height == RefreshButton.buttonSize.height
       refreshButton.width == RefreshButton.buttonSize.width
@@ -103,7 +105,7 @@ class ScheduleViewController: UIViewController {
     constrain(shareButton, refreshButton, view) {
       shareButton, refreshButton, superview in
       
-      shareButton.top == superview.top + topMargin
+      shareButton.top == superview.safeAreaLayoutGuide.top + topMargin
       shareButton.trailing == refreshButton.leading - 2.0
       shareButton.height == ShareButton.buttonSize.height
       shareButton.width == ShareButton.buttonSize.width
@@ -133,7 +135,7 @@ class ScheduleViewController: UIViewController {
       scheduleTableView.top == titleLabel.bottom + 10.0
       scheduleTableView.leading == superview.leading
       scheduleTableView.trailing == superview.trailing
-      scheduleTableView.bottom == superview.bottom
+      scheduleTableView.bottom == superview.safeAreaLayoutGuide.bottom
     }
     // Remove separators for empty cells
     scheduleTableView.tableFooterView = UIView()
@@ -159,6 +161,20 @@ class ScheduleViewController: UIViewController {
     constrain(activityIndicatorView, view) { activityIndicatorView, superview in
       activityIndicatorView.center == superview.center
     }
+    
+    // Pull to refresh
+    setupPullToRefresh()
+  }
+  
+  // MARK: - Pull to refresh
+  
+  private func setupPullToRefresh() {
+    scheduleTableView.refreshControl = refreshControl
+    refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+  }
+  
+  @objc func refreshData() {
+    parser.sendScheduleRequest(listData)
   }
   
   fileprivate func updateTitleText() {
@@ -208,23 +224,24 @@ class ScheduleViewController: UIViewController {
     parser.sendScheduleRequest(listData)
   }
   
-  func backButtonPressed() {
+  @objc func backButtonPressed() {
     if UIDevice.current.userInterfaceIdiom == .phone {
       let _ = navigationController?.popViewController(animated: true)
     }
   }
   
   /// Refresh schedule table
-  func refreshButtonPressed() {
+  @objc func refreshButtonPressed() {
+    refreshButton.rotate360Degrees(duration: 1.0, completionDelegate: self)
     parser.sendScheduleRequest(listData)
   }
   
   /// Share schedule
-  func shareButtonPressed() {
+  @objc func shareButtonPressed() {
     if recordsBySection.count > 0 {
       parser.generateCalendarURL(listData)
-      if let url = calendarURL {
-        UIApplication.shared.openURL(url)
+      if let url = calendarURL, UIApplication.shared.canOpenURL(url) {
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
       }
     }
   }
@@ -346,6 +363,8 @@ extension ScheduleViewController: ParserScheduleDelegate {
     }
     // Tell refresh control it can stop showing up now
     activityIndicatorView.stopAnimating()
+    refreshControl.endRefreshing()
+    refreshButton.rotate360Degrees(duration: nil)
     UIApplication.shared.isNetworkActivityIndicatorVisible = false
   }
   
@@ -356,6 +375,8 @@ extension ScheduleViewController: ParserScheduleDelegate {
   func scheduleRequestError(_ parser: Parser, localizedError error: String?) {
     UIApplication.shared.isNetworkActivityIndicatorVisible = false
     activityIndicatorView.stopAnimating()
+    refreshControl.endRefreshing()
+    refreshButton.rotate360Degrees(duration: nil)
     
     // Create alert
     let alertController = UIAlertController(title: NSLocalizedString("Error", comment: ""), message: error, preferredStyle: .alert)

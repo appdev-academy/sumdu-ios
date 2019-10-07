@@ -85,7 +85,7 @@ struct DataModel {
     case .groups: data = groups
     case .teachers: data = teachers
     }
-    if let query = searchText, query.characters.count > 0 {
+    if let query = searchText, query.count > 0 {
       data = data.filter { return $0.name.localizedCaseInsensitiveContains(query) }
     }
     return data
@@ -125,7 +125,7 @@ struct DataModel {
     // Get all unique first letters
     var uniqueCharacters = Set<Character>()
     for item in allData {
-      if let first = item.name.characters.first {
+      if let first = item.name.first {
         uniqueCharacters.insert(first)
       }
     }
@@ -136,7 +136,7 @@ struct DataModel {
     for letter in sortedCharacters {
       var sectionRecords: [ListData] = []
       for item in allData {
-        if letter == item.name.characters.first {
+        if letter == item.name.first {
           sectionRecords.append(item)
         }
       }

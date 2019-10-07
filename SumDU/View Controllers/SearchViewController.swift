@@ -49,6 +49,8 @@ class SearchViewController: UIViewController {
     }
   }
   
+  fileprivate let refreshControl = UIRefreshControl()
+  
   /// Parser for working with server
   fileprivate var parser = Parser()
   
@@ -64,6 +66,7 @@ class SearchViewController: UIViewController {
   fileprivate let notFoundLabel = UILabel()
   fileprivate let contentTableView = UITableView()
   fileprivate let emptyHistoryView = EmptyHistoryView()
+  fileprivate var refreshButton = RefreshButton()
   
   // MARK: - Lifecycle
   
@@ -86,6 +89,8 @@ class SearchViewController: UIViewController {
     }
     
     updateContent()
+    
+    setupPullToRefresh()
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -104,11 +109,22 @@ class SearchViewController: UIViewController {
     updateMenuScrollIndicator()
     // Select menu item
     let indexPath = IndexPath(item: model.currentState.rawValue, section: 0)
-    menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition())
+    menuCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionView.ScrollPosition())
   }
   
   deinit {
     deregisterFromNotifications()
+  }
+  
+  // MARK: - Pull to refresh
+  
+  private func setupPullToRefresh() {
+    contentTableView.refreshControl = refreshControl
+    refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+  }
+  
+  @objc func refreshData() {
+    model.updateFromServer(with: parser)
   }
   
   // MARK: - Helpers
@@ -140,7 +156,7 @@ class SearchViewController: UIViewController {
     constrain(searchBarView, view) {
       searchBarView, superview in
       
-      searchBarView.top == superview.top + 30.0
+      searchBarView.top == superview.safeAreaLayoutGuide.top + 10
       searchBarView.leading == superview.leading + 14.0
       searchBarView.trailing == superview.trailing
       searchBarView.height == SearchBarView.viewHeight
@@ -203,7 +219,7 @@ class SearchViewController: UIViewController {
       contentTableView.top == scrollLineView.bottom
       contentTableView.leading == superview.leading
       contentTableView.trailing == superview.trailing
-      contentTableView.bottom == superview.bottom
+      contentTableView.bottom == superview.safeAreaLayoutGuide.bottom
     }
     
     // Not found
@@ -233,7 +249,7 @@ class SearchViewController: UIViewController {
   
   fileprivate func labelWidth(_ text: String) -> CGFloat {
     let size = CGSize(width: CGFloat.greatestFiniteMagnitude, height: MenuCollectionViewCell.cellHeight)
-    let attributes = [NSFontAttributeName: Font.named(.helveticaNeueMedium, size: 17.0)]
+    let attributes = [NSAttributedString.Key.font: Font.named(.helveticaNeueMedium, size: 17.0)]
     return text.boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil).size.width
   }
   
@@ -289,25 +305,25 @@ class SearchViewController: UIViewController {
   // MARK: - Notifications
   
   fileprivate func registerForNotifications() {
-    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
   }
   
   fileprivate func deregisterFromNotifications() {
     NotificationCenter.default.removeObserver(self)
   }
   
-  func keyboardWillShow(_ notification: Notification) {
+  @objc func keyboardWillShow(_ notification: Notification) {
     guard let userInfo: NSDictionary = notification.userInfo as NSDictionary?,
-      let keyboardFrame: NSValue = userInfo.value(forKey: UIKeyboardFrameEndUserInfoKey) as? NSValue else {
+      let keyboardFrame: NSValue = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue else {
         return
     }
     let keyboardHeight = keyboardFrame.cgRectValue.size.height
-    tableViewContentInset = UIEdgeInsetsMake(0.0, 0.0, keyboardHeight,  0.0);
+    tableViewContentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardHeight,  right: 0.0);
     updateTableContentInset()
   }
   
-  func keyboardWillHide(_ notification: Notification) {
+  @objc func keyboardWillHide(_ notification: Notification) {
     tableViewContentInset = UIEdgeInsets.zero
     updateTableContentInset()
   }
@@ -319,6 +335,7 @@ extension SearchViewController: SearchBarViewDelegate {
   
   func refreshContent(searchBarView view: SearchBarView) {
     model.updateFromServer(with: parser)
+    self.refreshButton = view.refreshButton
   }
   
   func searchBarView(searchBarView view: SearchBarView, searchWithText text: String?) {
@@ -446,6 +463,9 @@ extension SearchViewController: ParserDataListDelegate {
     model.teachers = teachers
     ListData.saveToStorage(model.teachers, forKey: UserDefaultsKey.Teachers.key)
     
+    refreshControl.endRefreshing()
+    refreshButton.rotate360Degrees(duration: nil)
+    
     updateContent()
   }
   
@@ -453,6 +473,9 @@ extension SearchViewController: ParserDataListDelegate {
     if UIApplication.shared.isNetworkActivityIndicatorVisible {
       UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
+    
+    refreshControl.endRefreshing()
+    refreshButton.rotate360Degrees(duration: nil)
     
     // Create alert
     let alertController = UIAlertController(title: NSLocalizedString("Error", comment: ""), message: error, preferredStyle: .alert)
