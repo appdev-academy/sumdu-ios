@@ -81,7 +81,7 @@ DEPENDENCIES:
   - SwiftyJSON
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - Cartography
     - Crashlytics
@@ -119,6 +119,6 @@ SPEC CHECKSUMS:
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
 
-PODFILE CHECKSUM: 58576f03fe15408c0ac0a5d77b4e15ff597325a7
+PODFILE CHECKSUM: 4f92392471646f4e42de50eb1a7f1630671eb61f
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.8.3

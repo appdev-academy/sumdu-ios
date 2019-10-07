@@ -421,7 +421,7 @@
 				TargetAttributes = {
 					7D181E271C006D96000C04B5 = {
 						CreatedOnToolsVersion = 7.1.1;
-						DevelopmentTeam = CBGX48BZ8F;
+						DevelopmentTeam = EL75NL7VGE;
 						LastSwiftMigration = 0800;
 					};
 					7D181E3B1C006D96000C04B5 = {
@@ -782,11 +782,13 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = CBGX48BZ8F;
+				DEVELOPMENT_TEAM = EL75NL7VGE;
 				INFOPLIST_FILE = "$(SRCROOT)/SumDU/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 2.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = Maksym.Skliarov.SumDU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -803,10 +805,12 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = CBGX48BZ8F;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = EL75NL7VGE;
 				INFOPLIST_FILE = "$(SRCROOT)/SumDU/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 2.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = Maksym.Skliarov.SumDU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
