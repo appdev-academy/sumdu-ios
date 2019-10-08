@@ -16,6 +16,8 @@ class ScheduleTableViewCell: UITableViewCell {
   static let reuseIdentifier = "\(ScheduleTableViewCell.self)"
   static let cellHeight: CGFloat = 126.0
   
+  private let nameLabelGroup = ConstraintGroup()
+  
   // MARK: - UI objects
   
   fileprivate let nameLabel = UILabel()
@@ -52,7 +54,7 @@ class ScheduleTableViewCell: UITableViewCell {
     nameLabel.minimumScaleFactor = 0.7
     nameLabel.numberOfLines = 2
     contentView.addSubview(nameLabel)
-    constrain(nameLabel, contentView) {
+    constrain(nameLabel, contentView, replace: nameLabelGroup) {
       nameLabel, superview in
       
       nameLabel.top == superview.top + 12.0
@@ -90,10 +92,10 @@ class ScheduleTableViewCell: UITableViewCell {
     auditoriumLabel.textColor = Color.textNormal
     auditoriumLabel.textAlignment = .left
     contentView.addSubview(auditoriumLabel)
-    constrain(auditoriumLabel, dotImageView, nameLabel, contentView) {
-      auditoriumLabel, dotImageView, nameLabel, superview in
+    constrain(auditoriumLabel, dotImageView, contentView) {
+      auditoriumLabel, dotImageView, superview in
       
-      auditoriumLabel.top == nameLabel.bottom + 8.0
+      auditoriumLabel.centerY == dotImageView.centerY
       auditoriumLabel.leading == dotImageView.trailing + itemSpacing
       auditoriumLabel.height == 21.0
     }
@@ -131,6 +133,14 @@ class ScheduleTableViewCell: UITableViewCell {
     var name = schedule.pairName
     if schedule.pairType.count > 0 { name += " (" + schedule.pairType + ")" }
     nameLabel.text = name
+    // Change name size and position if there is no information about it
+    if nameLabel.text?.isEmpty == true {
+      constrain(nameLabel,contentView, replace: nameLabelGroup) {
+        nameLabel, superview in
+        nameLabel.top == superview.top + 6.0
+        nameLabel.height == 0
+      }
+    }
     // Time
     timeLabel.text = schedule.pairTime
     // Auditorium

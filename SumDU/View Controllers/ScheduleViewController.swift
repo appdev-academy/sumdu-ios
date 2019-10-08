@@ -99,6 +99,7 @@ class ScheduleViewController: UIViewController {
       refreshButton.height == RefreshButton.buttonSize.height
       refreshButton.width == RefreshButton.buttonSize.width
     }
+    refreshButton.isHidden = true
     // Share
     shareButton.addTarget(self, action: #selector(shareButtonPressed), for: .touchUpInside)
     view.addSubview(shareButton)
@@ -110,6 +111,7 @@ class ScheduleViewController: UIViewController {
       shareButton.height == ShareButton.buttonSize.height
       shareButton.width == ShareButton.buttonSize.width
     }
+    shareButton.isHidden = true
     // Title
     titleLabel.font = Font.named(.helveticaNeueMedium, size: 26.0)
     titleLabel.textColor = Color.textBlack
@@ -128,6 +130,7 @@ class ScheduleViewController: UIViewController {
     scheduleTableView.delegate = self
     scheduleTableView.dataSource = self
     scheduleTableView.separatorStyle = .none
+    scheduleTableView.estimatedRowHeight = ScheduleTableViewCell.cellHeight
     view.addSubview(scheduleTableView)
     constrain(scheduleTableView, titleLabel, view) {
       scheduleTableView, titleLabel, superview in
@@ -200,9 +203,13 @@ class ScheduleViewController: UIViewController {
     if recordsBySection.count == 0 {
       informationLabel.isHidden = false
       scheduleTableView.isHidden = true
+      shareButton.isHidden = true
+      refreshButton.isHidden = true
     } else {
       informationLabel.isHidden = true
       scheduleTableView.isHidden = false
+      shareButton.isHidden = false
+      refreshButton.isHidden = false
     }
     updateTitleText()
   }
@@ -252,7 +259,7 @@ class ScheduleViewController: UIViewController {
 extension ScheduleViewController: UITableViewDelegate {
   
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    return ScheduleTableViewCell.cellHeight
+    return UITableView.automaticDimension
   }
   
   func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -351,6 +358,8 @@ extension ScheduleViewController: ParserScheduleDelegate {
       // Update UI
       informationLabel.isHidden = true
       scheduleTableView.isHidden = false
+      shareButton.isHidden = false
+      refreshButton.isHidden = false
       
       // Move data from temporary var to public
       recordsBySection = forRecordsBySection
@@ -360,6 +369,8 @@ extension ScheduleViewController: ParserScheduleDelegate {
       // Empty data
       informationLabel.isHidden = false
       scheduleTableView.isHidden = true
+      shareButton.isHidden = true
+      refreshButton.isHidden = true
     }
     // Tell refresh control it can stop showing up now
     activityIndicatorView.stopAnimating()
