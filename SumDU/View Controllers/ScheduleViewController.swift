@@ -162,6 +162,15 @@ class ScheduleViewController: UIViewController {
       activityIndicatorView.center == superview.center
     }
     
+    // Do not show navigation buttons if there are no results
+    if listData == nil {
+      shareButton.isHidden = true
+      refreshButton.isHidden = true
+    } else {
+      shareButton.isHidden = false
+      refreshButton.isHidden = false
+    }
+    
     // Pull to refresh
     setupPullToRefresh()
   }
@@ -200,9 +209,13 @@ class ScheduleViewController: UIViewController {
     if recordsBySection.count == 0 {
       informationLabel.isHidden = false
       scheduleTableView.isHidden = true
+      shareButton.isHidden = true
+      refreshButton.isHidden = true
     } else {
       informationLabel.isHidden = true
       scheduleTableView.isHidden = false
+      shareButton.isHidden = false
+      refreshButton.isHidden = false
     }
     updateTitleText()
   }
@@ -351,6 +364,8 @@ extension ScheduleViewController: ParserScheduleDelegate {
       // Update UI
       informationLabel.isHidden = true
       scheduleTableView.isHidden = false
+      shareButton.isHidden = false
+      refreshButton.isHidden = false
       
       // Move data from temporary var to public
       recordsBySection = forRecordsBySection
@@ -360,6 +375,8 @@ extension ScheduleViewController: ParserScheduleDelegate {
       // Empty data
       informationLabel.isHidden = false
       scheduleTableView.isHidden = true
+      shareButton.isHidden = true
+      refreshButton.isHidden = true
     }
     // Tell refresh control it can stop showing up now
     activityIndicatorView.stopAnimating()
