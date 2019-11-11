@@ -564,4 +564,27 @@ extension SearchViewController: UITableViewDelegate {
     if historyItems.count == 0 { model.history.append(dataItem) }
     ListData.saveToStorage(model.history, forKey: UserDefaultsKey.History.key)
   }
+  
+  func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    switch model.currentState {
+    case .favorites:
+      return true
+    default:
+      return false
+    }
+  }
+  
+  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    switch model.currentState {
+    case .favorites:
+      if editingStyle == .delete {
+        let dataItem = model.currentData[indexPath.section].records[indexPath.row]
+        ListData.deleteObject(model.history, value: dataItem, forKey: UserDefaultsKey.History.key)
+        model.updateFromStorage()
+        updateContent()
+      }
+    default:
+      break
+    }
+  }
 }
