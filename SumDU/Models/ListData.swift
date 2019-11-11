@@ -110,15 +110,22 @@ extension ListData {
     return sortedRecords
   }
   
-  /// Function which stores ListData entity
-  static func saveObject(_ listDataObject: ListData?, forKey: String) {
+  // Remove ListData entity from storage
+  static func deleteObject(_ listDataObjects: [ListData], value: ListData, forKey: String) {
+    var listDataObjects = listDataObjects
     var listDataCoders: [ListDataCoder] = []
-    if let lisData = listDataObject {
-      listDataCoders.append(lisData.listDataCoder)
-      let userDefaults = UserDefaults.standard
-      let data = NSKeyedArchiver.archivedData(withRootObject: listDataCoders)
-      userDefaults.set(data, forKey: forKey)
+    let index = listDataObjects.firstIndex { listData -> Bool in
+      return listData.id == value.id
     }
+    if let index = index {
+      listDataObjects.remove(at: index)
+    }
+    for listDataRecord in listDataObjects {
+      listDataCoders.append(listDataRecord.listDataCoder)
+    }
+    let userDefaults = UserDefaults.standard
+    let data = NSKeyedArchiver.archivedData(withRootObject: listDataCoders)
+    userDefaults.set(data, forKey: forKey)
   }
   
   /// Function which loads ListData entity
