@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Oleksandr Kysil on 10/4/19.
-//  Copyright © 2019 App Dev Academy. All rights reserved.
+//  Copyright © 2019 App Dev Academy Ltd. All rights reserved.
 //
 
 import UIKit

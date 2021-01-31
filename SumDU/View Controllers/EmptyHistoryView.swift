@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Yura Voevodin on 9/26/16.
-//  Copyright © 2016 App Dev Academy. All rights reserved.
+//  Copyright © 2016 App Dev Academy Ltd. All rights reserved.
 //
 
 import Cartography

@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Oleksandr Kysil on 12/11/15.
-//  Copyright © 2015 App Dev Academy. All rights reserved.
+//  Copyright © 2015 App Dev Academy Ltd. All rights reserved.
 //
 
 import Foundation
@@ -28,9 +28,9 @@ class ListDataCoder: NSObject, NSCoding {
   /// Decode ListData enities: Auditorium, Group or Teacher
   required init(coder aDecoder: NSCoder) {
     if let id = aDecoder.decodeObject(forKey: "id") as? Int,
-      let name = aDecoder.decodeObject(forKey: "name") as? String,
-      let type = aDecoder.decodeObject(forKey: "type") as? String,
-      let listDataType = ListDataType(rawValue: type) {
+       let name = aDecoder.decodeObject(forKey: "name") as? String,
+       let type = aDecoder.decodeObject(forKey: "type") as? String,
+       let listDataType = ListDataType(rawValue: type) {
       self.listData = ListData(id: id, name: name, type: listDataType)
     }
   }

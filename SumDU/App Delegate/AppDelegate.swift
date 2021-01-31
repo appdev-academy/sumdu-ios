@@ -3,10 +3,11 @@
 //  SumDU
 //
 //  Created by Maksym Skliarov on 11/21/15.
-//  Copyright © 2015 AppDevAcademy. All rights reserved.
+//  Copyright © 2015 App Dev Academy Ltd. All rights reserved.
 //
 
 import Firebase
+import FirebaseCrashlytics
 import UIKit
 
 @UIApplicationMain
@@ -32,6 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       window.rootViewController = splitViewController
       window.makeKeyAndVisible()
     }
+    
     if UIDevice.current.userInterfaceIdiom == .phone, let window = self.window  {
       let searchViewController = SearchViewController()
       let navigationController = UINavigationController(rootViewController: searchViewController)

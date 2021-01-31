@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Yura Voevodin on 11.07.16.
-//  Copyright © 2016 App Dev Academy. All rights reserved.
+//  Copyright © 2016 App Dev Academy Ltd. All rights reserved.
 //
 
 import Cartography
@@ -271,7 +271,7 @@ class SearchViewController: UIViewController {
     var width: CGFloat = labelWidth(model.currentState.name)
     let historyImageWidth = MenuImageCollectionViewCell.historyImageSize.width
     switch model.currentState {
-      
+    
     case .favorites:
       leading = spacing/2
       width = historyImageWidth
@@ -315,8 +315,8 @@ class SearchViewController: UIViewController {
   
   @objc func keyboardWillShow(_ notification: Notification) {
     guard let userInfo: NSDictionary = notification.userInfo as NSDictionary?,
-      let keyboardFrame: NSValue = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue else {
-        return
+          let keyboardFrame: NSValue = userInfo.value(forKey: UIResponder.keyboardFrameEndUserInfoKey) as? NSValue else {
+      return
     }
     let keyboardHeight = keyboardFrame.cgRectValue.size.height
     tableViewContentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: keyboardHeight,  right: 0.0);

@@ -3,7 +3,7 @@
 //  SumDU
 //
 //  Created by Yura Voevodin on 28.11.15.
-//  Copyright © 2015 AppDevAcademy. All rights reserved.
+//  Copyright © 2015 App Dev Academy Ltd. All rights reserved.
 //
 
 import Alamofire
@@ -198,7 +198,7 @@ class Parser {
     var requestData: [String : String]
     
     switch typeOfRequest {
-      
+    
     case .CalendarRequest:
       // Calendar request parameters
       requestData = [
