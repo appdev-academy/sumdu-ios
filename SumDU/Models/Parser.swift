@@ -118,7 +118,7 @@ class Parser {
     var method: HTTPMethod {
       switch self {
       case .scheduleRequest:
-        return .post
+        return .get
       case .scheduleCalendarRequest:
         return .get
       case .updateListsOfAuditoriumsGroupsTeachers:
