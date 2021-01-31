@@ -6,10 +6,10 @@ abstract_target 'SumDU App' do
   pod 'Cartography'
   pod 'SwiftyJSON'
   
-  pod 'Fabric', '~> 1.10.2'
-  pod 'Crashlytics', '~> 3.14.0'
   pod 'Firebase/Analytics'
+  pod 'Firebase/Crashlytics'
   
   pod 'Fuzi'
+  
   target 'SumDU'
 end
