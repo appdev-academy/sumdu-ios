@@ -13,11 +13,11 @@ import SwiftyJSON
 
 /// Request parameter for schedule
 enum ScheduleRequestParameter: String {
-  case BeginDate = "data[DATE_BEG]"
-  case EndDate = "data[DATE_END]"
-  case GroupId = "data[KOD_GROUP]"
-  case NameId = "data[ID_FIO]"
-  case LectureRoomId = "data[ID_AUD]"
+  case BeginDate = "date_beg"
+  case EndDate = "date_end"
+  case GroupId = "id_grp"
+  case NameId = "id_fio"
+  case LectureRoomId = "id_aud"
 }
 
 /// Request parameter for calendar
@@ -40,6 +40,17 @@ enum ListDataType: String {
   case Auditorium = "auditorium"
   case Group = "group"
   case Teacher = "teacher"
+  
+  var parameters: [String: String] {
+    switch self {
+    case .Auditorium:
+      return ["method": "getAuditoriums"]
+    case .Group:
+      return ["method": "getGroups"]
+    case .Teacher:
+      return ["method": "getTeachers"]
+    }
+  }
 }
 
 // MARK: - ParserDelegate protocol
@@ -109,10 +120,10 @@ class Parser {
     
     case scheduleRequest([String: String])
     case scheduleCalendarRequest([String: String])
-    case updateListsOfAuditoriumsGroupsTeachers
+    case updateListsOfAuditoriumsGroupsTeachers([String: String])
     
     /// Main URL for schedule requests
-    static let baseURL = "http://schedule.sumdu.edu.ua"
+    static let baseURL = "https://schedule.sumdu.edu.ua"
     
     /// Returns HTTP method for each request
     var method: HTTPMethod {
@@ -134,7 +145,7 @@ class Parser {
       case .scheduleCalendarRequest:
         return "/index/ical"
       case .updateListsOfAuditoriumsGroupsTeachers:
-        return ""
+        return "/index/json"
       }
     }
     
@@ -151,12 +162,26 @@ class Parser {
         urlRequest = try URLEncoding.default.encode(urlRequest, with: params)
       case .scheduleCalendarRequest(let params):
         urlRequest = try URLEncoding.default.encode(urlRequest, with: params)
-      case .updateListsOfAuditoriumsGroupsTeachers:
-        urlRequest = try URLEncoding.default.encode(urlRequest, with: nil)
+      case .updateListsOfAuditoriumsGroupsTeachers(let params):
+        urlRequest = try URLEncoding.default.encode(urlRequest, with: params)
       }
       
       return urlRequest
     }
+  }
+  
+  private func processListData(_ value: Any, type: ListDataType) -> [ListData] {
+    guard let json = JSON(rawValue: value) else { return [] }
+    var listData: [ListData] = []
+    
+    for (key, value) in json {
+      if let id = Int(key), key != "0" {
+        let item = ListData(id: id, name: value.stringValue, type: type)
+        listData.append(item)
+      }
+    }
+    
+    return listData
   }
   
   /**
@@ -259,53 +284,58 @@ class Parser {
   
   /// Update and save Auditoriums, Groups and Teachers from server
   func updateListsOfAuditoriumsGroupsAndTeachers() {
+    var auditoriums: [ListData] = []
+    var groups: [ListData] = []
+    var teachers: [ListData] = []
     
-    Alamofire.request(Router.updateListsOfAuditoriumsGroupsTeachers).responseString {
+    var networkError: Error?
+    
+    let group = DispatchGroup()
+    
+    // Auditoriums
+    group.enter()
+    Alamofire.request(Router.updateListsOfAuditoriumsGroupsTeachers(ListDataType.Auditorium.parameters)).responseJSON {
       response in
       
-      let htmlString = response.description
+      if response.result.isSuccess, let resultValue = response.result.value {
+        auditoriums = self.processListData(resultValue, type: .Auditorium)
+      } else {
+        networkError = response.result.error
+      }
+      group.leave()
+    }
+    
+    // Groups
+    group.enter()
+    Alamofire.request(Router.updateListsOfAuditoriumsGroupsTeachers(ListDataType.Group.parameters)).responseJSON {
+      response in
       
-      do {
-        let htmlDocument = try HTMLDocument(string: htmlString, encoding: String.Encoding.windowsCP1251)
-        
-        var auditoriums: [ListData] = []
-        var groups: [ListData] = []
-        var teachers: [ListData] = []
-        
-        // Auditoriums
-        if let auditoriumsSelect = htmlDocument.firstChild(css: "#auditorium") {
-          for option in auditoriumsSelect.children {
-            if let idString = option.attr("value"), let id = Int(idString), option.stringValue.count > 1 {
-              let auditorium = ListData(id: id, name: option.stringValue, type: ListDataType.Auditorium)
-              auditoriums.append(auditorium)
-            }
-          }
-        }
-        
-        // Groups
-        if let groupsSelect = htmlDocument.firstChild(css: "#group") {
-          for option in groupsSelect.children {
-            if let idString = option.attr("value"), let id = Int(idString), option.stringValue.count > 1 {
-              let group = ListData(id: id, name: option.stringValue, type: ListDataType.Group)
-              groups.append(group)
-            }
-          }
-        }
-        
-        // Teachers
-        if let teachersSelect = htmlDocument.firstChild(css: "#teacher") {
-          for option in teachersSelect.children {
-            if let idString = option.attr("value"), let id = Int(idString), option.stringValue.count > 1 {
-              let teacher = ListData(id: id, name: option.stringValue, type: ListDataType.Teacher)
-              teachers.append(teacher)
-            }
-          }
-        }
-        
-        self.dataListDelegate?.requesSuccess(auditoriums: auditoriums, groups: groups, teachers: teachers)
-        
-      } catch {
+      if response.result.isSuccess, let resultValue = response.result.value {
+        groups = self.processListData(resultValue, type: .Group)
+      } else {
+        networkError = response.result.error
+      }
+      group.leave()
+    }
+    
+    // Teachers
+    group.enter()
+    Alamofire.request(Router.updateListsOfAuditoriumsGroupsTeachers(ListDataType.Teacher.parameters)).responseJSON {
+      response in
+      
+      if response.result.isSuccess, let resultValue = response.result.value {
+        teachers = self.processListData(resultValue, type: .Teacher)
+      } else {
+        networkError = response.result.error
+      }
+      group.leave()
+    }
+    
+    group.notify(queue: .main) {
+      if let _ = networkError {
         self.dataListDelegate?.requestError(self, localizedError: NSLocalizedString("Error while importing Auditoriums, Groups and Teachers", comment: "Error message"))
+      } else {
+        self.dataListDelegate?.requesSuccess(auditoriums: auditoriums, groups: groups, teachers: teachers)
       }
     }
   }
