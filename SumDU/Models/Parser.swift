@@ -13,6 +13,7 @@ import SwiftyJSON
 
 /// Request parameter for schedule
 enum ScheduleRequestParameter: String {
+  case method = "method"
   case BeginDate = "date_beg"
   case EndDate = "date_end"
   case GroupId = "id_grp"
@@ -22,6 +23,7 @@ enum ScheduleRequestParameter: String {
 
 /// Request parameter for calendar
 enum CalendarRequestParameter: String {
+  case method = "method"
   case BeginDate = "date_beg"
   case EndDate = "date_end"
   case GroupId = "id_grp"
@@ -227,6 +229,7 @@ class Parser {
     case .CalendarRequest:
       // Calendar request parameters
       requestData = [
+        CalendarRequestParameter.method.rawValue: "getSchedules",
         CalendarRequestParameter.BeginDate.rawValue: dateFormatter.string(from: startDate),
         CalendarRequestParameter.EndDate.rawValue: dateFormatter.string(from: endDate),
         CalendarRequestParameter.GroupId.rawValue: groupId,
@@ -236,6 +239,7 @@ class Parser {
     case .ScheduleRequest:
       // Schedule request parameters
       requestData = [
+        ScheduleRequestParameter.method.rawValue: "getSchedules",
         ScheduleRequestParameter.BeginDate.rawValue: dateFormatter.string(from: startDate),
         ScheduleRequestParameter.EndDate.rawValue: dateFormatter.string(from: endDate),
         ScheduleRequestParameter.GroupId.rawValue: groupId,
