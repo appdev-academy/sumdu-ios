@@ -23,7 +23,6 @@ enum ScheduleRequestParameter: String {
 
 /// Request parameter for calendar
 enum CalendarRequestParameter: String {
-  case method = "method"
   case BeginDate = "date_beg"
   case EndDate = "date_end"
   case GroupId = "id_grp"
@@ -125,7 +124,16 @@ class Parser {
     case updateListsOfAuditoriumsGroupsTeachers([String: String])
     
     /// Main URL for schedule requests
-    static let baseURL = "https://schedule.sumdu.edu.ua"
+    var baseURL: String {
+      get {
+        switch self {
+        case .scheduleCalendarRequest:
+          return "https://sh.cabinet.sumdu.edu.ua"
+        case .scheduleRequest, .updateListsOfAuditoriumsGroupsTeachers:
+          return "https://schedule.sumdu.edu.ua"
+        }
+      }
+    }
     
     /// Returns HTTP method for each request
     var method: HTTPMethod {
@@ -154,7 +162,7 @@ class Parser {
     // MARK: - URLRequestConvertible
     
     func asURLRequest() throws -> URLRequest {
-      let url = try Router.baseURL.asURL()
+      let url = try baseURL.asURL()
       
       var urlRequest = URLRequest(url: url.appendingPathComponent(path))
       urlRequest.httpMethod = method.rawValue
@@ -229,7 +237,6 @@ class Parser {
     case .CalendarRequest:
       // Calendar request parameters
       requestData = [
-        CalendarRequestParameter.method.rawValue: "getSchedules",
         CalendarRequestParameter.BeginDate.rawValue: dateFormatter.string(from: startDate),
         CalendarRequestParameter.EndDate.rawValue: dateFormatter.string(from: endDate),
         CalendarRequestParameter.GroupId.rawValue: groupId,
